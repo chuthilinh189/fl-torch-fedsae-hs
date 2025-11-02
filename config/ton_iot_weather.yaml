@@ -1,0 +1,29 @@
+dataset: ton_iot_weather
+train_batch_size: 128
+val_batch_size: 1
+test_batch_size: 1
+mal_batch_size: 128
+dimension: 3
+epochs: 2000
+model_type:
+  - SupAE
+noise_type:
+  - label_flipping
+num_of_poisoned_workers:
+  - 0
+poisoned_sample_ratio:
+  - 1
+learning_rate:
+  - 0.0001
+noise_std:
+  - 0.001
+attack_noise_std:
+  - 0.5
+aggregation_type:
+  - average
+coef_shrink_ae:
+  - 1
+threshold_multiplier:
+  - 1
+num_multi_class_clients:
+  - 0

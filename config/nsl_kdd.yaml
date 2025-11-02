@@ -1,0 +1,50 @@
+dataset: nsl_kdd
+train_batch_size: 32
+val_batch_size: 1
+test_batch_size: 1
+mal_batch_size: 32
+dimension: 122
+epochs: 1000
+model_type:
+  # - AE
+  # - DAE
+  # - SAE
+  # - SDAE
+  # - SAE1
+  # - SDAE1
+  # - DualLossAE
+  - SupAE
+noise_type:
+  # - gaussian_noise
+  - label_flipping
+num_of_poisoned_workers:
+  - 0
+  # - 5
+  # - 10
+  #- 20
+poisoned_sample_ratio:
+  - 0.5
+learning_rate:
+  - 0.0001
+noise_std:
+  - 0.001
+attack_noise_std:
+  - 1
+aggregation_type:
+  # - attention
+  - average
+  # - cluster
+  #- kmean
+  #- split
+coef_shrink_ae:
+  - 1
+threshold_multiplier:
+  - 0
+num_multi_class_clients:
+  # - 5
+  # - 10
+  - 20
+#AE learning_rate 0.001
+# DAE learning_rate 0.001 noise_std 0.0001
+# SAE learning_rate 0.0001 coefficient_ae 1
+# SDAE learning_rate 0.0001 cofficient_ae 1 noise_std 0.0001

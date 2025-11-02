@@ -1,0 +1,374 @@
+nohup: ignoring input
+2025-10-31 13:31:21.259 | INFO     | function.utils.data_loader_util:load_data_loader_from_file:191 - Loading data loader from file: data_loaders/nb_iot/test_data_loader.pickle
+2025-10-31 13:31:24.900 | INFO     | __main__:main:172 - Testing FedMSE model at epoch #500
+2025-10-31 13:31:24.901 | INFO     | __main__:main:211 - Client 0 test at epoch 500 with threshold re: (0, 0), and thredhold z: (np.float64(1.72181553352857e-05), np.float64(1.2052445526933298e-05))
+2025-10-31 13:32:10.827 | DEBUG    | agents.clients.clientFedMSE:test_with_thresholds:279 - Classification Report:
+              precision    recall  f1-score   support
+
+           0       0.99      0.89      0.94       281
+           1       0.98      1.00      0.99      1624
+
+    accuracy                           0.98      1905
+   macro avg       0.99      0.94      0.96      1905
+weighted avg       0.98      0.98      0.98      1905
+
+2025-10-31 13:32:10.827 | DEBUG    | agents.clients.clientFedMSE:test_with_thresholds:283 - Confusion Matrix:
+[[ 249   32]
+ [   2 1622]]
+2025-10-31 13:32:10.827 | DEBUG    | agents.clients.clientFedMSE:test_with_thresholds:284 - ROC AUC Score: 0.9424447346738426
+2025-10-31 13:32:10.827 | DEBUG    | agents.clients.clientFedMSE:test_with_thresholds:285 - False Positive Rate (FPR): 0.1139
+2025-10-31 13:32:21.785 | INFO     | __main__:main:232 - [Client 1] Multiplier 4.0: ACC=0.9822, P=0.9807, R=0.9988, F1=0.9896, AUC=0.9424
+2025-10-31 13:32:21.787 | INFO     | __main__:main:211 - Client 1 test at epoch 500 with threshold re: (0, 0), and thredhold z: (np.float64(1.1360377811797662e-05), np.float64(1.2081350178050343e-06))
+2025-10-31 13:33:07.646 | DEBUG    | agents.clients.clientFedMSE:test_with_thresholds:279 - Classification Report:
+              precision    recall  f1-score   support
+
+           0       0.99      0.70      0.82       288
+           1       0.95      1.00      0.97      1617
+
+    accuracy                           0.95      1905
+   macro avg       0.97      0.85      0.90      1905
+weighted avg       0.96      0.95      0.95      1905
+
+2025-10-31 13:33:07.646 | DEBUG    | agents.clients.clientFedMSE:test_with_thresholds:283 - Confusion Matrix:
+[[ 202   86]
+ [   2 1615]]
+2025-10-31 13:33:07.646 | DEBUG    | agents.clients.clientFedMSE:test_with_thresholds:284 - ROC AUC Score: 0.8500760152545866
+2025-10-31 13:33:07.646 | DEBUG    | agents.clients.clientFedMSE:test_with_thresholds:285 - False Positive Rate (FPR): 0.2986
+2025-10-31 13:33:18.651 | INFO     | __main__:main:232 - [Client 2] Multiplier 4.0: ACC=0.9538, P=0.9494, R=0.9988, F1=0.9735, AUC=0.8501
+2025-10-31 13:33:18.653 | INFO     | __main__:main:211 - Client 2 test at epoch 500 with threshold re: (0, 0), and thredhold z: (np.float64(5.9938109188806266e-05), np.float64(2.8565489628817886e-05))
+2025-10-31 13:34:04.752 | DEBUG    | agents.clients.clientFedMSE:test_with_thresholds:279 - Classification Report:
+              precision    recall  f1-score   support
+
+           0       0.90      0.96      0.93       282
+           1       0.99      0.98      0.99      1623
+
+    accuracy                           0.98      1905
+   macro avg       0.95      0.97      0.96      1905
+weighted avg       0.98      0.98      0.98      1905
+
+2025-10-31 13:34:04.753 | DEBUG    | agents.clients.clientFedMSE:test_with_thresholds:283 - Confusion Matrix:
+[[ 272   10]
+ [  31 1592]]
+2025-10-31 13:34:04.753 | DEBUG    | agents.clients.clientFedMSE:test_with_thresholds:284 - ROC AUC Score: 0.9727192878960684
+2025-10-31 13:34:04.753 | DEBUG    | agents.clients.clientFedMSE:test_with_thresholds:285 - False Positive Rate (FPR): 0.0355
+2025-10-31 13:34:15.832 | INFO     | __main__:main:232 - [Client 3] Multiplier 4.0: ACC=0.9785, P=0.9938, R=0.9809, F1=0.9873, AUC=0.9727
+2025-10-31 13:34:15.834 | INFO     | __main__:main:211 - Client 3 test at epoch 500 with threshold re: (0, 0), and thredhold z: (np.float64(2.9438450837915298e-05), np.float64(1.7962805031856988e-05))
+2025-10-31 13:34:58.931 | DEBUG    | agents.clients.clientFedMSE:test_with_thresholds:279 - Classification Report:
+              precision    recall  f1-score   support
+
+           0       0.98      0.92      0.95       275
+           1       0.99      1.00      0.99      1630
+
+    accuracy                           0.99      1905
+   macro avg       0.98      0.96      0.97      1905
+weighted avg       0.99      0.99      0.99      1905
+
+2025-10-31 13:34:58.931 | DEBUG    | agents.clients.clientFedMSE:test_with_thresholds:283 - Confusion Matrix:
+[[ 254   21]
+ [   6 1624]]
+2025-10-31 13:34:58.931 | DEBUG    | agents.clients.clientFedMSE:test_with_thresholds:284 - ROC AUC Score: 0.9599776910206358
+2025-10-31 13:34:58.931 | DEBUG    | agents.clients.clientFedMSE:test_with_thresholds:285 - False Positive Rate (FPR): 0.0764
+2025-10-31 13:35:04.774 | INFO     | __main__:main:232 - [Client 4] Multiplier 4.0: ACC=0.9858, P=0.9872, R=0.9963, F1=0.9918, AUC=0.9600
+2025-10-31 13:35:04.776 | INFO     | __main__:main:211 - Client 4 test at epoch 500 with threshold re: (0, 0), and thredhold z: (np.float64(2.5901529625116382e-05), np.float64(4.764263394463342e-06))
+2025-10-31 13:35:37.477 | DEBUG    | agents.clients.clientFedMSE:test_with_thresholds:279 - Classification Report:
+              precision    recall  f1-score   support
+
+           0       0.99      0.83      0.90       304
+           1       0.97      1.00      0.98      1601
+
+    accuracy                           0.97      1905
+   macro avg       0.98      0.92      0.94      1905
+weighted avg       0.97      0.97      0.97      1905
+
+2025-10-31 13:35:37.477 | DEBUG    | agents.clients.clientFedMSE:test_with_thresholds:283 - Confusion Matrix:
+[[ 253   51]
+ [   3 1598]]
+2025-10-31 13:35:37.477 | DEBUG    | agents.clients.clientFedMSE:test_with_thresholds:284 - ROC AUC Score: 0.9151815066241493
+2025-10-31 13:35:37.477 | DEBUG    | agents.clients.clientFedMSE:test_with_thresholds:285 - False Positive Rate (FPR): 0.1678
+2025-10-31 13:35:46.981 | INFO     | __main__:main:232 - [Client 5] Multiplier 4.0: ACC=0.9717, P=0.9691, R=0.9981, F1=0.9834, AUC=0.9152
+2025-10-31 13:35:46.982 | INFO     | __main__:main:211 - Client 5 test at epoch 500 with threshold re: (0, 0), and thredhold z: (np.float64(1.9896124285878614e-05), np.float64(3.616332833189517e-07))
+2025-10-31 13:36:26.764 | DEBUG    | agents.clients.clientFedMSE:test_with_thresholds:279 - Classification Report:
+              precision    recall  f1-score   support
+
+           0       1.00      0.78      0.87       283
+           1       0.96      1.00      0.98      1622
+
+    accuracy                           0.97      1905
+   macro avg       0.98      0.89      0.93      1905
+weighted avg       0.97      0.97      0.97      1905
+
+2025-10-31 13:36:26.765 | DEBUG    | agents.clients.clientFedMSE:test_with_thresholds:283 - Confusion Matrix:
+[[ 220   63]
+ [   0 1622]]
+2025-10-31 13:36:26.765 | DEBUG    | agents.clients.clientFedMSE:test_with_thresholds:284 - ROC AUC Score: 0.8886925795053003
+2025-10-31 13:36:26.765 | DEBUG    | agents.clients.clientFedMSE:test_with_thresholds:285 - False Positive Rate (FPR): 0.2226
+2025-10-31 13:36:36.222 | INFO     | __main__:main:232 - [Client 6] Multiplier 4.0: ACC=0.9669, P=0.9626, R=1.0000, F1=0.9809, AUC=0.8887
+2025-10-31 13:36:36.224 | INFO     | __main__:main:211 - Client 6 test at epoch 500 with threshold re: (0, 0), and thredhold z: (np.float64(2.3560332010674756e-05), np.float64(1.3430731087282766e-05))
+2025-10-31 13:37:16.067 | DEBUG    | agents.clients.clientFedMSE:test_with_thresholds:279 - Classification Report:
+              precision    recall  f1-score   support
+
+           0       0.97      0.88      0.92       264
+           1       0.98      1.00      0.99      1641
+
+    accuracy                           0.98      1905
+   macro avg       0.98      0.94      0.96      1905
+weighted avg       0.98      0.98      0.98      1905
+
+2025-10-31 13:37:16.068 | DEBUG    | agents.clients.clientFedMSE:test_with_thresholds:283 - Confusion Matrix:
+[[ 232   32]
+ [   6 1635]]
+2025-10-31 13:37:16.068 | DEBUG    | agents.clients.clientFedMSE:test_with_thresholds:284 - ROC AUC Score: 0.9375657858290399
+2025-10-31 13:37:16.068 | DEBUG    | agents.clients.clientFedMSE:test_with_thresholds:285 - False Positive Rate (FPR): 0.1212
+2025-10-31 13:37:25.576 | INFO     | __main__:main:232 - [Client 7] Multiplier 4.0: ACC=0.9801, P=0.9808, R=0.9963, F1=0.9885, AUC=0.9376
+2025-10-31 13:37:25.578 | INFO     | __main__:main:211 - Client 7 test at epoch 500 with threshold re: (0, 0), and thredhold z: (np.float64(1.8603522676130524e-05), np.float64(1.2672704997385154e-05))
+2025-10-31 13:38:05.106 | DEBUG    | agents.clients.clientFedMSE:test_with_thresholds:279 - Classification Report:
+              precision    recall  f1-score   support
+
+           0       0.97      0.90      0.94       284
+           1       0.98      1.00      0.99      1621
+
+    accuracy                           0.98      1905
+   macro avg       0.98      0.95      0.96      1905
+weighted avg       0.98      0.98      0.98      1905
+
+2025-10-31 13:38:05.106 | DEBUG    | agents.clients.clientFedMSE:test_with_thresholds:283 - Confusion Matrix:
+[[ 256   28]
+ [   7 1614]]
+2025-10-31 13:38:05.106 | DEBUG    | agents.clients.clientFedMSE:test_with_thresholds:284 - ROC AUC Score: 0.9485450643403917
+2025-10-31 13:38:05.106 | DEBUG    | agents.clients.clientFedMSE:test_with_thresholds:285 - False Positive Rate (FPR): 0.0986
+2025-10-31 13:38:14.477 | INFO     | __main__:main:232 - [Client 8] Multiplier 4.0: ACC=0.9816, P=0.9829, R=0.9957, F1=0.9893, AUC=0.9485
+2025-10-31 13:38:14.478 | INFO     | __main__:main:211 - Client 8 test at epoch 500 with threshold re: (0, 0), and thredhold z: (np.float64(2.9180302021813986e-05), np.float64(2.5588548510313558e-05))
+2025-10-31 13:38:54.088 | DEBUG    | agents.clients.clientFedMSE:test_with_thresholds:279 - Classification Report:
+              precision    recall  f1-score   support
+
+           0       0.96      0.94      0.95       281
+           1       0.99      0.99      0.99      1624
+
+    accuracy                           0.99      1905
+   macro avg       0.98      0.97      0.97      1905
+weighted avg       0.99      0.99      0.99      1905
+
+2025-10-31 13:38:54.088 | DEBUG    | agents.clients.clientFedMSE:test_with_thresholds:283 - Confusion Matrix:
+[[ 265   16]
+ [  10 1614]]
+2025-10-31 13:38:54.088 | DEBUG    | agents.clients.clientFedMSE:test_with_thresholds:284 - ROC AUC Score: 0.96845143137633
+2025-10-31 13:38:54.088 | DEBUG    | agents.clients.clientFedMSE:test_with_thresholds:285 - False Positive Rate (FPR): 0.0569
+2025-10-31 13:39:03.586 | INFO     | __main__:main:232 - [Client 9] Multiplier 4.0: ACC=0.9864, P=0.9902, R=0.9938, F1=0.9920, AUC=0.9685
+2025-10-31 13:39:03.587 | INFO     | __main__:main:211 - Client 9 test at epoch 500 with threshold re: (0, 0), and thredhold z: (np.float64(2.429791675240267e-05), np.float64(4.3855452531715855e-06))
+2025-10-31 13:39:43.360 | DEBUG    | agents.clients.clientFedMSE:test_with_thresholds:279 - Classification Report:
+              precision    recall  f1-score   support
+
+           0       1.00      0.80      0.89       274
+           1       0.97      1.00      0.98      1631
+
+    accuracy                           0.97      1905
+   macro avg       0.98      0.90      0.94      1905
+weighted avg       0.97      0.97      0.97      1905
+
+2025-10-31 13:39:43.360 | DEBUG    | agents.clients.clientFedMSE:test_with_thresholds:283 - Confusion Matrix:
+[[ 220   54]
+ [   1 1630]]
+2025-10-31 13:39:43.360 | DEBUG    | agents.clients.clientFedMSE:test_with_thresholds:284 - ROC AUC Score: 0.9011532936222013
+2025-10-31 13:39:43.360 | DEBUG    | agents.clients.clientFedMSE:test_with_thresholds:285 - False Positive Rate (FPR): 0.1971
+2025-10-31 13:39:52.896 | INFO     | __main__:main:232 - [Client 10] Multiplier 4.0: ACC=0.9711, P=0.9679, R=0.9994, F1=0.9834, AUC=0.9012
+2025-10-31 13:39:52.897 | INFO     | __main__:main:211 - Client 10 test at epoch 500 with threshold re: (0, 0), and thredhold z: (np.float64(6.785742516512983e-05), np.float64(4.270723366062157e-05))
+2025-10-31 13:40:35.131 | DEBUG    | agents.clients.clientFedMSE:test_with_thresholds:279 - Classification Report:
+              precision    recall  f1-score   support
+
+           0       0.83      0.98      0.90       286
+           1       1.00      0.96      0.98      1619
+
+    accuracy                           0.97      1905
+   macro avg       0.91      0.97      0.94      1905
+weighted avg       0.97      0.97      0.97      1905
+
+2025-10-31 13:40:35.131 | DEBUG    | agents.clients.clientFedMSE:test_with_thresholds:283 - Confusion Matrix:
+[[ 281    5]
+ [  59 1560]]
+2025-10-31 13:40:35.131 | DEBUG    | agents.clients.clientFedMSE:test_with_thresholds:284 - ROC AUC Score: 0.9730376171080309
+2025-10-31 13:40:35.131 | DEBUG    | agents.clients.clientFedMSE:test_with_thresholds:285 - False Positive Rate (FPR): 0.0175
+2025-10-31 13:40:44.776 | INFO     | __main__:main:232 - [Client 11] Multiplier 4.0: ACC=0.9664, P=0.9968, R=0.9636, F1=0.9799, AUC=0.9730
+2025-10-31 13:40:44.778 | INFO     | __main__:main:211 - Client 11 test at epoch 500 with threshold re: (0, 0), and thredhold z: (np.float64(6.187851249706e-05), np.float64(3.583057696232572e-05))
+2025-10-31 13:41:24.418 | DEBUG    | agents.clients.clientFedMSE:test_with_thresholds:279 - Classification Report:
+              precision    recall  f1-score   support
+
+           0       0.87      0.97      0.92       279
+           1       0.99      0.97      0.98      1626
+
+    accuracy                           0.97      1905
+   macro avg       0.93      0.97      0.95      1905
+weighted avg       0.98      0.97      0.97      1905
+
+2025-10-31 13:41:24.418 | DEBUG    | agents.clients.clientFedMSE:test_with_thresholds:283 - Confusion Matrix:
+[[ 271    8]
+ [  41 1585]]
+2025-10-31 13:41:24.418 | DEBUG    | agents.clients.clientFedMSE:test_with_thresholds:284 - ROC AUC Score: 0.9730554563610152
+2025-10-31 13:41:24.418 | DEBUG    | agents.clients.clientFedMSE:test_with_thresholds:285 - False Positive Rate (FPR): 0.0287
+2025-10-31 13:41:33.796 | INFO     | __main__:main:232 - [Client 12] Multiplier 4.0: ACC=0.9743, P=0.9950, R=0.9748, F1=0.9848, AUC=0.9731
+2025-10-31 13:41:33.797 | INFO     | __main__:main:211 - Client 12 test at epoch 500 with threshold re: (0, 0), and thredhold z: (np.float64(2.921677423728397e-05), np.float64(1.2728259207506198e-05))
+2025-10-31 13:42:13.483 | DEBUG    | agents.clients.clientFedMSE:test_with_thresholds:279 - Classification Report:
+              precision    recall  f1-score   support
+
+           0       0.98      0.90      0.94       279
+           1       0.98      1.00      0.99      1626
+
+    accuracy                           0.98      1905
+   macro avg       0.98      0.95      0.97      1905
+weighted avg       0.98      0.98      0.98      1905
+
+2025-10-31 13:42:13.483 | DEBUG    | agents.clients.clientFedMSE:test_with_thresholds:283 - Confusion Matrix:
+[[ 252   27]
+ [   4 1622]]
+2025-10-31 13:42:13.484 | DEBUG    | agents.clients.clientFedMSE:test_with_thresholds:284 - ROC AUC Score: 0.9503828909256835
+2025-10-31 13:42:13.484 | DEBUG    | agents.clients.clientFedMSE:test_with_thresholds:285 - False Positive Rate (FPR): 0.0968
+2025-10-31 13:42:22.782 | INFO     | __main__:main:232 - [Client 13] Multiplier 4.0: ACC=0.9837, P=0.9836, R=0.9975, F1=0.9905, AUC=0.9504
+2025-10-31 13:42:22.784 | INFO     | __main__:main:211 - Client 13 test at epoch 500 with threshold re: (0, 0), and thredhold z: (np.float64(2.6346723188908072e-05), np.float64(1.5407523733301787e-05))
+2025-10-31 13:43:02.188 | DEBUG    | agents.clients.clientFedMSE:test_with_thresholds:279 - Classification Report:
+              precision    recall  f1-score   support
+
+           0       0.97      0.93      0.95       261
+           1       0.99      1.00      0.99      1643
+
+    accuracy                           0.99      1904
+   macro avg       0.98      0.96      0.97      1904
+weighted avg       0.99      0.99      0.99      1904
+
+2025-10-31 13:43:02.188 | DEBUG    | agents.clients.clientFedMSE:test_with_thresholds:283 - Confusion Matrix:
+[[ 243   18]
+ [   8 1635]]
+2025-10-31 13:43:02.188 | DEBUG    | agents.clients.clientFedMSE:test_with_thresholds:284 - ROC AUC Score: 0.9630826704724327
+2025-10-31 13:43:02.188 | DEBUG    | agents.clients.clientFedMSE:test_with_thresholds:285 - False Positive Rate (FPR): 0.0690
+2025-10-31 13:43:11.604 | INFO     | __main__:main:232 - [Client 14] Multiplier 4.0: ACC=0.9863, P=0.9891, R=0.9951, F1=0.9921, AUC=0.9631
+2025-10-31 13:43:11.605 | INFO     | __main__:main:211 - Client 14 test at epoch 500 with threshold re: (0, 0), and thredhold z: (np.float64(3.267593911004951e-05), np.float64(1.6736584257159848e-05))
+2025-10-31 13:43:51.214 | DEBUG    | agents.clients.clientFedMSE:test_with_thresholds:279 - Classification Report:
+              precision    recall  f1-score   support
+
+           0       0.97      0.95      0.96       266
+           1       0.99      1.00      0.99      1638
+
+    accuracy                           0.99      1904
+   macro avg       0.98      0.97      0.98      1904
+weighted avg       0.99      0.99      0.99      1904
+
+2025-10-31 13:43:51.215 | DEBUG    | agents.clients.clientFedMSE:test_with_thresholds:283 - Confusion Matrix:
+[[ 252   14]
+ [   7 1631]]
+2025-10-31 13:43:51.215 | DEBUG    | agents.clients.clientFedMSE:test_with_thresholds:284 - ROC AUC Score: 0.9715474583895638
+2025-10-31 13:43:51.215 | DEBUG    | agents.clients.clientFedMSE:test_with_thresholds:285 - False Positive Rate (FPR): 0.0526
+2025-10-31 13:44:00.651 | INFO     | __main__:main:232 - [Client 15] Multiplier 4.0: ACC=0.9890, P=0.9915, R=0.9957, F1=0.9936, AUC=0.9715
+2025-10-31 13:44:00.651 | INFO     | __main__:main:211 - Client 15 test at epoch 500 with threshold re: (0, 0), and thredhold z: (np.float64(2.0821390535274986e-05), np.float64(4.6476734496536665e-06))
+2025-10-31 13:44:40.340 | DEBUG    | agents.clients.clientFedMSE:test_with_thresholds:279 - Classification Report:
+              precision    recall  f1-score   support
+
+           0       0.97      0.85      0.91       278
+           1       0.98      1.00      0.99      1626
+
+    accuracy                           0.97      1904
+   macro avg       0.97      0.92      0.95      1904
+weighted avg       0.97      0.97      0.97      1904
+
+2025-10-31 13:44:40.340 | DEBUG    | agents.clients.clientFedMSE:test_with_thresholds:283 - Confusion Matrix:
+[[ 237   41]
+ [   7 1619]]
+2025-10-31 13:44:40.340 | DEBUG    | agents.clients.clientFedMSE:test_with_thresholds:284 - ROC AUC Score: 0.9241064712805401
+2025-10-31 13:44:40.340 | DEBUG    | agents.clients.clientFedMSE:test_with_thresholds:285 - False Positive Rate (FPR): 0.1475
+2025-10-31 13:44:49.796 | INFO     | __main__:main:232 - [Client 16] Multiplier 4.0: ACC=0.9748, P=0.9753, R=0.9957, F1=0.9854, AUC=0.9241
+2025-10-31 13:44:49.797 | INFO     | __main__:main:211 - Client 16 test at epoch 500 with threshold re: (0, 0), and thredhold z: (np.float64(7.293745875358582e-05), np.float64(2.7013156795874238e-05))
+2025-10-31 13:45:29.354 | DEBUG    | agents.clients.clientFedMSE:test_with_thresholds:279 - Classification Report:
+              precision    recall  f1-score   support
+
+           0       0.89      0.96      0.92       269
+           1       0.99      0.98      0.99      1635
+
+    accuracy                           0.98      1904
+   macro avg       0.94      0.97      0.95      1904
+weighted avg       0.98      0.98      0.98      1904
+
+2025-10-31 13:45:29.354 | DEBUG    | agents.clients.clientFedMSE:test_with_thresholds:283 - Confusion Matrix:
+[[ 257   12]
+ [  32 1603]]
+2025-10-31 13:45:29.354 | DEBUG    | agents.clients.clientFedMSE:test_with_thresholds:284 - ROC AUC Score: 0.9679092345645328
+2025-10-31 13:45:29.354 | DEBUG    | agents.clients.clientFedMSE:test_with_thresholds:285 - False Positive Rate (FPR): 0.0446
+2025-10-31 13:45:38.770 | INFO     | __main__:main:232 - [Client 17] Multiplier 4.0: ACC=0.9769, P=0.9926, R=0.9804, F1=0.9865, AUC=0.9679
+2025-10-31 13:45:38.772 | INFO     | __main__:main:211 - Client 17 test at epoch 500 with threshold re: (0, 0), and thredhold z: (np.float64(2.4639856292196782e-05), np.float64(1.2913809314341052e-05))
+2025-10-31 13:46:18.584 | DEBUG    | agents.clients.clientFedMSE:test_with_thresholds:279 - Classification Report:
+              precision    recall  f1-score   support
+
+           0       0.98      0.88      0.93       282
+           1       0.98      1.00      0.99      1622
+
+    accuracy                           0.98      1904
+   macro avg       0.98      0.94      0.96      1904
+weighted avg       0.98      0.98      0.98      1904
+
+2025-10-31 13:46:18.585 | DEBUG    | agents.clients.clientFedMSE:test_with_thresholds:283 - Confusion Matrix:
+[[ 249   33]
+ [   4 1618]]
+2025-10-31 13:46:18.585 | DEBUG    | agents.clients.clientFedMSE:test_with_thresholds:284 - ROC AUC Score: 0.9402563160794395
+2025-10-31 13:46:18.585 | DEBUG    | agents.clients.clientFedMSE:test_with_thresholds:285 - False Positive Rate (FPR): 0.1170
+2025-10-31 13:46:28.017 | INFO     | __main__:main:232 - [Client 18] Multiplier 4.0: ACC=0.9806, P=0.9800, R=0.9975, F1=0.9887, AUC=0.9403
+2025-10-31 13:46:28.019 | INFO     | __main__:main:211 - Client 18 test at epoch 500 with threshold re: (0, 0), and thredhold z: (np.float64(2.6780791813507676e-05), np.float64(3.0705705285072327e-06))
+2025-10-31 13:47:07.583 | DEBUG    | agents.clients.clientFedMSE:test_with_thresholds:279 - Classification Report:
+              precision    recall  f1-score   support
+
+           0       0.98      0.84      0.90       273
+           1       0.97      1.00      0.99      1631
+
+    accuracy                           0.97      1904
+   macro avg       0.98      0.92      0.94      1904
+weighted avg       0.97      0.97      0.97      1904
+
+2025-10-31 13:47:07.583 | DEBUG    | agents.clients.clientFedMSE:test_with_thresholds:283 - Confusion Matrix:
+[[ 228   45]
+ [   4 1627]]
+2025-10-31 13:47:07.583 | DEBUG    | agents.clients.clientFedMSE:test_with_thresholds:284 - ROC AUC Score: 0.9163561760128284
+2025-10-31 13:47:07.583 | DEBUG    | agents.clients.clientFedMSE:test_with_thresholds:285 - False Positive Rate (FPR): 0.1648
+2025-10-31 13:47:17.047 | INFO     | __main__:main:232 - [Client 19] Multiplier 4.0: ACC=0.9743, P=0.9731, R=0.9975, F1=0.9852, AUC=0.9164
+2025-10-31 13:47:17.048 | INFO     | __main__:main:211 - Client 19 test at epoch 500 with threshold re: (0, 0), and thredhold z: (np.float64(3.6300072679296136e-05), np.float64(2.264908835059032e-05))
+2025-10-31 13:47:56.663 | DEBUG    | agents.clients.clientFedMSE:test_with_thresholds:279 - Classification Report:
+              precision    recall  f1-score   support
+
+           0       0.94      0.93      0.94       257
+           1       0.99      0.99      0.99      1647
+
+    accuracy                           0.98      1904
+   macro avg       0.96      0.96      0.96      1904
+weighted avg       0.98      0.98      0.98      1904
+
+2025-10-31 13:47:56.663 | DEBUG    | agents.clients.clientFedMSE:test_with_thresholds:283 - Confusion Matrix:
+[[ 240   17]
+ [  16 1631]]
+2025-10-31 13:47:56.664 | DEBUG    | agents.clients.clientFedMSE:test_with_thresholds:284 - ROC AUC Score: 0.9620687537061844
+2025-10-31 13:47:56.664 | DEBUG    | agents.clients.clientFedMSE:test_with_thresholds:285 - False Positive Rate (FPR): 0.0661
+2025-10-31 13:48:06.049 | INFO     | __main__:main:232 - [Client 20] Multiplier 4.0: ACC=0.9827, P=0.9897, R=0.9903, F1=0.9900, AUC=0.9621
+2025-10-31 13:48:06.050 | INFO     | __main__:main:259 - 
+====== AVERAGE AUC PER MULTIPLIER ======
+Multiplier   All Clients          
+---------------------------------------------------------------------------
+0.0          0.887917             
+0.2          0.894545             
+0.4          0.900149             
+0.6          0.902772             
+0.8          0.907345             
+1.0          0.912477             
+1.2          0.916001             
+1.4          0.919528             
+1.6          0.922042             
+1.8          0.923431             
+2.0          0.926020             
+2.2          0.928525             
+2.4          0.931235             
+2.6          0.933123             
+2.8          0.934772             
+3.0          0.936267             
+3.2          0.937495             
+3.4          0.938435             
+3.6          0.939703             
+3.8          0.940010             
+4.0          0.941331             
+4.2          0.942456             
+4.4          0.943185             
+4.6          0.943722             
+4.8          0.944959             
+5.0          0.945596             
+

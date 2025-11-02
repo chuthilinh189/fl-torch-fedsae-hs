@@ -1,0 +1,31 @@
+dataset: wsn_ds
+train_batch_size: 128
+val_batch_size: 1
+test_batch_size: 1
+mal_batch_size: 128
+dimension: 17         # Số đặc trưng của WSN-DS sau khi loại bỏ cột ID & Attack type & label
+epochs: 2000
+model_type:
+  - SupAE
+noise_type:
+  - label_flipping
+num_of_poisoned_workers:
+  - 0
+poisoned_sample_ratio:
+  - 1
+learning_rate:
+  - 0.001
+noise_std:
+  - 0.001
+attack_noise_std:
+  - 0.5
+aggregation_type:
+  - average
+coef_shrink_ae:
+  - 1
+threshold_multiplier:
+  - 1
+num_multi_class_clients:
+  - 0
+by_attack_type: 
+  - 0

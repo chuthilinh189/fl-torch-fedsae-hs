@@ -1,0 +1,42 @@
+dataset: ctu13_08
+train_batch_size: 256
+val_batch_size: 1
+test_batch_size: 1
+mal_batch_size: 256
+dimension: 40
+epochs: 1000
+model_type:
+  # - AE
+  # - DAE
+  # - SAE
+  # - SDAE   
+  # - SAE1
+  # - SDAE1 
+  - SupAE
+noise_type:
+  # - gaussian_noise
+  - label_flipping
+num_of_poisoned_workers:
+  - 0
+  # - 10
+poisoned_sample_ratio:
+  - 01
+learning_rate:
+  - 0.0001
+noise_std:
+  - 0.001
+attack_noise_std:
+  - 3
+aggregation_type:
+  # - attention
+  - average
+  # - cluster
+coef_shrink_ae:
+  - 1
+threshold_multiplier:
+  - 0
+num_multi_class_clients:
+  # - 5
+  # - 10
+  - 20
+# AE learning_rate 0.001
