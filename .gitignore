@@ -119,6 +119,3 @@ venv.bak/
 
 # evaluate_results 
 /evaluate_results
-
-# logs 
-/logs
