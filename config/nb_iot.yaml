@@ -4,16 +4,16 @@ val_batch_size: 1
 test_batch_size: 1
 mal_batch_size: 128
 dimension: 115
-epochs: 1000
+epochs: 500
 model_type:
-  # - AE
+  - AE
   # - DAE
   # - SAE
   # - SDAE
   # - SAE1
   # - SDAE1
   # - DualLossAE
-  - SupAE
+  # - SupAE
 noise_type:
   # - gaussian_noise
   - label_flipping
@@ -43,7 +43,7 @@ threshold_multiplier:
 num_multi_class_clients:
   # - 5
   # - 10
-  - 20
+  - 0
 by_attack_type: 
   - 0
 # AE learning_rate 0.001
