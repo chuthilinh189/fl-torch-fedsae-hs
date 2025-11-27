@@ -39,6 +39,9 @@ class Arguments:
         self.ptl_margin = config.get("ptl_margin", 1.0)
         # Distance metric for prototypes: 'euclid' or 'cosine'
         self.ptl_distance = config.get("ptl_distance", "euclid")
+        # Decision mode for PTL at test time: 're' | 'proto' | 'combined'
+        # default to 'proto' to use prototype-based thresholding
+        self.ptl_decision_mode = config.get("ptl_decision_mode", "proto")
 
         # ⚙️ Các tham số nội bộ tự động gán
         self.num_workers = 20  # Tổng số client mặc định
@@ -133,6 +136,7 @@ class Arguments:
             + "\nptl Prototype EMA: {}".format(self.ptl_proto_ema)
             + "\nptl Margin: {}".format(self.ptl_margin)
             + "\nptl Distance: {}".format(self.ptl_distance)
+            + "\nptl Decision Mode: {}".format(self.ptl_decision_mode)
             + "\n\n[System Config]"
             + "\nNumber of Workers: {}".format(self.num_workers)
             + "\nEarly Stop Offset: {}".format(self.es_offset)

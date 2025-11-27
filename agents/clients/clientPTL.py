@@ -202,6 +202,8 @@ class ClientPTL:
         total_loss = 0.0
         it = 0
 
+        total_re = 0.0
+        total_z_norm = 0.0
         for input, label in self.train_data_loader:
             input = input.to(self.device)
             label = label.to(self.device)
@@ -221,7 +223,16 @@ class ClientPTL:
             loss.backward()
             self.optimizer.step()
 
+            # reconstruction loss is a tensor; take its scalar value
+            try:
+                re_val = float(re_loss.item())
+            except Exception:
+                re_val = float(re_loss)
+            total_re += re_val
             total_loss += loss.item()
+            # accumulate mean latent norm for logging
+            z_norms = torch.norm(encode.view(encode.size(0), -1), p=2, dim=1)
+            total_z_norm += float(z_norms.mean().item())
             it += 1
 
             # accumulate latents per-sample for prototype stats (CPU)
@@ -231,6 +242,13 @@ class ClientPTL:
                 latent_z_dict[int(lab)].append(encode_cpu[idx])
 
         avg_loss = total_loss / it if it > 0 else 0.0
+
+        # set recent metrics for logging (so server can read client.recent_re)
+        avg_re = total_re / it if it > 0 else 0.0
+        avg_z = total_z_norm / it if it > 0 else 0.0
+        self.recent_re = avg_re
+        self.recent_latent_z = avg_z
+        self.recent_train_loss = avg_loss
 
         # compute sums and counts per class
         local_proto_stats = {}

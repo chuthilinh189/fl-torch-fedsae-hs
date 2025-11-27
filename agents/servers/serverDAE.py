@@ -52,7 +52,7 @@ class ServerDAE:
 
                 # 💾 Lưu mô hình mỗi 10 epoch
                 if client.is_training and epoch % 10 == 0:
-                    save_dir = f"saved_models/{self.args.model_type}/{self.args.aggregation_type}/{self.args.dataset}/"
+                    save_dir = f"saved_models/{self.args.model_type}/{self.args.num_multi_class_clients}/{self.args.aggregation_type}/{self.args.dataset}/"
                     os.makedirs(save_dir, exist_ok=True)
                     model_path = os.path.join(save_dir, f"epoch_{epoch}_client_{client_idx}.pt")
                     torch.save(client.net.state_dict(), model_path)
