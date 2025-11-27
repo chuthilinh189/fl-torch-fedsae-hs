@@ -230,7 +230,7 @@ class ClientDualLossAE:
             )
 
             acc, precision, recall, f1, roc = self.test_with_thresholds(
-                threshold_re, is_verbose
+                threshold_re, is_verbose, is_verbose, 50
             )
             acc_list.append(acc)
             precision_list.append(precision)
@@ -240,18 +240,38 @@ class ClientDualLossAE:
 
         return acc_list, precision_list, recall_list, f1_list, roc_list
 
-    def test_with_thresholds(self, threshold_re, verbose=False):
+    def test_with_thresholds(self, threshold_re, verbose=False, show_samples=False, sample_n=50):
+        """
+        Test with a fixed threshold. Optionally log a few (label, re) samples.
+
+        :param threshold_re: threshold on reconstruction error
+        :param verbose: verbose logging for metrics
+        :param show_samples: if True, log the first `sample_n` (label, re) pairs
+        :param sample_n: number of samples to log when show_samples=True
+        """
         self.net.eval()
         with torch.no_grad():
             list_re = []
             labels = []
+            sample_list = []
 
             for input, label in self.test_data_loader:
                 input, label = input.to(self.device), label.to(self.device)
                 _, decode = self.net(input)
-                re = self.loss_function(decode, input).mean().item()
-                list_re.append(re)
+
+                # compute per-sample reconstruction error (MSE per sample)
+                per_sample_re = ((decode - input) ** 2).mean(dim=1).cpu().numpy().tolist()
+
+                list_re.extend(per_sample_re)
                 labels += label.cpu().tolist()
+
+                # collect some samples for quick inspection
+                if show_samples and len(sample_list) < sample_n:
+                    # append per-sample pairs until we reach sample_n
+                    for lab_val, re_val in zip(label.cpu().tolist(), per_sample_re):
+                        if len(sample_list) >= sample_n:
+                            break
+                        sample_list.append((int(lab_val), float(re_val)))
 
             # nếu đang chạy thí nghiệm theo loạ attack type thì ép hết label tấn công về 1
             if self.args.by_attack_type:
@@ -279,6 +299,20 @@ class ClientDualLossAE:
                 self.args.logger.debug("Confusion Matrix:\n" + str(confusion_mat))
                 self.args.logger.debug("ROC AUC Score: {}".format(roc))
                 self.args.logger.debug("False Positive Rate (FPR): {:.4f}".format(fpr))
+
+            if show_samples and len(sample_list) > 0:
+                # compute prediction for each sampled pair and log (label, re, pred)
+                sample_list_with_pred = []
+                for lab_val, re_val in sample_list:
+                    # apply by_attack_type conversion to label if needed
+                    lab_bin = int(lab_val != 0) if self.args.by_attack_type else int(lab_val)
+                    pred = 1 if re_val > threshold_re else 0
+                    sample_list_with_pred.append((lab_bin, float(re_val), int(pred)))
+
+                try:
+                    self.args.logger.info(f"Sample label, RE, pred (first {len(sample_list_with_pred)}): {sample_list_with_pred}")
+                except Exception:
+                    print(f"Sample label, RE, pred (first {len(sample_list_with_pred)}): {sample_list_with_pred}")
 
             return acc, precision, recall, f1, roc
 

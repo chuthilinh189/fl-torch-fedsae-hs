@@ -11,7 +11,15 @@ from function.utils import (
     kmeans_cluster_parameters,
     kmeans_cluster_parameters_and_get_min_center,
 )
-from function.utils.visualize_util import visualize_parameters
+from function.utils.visualize_util import (
+    visualize_parameters,
+    log_re_distributions_from_lists,
+    collect_re_and_labels_from_client,
+    collect_z_norms_and_labels_from_client,
+    log_z_boxplots_from_lists,
+    compute_auc_per_attack_from_flat,
+)
+import json
 
 class ServerDualLossAE:
     def __init__(self, args):
@@ -136,6 +144,9 @@ class ServerDualLossAE:
         multiplier_auc_all = {m: [] for m in multipliers}
         multiplier_auc_benign = {m: [] for m in multipliers}
         multiplier_auc_poisoned = {m: [] for m in multipliers}
+        # accumulate global RE and labels across clients for epoch-level analysis
+        global_re = []
+        global_labels = []
 
         for client_idx, client in enumerate(clients):
             self.args.logger.info(
@@ -146,6 +157,38 @@ class ServerDualLossAE:
 
             recent_weight_model = client.get_nn_parameters()
             client.update_nn_parameters(client.best_weight_model)
+
+            # Collect per-sample RE and raw labels from client's test set
+            try:
+                client_re_list, client_raw_labels = collect_re_and_labels_from_client(client)
+            except Exception as e:
+                self.args.logger.warning(f"Failed to collect RE from client {client_idx}: {e}")
+                client_re_list, client_raw_labels = [], []
+
+            # Build out_dir name using model and multi-class setting as requested
+            out_dir = os.path.join(
+                "logs",
+                "re_distributions",
+                f"{self.args.model_type}_mc{self.args.num_multi_class_clients}_epoch_{epoch}",
+            )
+            client_out_dir = os.path.join(out_dir, f"client_{client_idx}")
+
+            # Save per-client RE distributions (CSV + plots)
+            try:
+                log_re_distributions_from_lists(client_re_list, client_raw_labels, client_out_dir, epoch, client_id=client_idx)
+            except Exception as e:
+                self.args.logger.warning(f"Failed to log RE distributions for client {client_idx}: {e}")
+
+            # Also collect & log latent (z) boxplots (L2 norms) per-client and per-attack
+            try:
+                client_z_list, client_z_labels = collect_z_norms_and_labels_from_client(client)
+                log_z_boxplots_from_lists(client_z_list, client_z_labels, client_out_dir, epoch, client_id=client_idx)
+            except Exception as e:
+                self.args.logger.warning(f"Failed to collect/log latent z for client {client_idx}: {e}")
+
+            # accumulate for global aggregation
+            global_re.extend(client_re_list)
+            global_labels.extend(client_raw_labels)
 
             acc_list, precision_list, recall_list, f1_list, auc_list = client.test()
 
@@ -188,6 +231,43 @@ class ServerDualLossAE:
                     multiplier_auc_poisoned[m].append(auc)
                 else:
                     multiplier_auc_benign[m].append(auc)
+
+        # After per-client collection, produce global RE plots and per-attack AUCs
+        if 'global_re' in locals() and len(global_re) > 0:
+            out_dir = os.path.join(
+                "logs",
+                "re_distributions",
+                f"{self.args.model_type}_mc{self.args.num_multi_class_clients}_epoch_{epoch}",
+            )
+            try:
+                summary, grouped = log_re_distributions_from_lists(global_re, global_labels, out_dir, epoch, client_id=None)
+            except Exception as e:
+                self.args.logger.warning(f"Failed to write global RE distributions: {e}")
+
+            # global latent z norms + boxplots
+            try:
+                global_z_list = []
+                # collect latent z norms across clients
+                for client in clients:
+                    try:
+                        z_list, z_labels = collect_z_norms_and_labels_from_client(client)
+                        global_z_list.extend(z_list)
+                    except Exception:
+                        # skip clients that fail
+                        continue
+                if len(global_z_list) > 0:
+                    log_z_boxplots_from_lists(global_z_list, global_labels, out_dir, epoch, client_id=None)
+            except Exception as e:
+                self.args.logger.warning(f"Failed to compute/save global latent z distributions: {e}")
+
+            try:
+                aucs = compute_auc_per_attack_from_flat(global_labels, global_re)
+                auc_path = os.path.join(out_dir, f"epoch{epoch}_aucs_per_attack.json")
+                with open(auc_path, "w") as jf:
+                    json.dump(aucs, jf, indent=2)
+                self.args.logger.info(f"Saved per-attack AUCs to {auc_path}")
+            except Exception as e:
+                self.args.logger.warning(f"Failed to compute/save per-attack AUCs: {e}")
 
         self._log_avg_auc(multiplier_auc_all, multiplier_auc_benign, multiplier_auc_poisoned)
 

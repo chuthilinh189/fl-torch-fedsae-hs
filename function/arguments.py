@@ -30,10 +30,19 @@ class Arguments:
         self.threshold_multiplier = config["threshold_multiplier"]
         self.num_multi_class_clients = config["num_multi_class_clients"]
         self.by_attack_type = config["by_attack_type"]
+        # ----- ptl (Prototype-Triplet) hyperparameters -----
+        # Lambda weight for prototype-triplet loss term
+        self.ptl_lambda = config.get("ptl_lambda", 1.0)
+        # EMA coefficient for server-side prototype updates (0..1)
+        self.ptl_proto_ema = config.get("ptl_proto_ema", 0.9)
+        # Margin used in triplet-style loss (d_pos - d_neg + margin)
+        self.ptl_margin = config.get("ptl_margin", 1.0)
+        # Distance metric for prototypes: 'euclid' or 'cosine'
+        self.ptl_distance = config.get("ptl_distance", "euclid")
 
         # ⚙️ Các tham số nội bộ tự động gán
         self.num_workers = 20  # Tổng số client mặc định
-        self.es_offset = 500  # Offset cho early stopping
+        self.es_offset = 100  # Offset cho early stopping
         self.threshold_factor = 0  # Threshold scaling
         self.cuda = True  # Luôn bật GPU
         self.shuffle = False  # Không shuffle dữ liệu
@@ -120,6 +129,10 @@ class Arguments:
             + "\nDimension: {}".format(self.dimension)
             + "\nEpochs: {}".format(self.epochs)
             + "\nNumber of Multi-Class Clients: {}".format(self.num_multi_class_clients)
+            + "\nptl Lambda: {}".format(self.ptl_lambda)
+            + "\nptl Prototype EMA: {}".format(self.ptl_proto_ema)
+            + "\nptl Margin: {}".format(self.ptl_margin)
+            + "\nptl Distance: {}".format(self.ptl_distance)
             + "\n\n[System Config]"
             + "\nNumber of Workers: {}".format(self.num_workers)
             + "\nEarly Stop Offset: {}".format(self.es_offset)

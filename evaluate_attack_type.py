@@ -18,7 +18,7 @@ from function.utils import load_test_data_loader
 def parse_args():
     parser = argparse.ArgumentParser(description="Evaluate saved models with thresholds from log")
     parser.add_argument("-d", "--dataset", required=True, help="Dataset name (e.g., cic_ids, nslkdd)")
-    parser.add_argument("-m", "--model_type", required=True, help="Model type (AE, DAE, SAE, SDAE, SupAE, DualLossAE)")
+    parser.add_argument("-m", "--model_type", required=True, help="Model type (AE, DAE, SAE, SDAE, SupAE, DualLossAE, PTL)")
     parser.add_argument("-tbs", "--train_batch_size", type=int, default=128, help="Train batch size")
     parser.add_argument("-vbs", "--val_batch_size", type=int, default=128, help="Val batch size")
     parser.add_argument("-di", "--dimension", type=int, default=128, help="Dimension")

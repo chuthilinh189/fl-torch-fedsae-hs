@@ -6,10 +6,10 @@ nohup python main.py -d wsn_ds -m DAE -tbs 128 -vbs 128 -di 17 -lr 0.01 -ep 2000
 nohup python main.py -d wsn_ds -m SAE -tbs 128 -vbs 128 -di 17 -lr 0.01 -ep 2000 -agg average -nt label_flipping -pw 0 -pr 1 -ns 0.001 -ans 3 -cs 1 -tm 0 -mc 0 > logger/wsn_ds_log.out 2>&1 &
 nohup python main.py -d wsn_ds -m FedMSE -tbs 128 -vbs 128 -di 17 -lr 0.01 -ep 2000 -agg FedMSE -nt label_flipping -pw 0 -pr 1 -ns 0.001 -ans 3 -cs 1 -tm 0 -mc 0 > logger/wsn_ds_log.out 2>&1 &
 nohup python main.py -d wsn_ds -m SupAE -tbs 128 -vbs 1 -di 17 -lr 0.01 -ep 2000 -agg average -nt label_flipping -pw 0 -pr 1 -ns 0.001 -ans 3 -cs 1 -tm 0 -mc 10 > logger/wsn_ds_log.out 2>&1 &
-nohup python main.py -d wsn_ds -m DualLossAE -tbs 128 -vbs 1 -di 17 -lr 0.0001 -ep 2000 -agg average -nt label_flipping -pw 0 -pr 1 -ns 0.001 -ans 3 -cs 1 -tm 0 -mc 2 > logger/wsn_ds_log.out 2>&1 &
-nohup python main.py -d wsn_ds -m DualLossAE -tbs 128 -vbs 1 -di 17 -lr 0.01 -ep 2000 -agg average -nt label_flipping -pw 0 -pr 1 -ns 0.001 -ans 3 -cs 1 -tm 0 -mc 5 > logger/wsn_ds_log.out 2>&1 &
-nohup python main.py -d wsn_ds -m DualLossAE -tbs 128 -vbs 1 -di 17 -lr 0.01 -ep 2000 -agg average -nt label_flipping -pw 0 -pr 1 -ns 0.001 -ans 3 -cs 1 -tm 0 -mc 10 > logger/wsn_ds_log.out 2>&1 &
-nohup python main.py -d wsn_ds -m DualLossAE -tbs 128 -vbs 1 -di 17 -lr 0.01 -ep 2000 -agg average -nt label_flipping -pw 0 -pr 1 -ns 0.001 -ans 3 -cs 1 -tm 0 -mc 20 > logger/wsn_ds_log.out 2>&1 &
+nohup python main.py -d wsn_ds -m DualLossAE -tbs 128 -vbs 1 -di 17 -lr 0.0001 -ep 2000 -agg average -nt label_flipping -pw 0 -pr 1 -ns 0.001 -ans 3 -cs 1 -tm 1 -mc 2 > logger/wsn_ds_log.out 2>&1 &
+nohup python main.py -d wsn_ds -m DualLossAE -tbs 128 -vbs 1 -di 17 -lr 0.0001 -ep 2000 -agg average -nt label_flipping -pw 0 -pr 1 -ns 0.001 -ans 3 -cs 1 -tm 1 -mc 5 > logger/wsn_ds_log.out 2>&1 &
+nohup python main.py -d wsn_ds -m DualLossAE -tbs 128 -vbs 1 -di 17 -lr 0.0001 -ep 2000 -agg average -nt label_flipping -pw 0 -pr 1 -ns 0.001 -ans 3 -cs 1 -tm 1 -mc 10 > logger/wsn_ds_log.out 2>&1 &
+nohup python main.py -d wsn_ds -m DualLossAE -tbs 128 -vbs 1 -di 17 -lr 0.0001 -ep 2000 -agg average -nt label_flipping -pw 0 -pr 1 -ns 0.001 -ans 3 -cs 1 -tm 1 -mc 20 > logger/wsn_ds_log.out 2>&1 &
 
 nohup python evaluate.py -d wsn_ds -m AE -tbs 128 -vbs 128 -di 17 -ep 2000 -tm 1.7 --model_dir saved_models/AE/average/wsn_ds --log_csv logs/AE/wsn_ds_AE_ > logger/wsn_ds_AE_2000_1.7.log 2>&1
 nohup python evaluate.py -d wsn_ds -m DAE -tbs 128 -vbs 128 -di 17 -ep 2000 -tm 3.0 --model_dir saved_models/DAE/average/wsn_ds --log_csv logs/DAE/wsn_ds_DAE_ > logger/wsn_ds_DAE_2000_3.log 2>&1
@@ -62,10 +62,11 @@ nohup python main.py -d unsw -m DAE -tbs 128 -vbs 1 -di 196 -lr 0.001 -ep 1000 -
 nohup python main.py -d unsw -m SAE -tbs 128 -vbs 1 -di 196 -lr 0.001 -ep 1000 -agg average -nt label_flipping -pw 0 -pr 1 -ns 0.001 -ans 1 -cs 1 -tm 0 -mc 0 > logger/unsw_log.out 2>&1 &
 nohup python main.py -d unsw -m FedMSE -tbs 128 -vbs 1 -di 196 -lr 0.001 -ep 1000 -agg FedMSE -nt label_flipping -pw 0 -pr 1 -ns 0.001 -ans 1 -cs 1 -tm 0 -mc 0 > logger/unsw_log.out 2>&1 &
 nohup python main.py -d unsw -m SupAE -tbs 128 -vbs 1 -di 196 -lr 0.001 -ep 1000 -agg average -nt label_flipping -pw 0 -pr 1 -ns 0.001 -ans 1 -cs 1 -tm 0 -mc 10 > logger/unsw_log.out 2>&1 &
-nohup python main.py -d unsw -m DualLossAE -tbs 128 -vbs 1 -di 196 -lr 0.001 -ep 1000 -agg average -nt label_flipping -pw 0 -pr 1 -ns 0.001 -ans 1 -cs 1 -tm 0 -mc 5 > logger/unsw_log.out 2>&1 &
-nohup python main.py -d unsw -m DualLossAE -tbs 128 -vbs 1 -di 196 -lr 0.001 -ep 1000 -agg average -nt label_flipping -pw 0 -pr 1 -ns 0.001 -ans 1 -cs 1 -tm 0 -mc 10 > logger/unsw_log.out 2>&1 &
-nohup python main.py -d unsw -m DualLossAE -tbs 128 -vbs 1 -di 196 -lr 0.001 -ep 1000 -agg average -nt label_flipping -pw 0 -pr 1 -ns 0.001 -ans 1 -cs 1 -tm 0 -mc 20 > logger/unsw_log.out 2>&1 &
-nohup python main.py -d unsw -m DualLossAE -tbs 128 -vbs 1 -di 196 -lr 0.001 -ep 1000 -agg average -nt label_flipping -pw 0 -pr 1 -ns 0.001 -ans 1 -cs 1 -tm 0 -mc 2 > logger/unsw_log.out 2>&1 &
+nohup python main.py -d unsw -m DualLossAE -tbs 128 -vbs 1 -di 196 -lr 0.001 -ep 2000 -agg average -nt label_flipping -pw 0 -pr 1 -ns 0.001 -ans 1 -cs 1 -tm 1 -mc 5 > logger/unsw_log.out 2>&1 &
+nohup python main.py -d unsw -m DualLossAE -tbs 128 -vbs 1 -di 196 -lr 0.001 -ep 2000 -agg average -nt label_flipping -pw 0 -pr 1 -ns 0.001 -ans 1 -cs 1 -tm 1 -mc 10 > logger/unsw_log.out 2>&1 &
+nohup python main.py -d unsw -m DualLossAE -tbs 128 -vbs 1 -di 196 -lr 0.001 -ep 2000 -agg average -nt label_flipping -pw 0 -pr 1 -ns 0.001 -ans 1 -cs 1 -tm 1 -mc 20 > logger/unsw_log.out 2>&1 &
+nohup python main.py -d unsw -m DualLossAE -tbs 128 -vbs 1 -di 196 -lr 0.001 -ep 2000 -agg average -nt label_flipping -pw 0 -pr 1 -ns 0.001 -ans 1 -cs 1 -tm 1 -mc 2 > logger/unsw_log.out 2>&1 &
+nohup python main.py -d unsw -m PTL -tbs 128 -vbs 1 -di 196 -lr 0.001 -ep 2000 -agg average -nt label_flipping -pw 0 -pr 1 -ns 0.001 -ans 1 -cs 1 -tm 1 -mc 5 > logger/unsw_log.out 2>&1 &
 
 nohup python evaluate.py -d unsw -m AE -tbs 128 -vbs 128 -di 196 -ep 1000 -tm 1.2 --model_dir saved_models/AE/average/unsw --log_csv logs/AE/unsw_AE_ > logger/unsw_AE_1000_1.2.log 2>&1 &
 nohup python evaluate.py -d unsw -m DAE -tbs 128 -vbs 128 -di 196 -ep 1000 -tm 1.5 --model_dir saved_models/DAE/average/unsw --log_csv logs/DAE/unsw_DAE_ > logger/unsw_DAE_1000_1.5.log 2>&1 &
@@ -77,8 +78,9 @@ nohup python evaluate.py -d unsw -m DualLossAE -tbs 128 -vbs 1 -di 196 -ep 1000 
 nohup python evaluate.py -d unsw -m DualLossAE -tbs 128 -vbs 1 -di 196 -ep 1000 -tm 0.2 --model_dir saved_models/DualLossAE20old/average/unsw --log_csv logs/DualLossAE20old/unsw_DualLossAE > logger/unsw_DualLossAE20old_1000_0.2.log 2>&1 &
 nohup python evaluate.py -d unsw -m DualLossAE -tbs 128 -vbs 1 -di 196 -ep 1000 -tm 0.6 --model_dir saved_models/DualLossAE2/average/unsw --log_csv logs/DualLossAE2/unsw_DualLossAE > logger/unsw_DualLossAE2_1000_0.6.log 2>&1 &
 nohup python evaluate.py -d unsw -m DualLossAE -tbs 128 -vbs 1 -di 196 -ep 1000 -tm 1.1 --model_dir saved_models/DualLossAE5/average/unsw --log_csv logs/DualLossAE5/unsw_DualLossAE > logger/unsw_DualLossAE5_1000_1.1.log 2>&1 &
-nohup python evaluate.py -d unsw -m DualLossAE -tbs 128 -vbs 1 -di 196 -ep 1000 -tm 1 --model_dir saved_models/DualLossAE10/average/unsw --log_csv logs/DualLossAE10/unsw_DualLossAE > logger/unsw_DualLossAE10_1000_1.log 2>&1 &
+nohup python evaluate.py -d unsw -m DualLossAE -tbs 128 -vbs 1 -di 196 -ep 400 -tm 1 --model_dir saved_models/DualLossAE5/average/unsw --log_csv logs/unsw_DualLossAE > logger/unsw_DualLossAE5_400_1.log 2>&1 &
 nohup python evaluate.py -d unsw -m DualLossAE -tbs 128 -vbs 1 -di 196 -ep 1000 -tm 1.4 --model_dir saved_models/DualLossAE20/average/unsw --log_csv logs/DualLossAE20/unsw_DualLossAE > logger/unsw_DualLossAE20_1000_1.4.log 2>&1 &
+
 
 nohup python main.py -d unsw -m DualLossAE -tbs 128 -vbs 1 -di 196 -lr 0.001 -ep 1000 -agg average -nt label_flipping -pw 0 -pr 1 -ns 0.001 -ans 1 -cs 1 -tm 0 -mc 2 -at 1 > logger/unsw_log.out 2>&1 &
 nohup python evaluate_attack_type.py -d unsw -m AE -tbs 128 -vbs 128 -di 196 -ep 1000 -tm 1.2 --model_dir saved_models/AE/average/unsw --log_csv logs/AE/unsw_AE_ > evaluate_results/attacktype_unsw_AE_1000_1.2.log 2>&1 &
