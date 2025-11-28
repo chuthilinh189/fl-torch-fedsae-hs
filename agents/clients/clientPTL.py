@@ -262,6 +262,22 @@ class ClientPTL:
             sum_vec = stacked.sum(dim=0).numpy()
             count = stacked.size(0)
             local_proto_stats[int(lab)] = (sum_vec, int(count))
+        # compute per-client mean prototypes (z0, z1) for logging
+        try:
+            z0 = None
+            z1 = None
+            if 0 in local_proto_stats:
+                s0, c0 = local_proto_stats[0]
+                z0 = (s0 / max(1, c0)).astype(float)
+            if 1 in local_proto_stats:
+                s1, c1 = local_proto_stats[1]
+                z1 = (s1 / max(1, c1)).astype(float)
+            # store as numpy arrays for later access
+            self.recent_proto_z0 = z0
+            self.recent_proto_z1 = z1
+        except Exception:
+            self.recent_proto_z0 = None
+            self.recent_proto_z1 = None
 
         return avg_loss, local_proto_stats
 
@@ -310,7 +326,13 @@ class ClientPTL:
         self.best_loss = best_loss
         self.best_epoch = best_epoch
         self.threshold_re = threshold_re
-        self.threshold_z = threshold_z
+        # store the client's best prototypes at the time of best checkpoint
+        try:
+            self.best_proto_z0 = getattr(self, 'recent_proto_z0', None)
+            self.best_proto_z1 = getattr(self, 'recent_proto_z1', None)
+        except Exception:
+            self.best_proto_z0 = None
+            self.best_proto_z1 = None
         self.best_weight_model = copy.deepcopy(best_weight_model)
 
     def set_training_status(self, status):

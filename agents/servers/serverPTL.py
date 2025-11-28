@@ -113,6 +113,7 @@ class ServerPTL:
             new_params = average_nn_parameters(parameters)
 
         # Update clients with new global params
+
         for client_idx in list_client_training:
             clients[client_idx].update_nn_parameters(new_params)
 
@@ -324,29 +325,40 @@ class ServerPTL:
 
     def log_train_progress(self, epoch, client_idx, client, is_mal):
         import pandas as pd
-        self.args.set_train_log_df(
-            pd.concat(
-                [
-                    self.args.get_train_log_df(),
-                    pd.DataFrame(
-                        [
-                            {
-                                "epoch": epoch,
-                                "client_id": client_idx,
-                                "is_mal": is_mal,
-                                "train_re": getattr(client, 'recent_re', 0.0),
-                                "train_latent_z": getattr(client, 'recent_latent_z', 0.0),
-                                "train_loss": getattr(client, 'recent_train_loss', 0.0),
-                                "val_loss": getattr(client, 'recent_val_loss', 0.0),
-                                "threshold_re": getattr(client, 'recent_threshold_re', (0,0)),
-                                "threshold_z": getattr(client, 'recent_threshold_z', (0,0)),
-                                "best_val_loss": client.best_loss if hasattr(client, 'best_loss') else 0,
-                                "best_epoch": client.best_epoch if hasattr(client, 'best_epoch') else -1,
-                                "is_training": client.is_training,
-                            }
-                        ]
-                    ),
-                ],
-                ignore_index=True,
-            )
-        )
+        # prepare per-client recent prototypes for logging (convert to python lists or None)
+        try:
+            rp0 = getattr(client, 'recent_proto_z0', None)
+            rp1 = getattr(client, 'recent_proto_z1', None)
+            recent_proto_z0 = rp0.tolist() if (rp0 is not None and hasattr(rp0, 'tolist')) else (list(rp0) if rp0 is not None else None)
+            recent_proto_z1 = rp1.tolist() if (rp1 is not None and hasattr(rp1, 'tolist')) else (list(rp1) if rp1 is not None else None)
+        except Exception:
+            recent_proto_z0, recent_proto_z1 = None, None
+
+        # prepare best prototypes for logging
+        try:
+            bp0 = getattr(client, 'best_proto_z0', None)
+            bp1 = getattr(client, 'best_proto_z1', None)
+            best_proto_z0 = bp0.tolist() if (bp0 is not None and hasattr(bp0, 'tolist')) else (list(bp0) if bp0 is not None else None)
+            best_proto_z1 = bp1.tolist() if (bp1 is not None and hasattr(bp1, 'tolist')) else (list(bp1) if bp1 is not None else None)
+        except Exception:
+            best_proto_z0, best_proto_z1 = None, None
+        new_row = pd.DataFrame([
+            {
+                "epoch": epoch,
+                "client_id": client_idx,
+                "is_mal": is_mal,
+                "train_re": getattr(client, 'recent_re', 0.0),
+                "train_latent_z": getattr(client, 'recent_latent_z', 0.0),
+                "train_loss": getattr(client, 'recent_train_loss', 0.0),
+                "val_loss": getattr(client, 'recent_val_loss', 0.0),
+                "threshold_re": getattr(client, 'recent_threshold_re', (0,0)),
+                "proto_z0": recent_proto_z0,
+                "proto_z1": recent_proto_z1,
+                "best_proto_z0": best_proto_z0,
+                "best_proto_z1": best_proto_z1,
+                "best_val_loss": client.best_loss if hasattr(client, 'best_loss') else 0,
+                "best_epoch": client.best_epoch if hasattr(client, 'best_epoch') else -1,
+                "is_training": client.is_training,
+            }
+        ])
+        self.args.set_train_log_df(pd.concat([self.args.get_train_log_df(), new_row], ignore_index=True))
