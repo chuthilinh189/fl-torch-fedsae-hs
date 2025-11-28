@@ -151,17 +151,20 @@ class ClientPTL:
     def set_prototypes(self, z0, z1):
         """Set prototypes (torch tensors on CPU or same device)."""
         # prototypes expected as numpy arrays or torch tensors
-        if z0 is None or z1 is None:
+        # set each prototype independently so a missing z0/z1 doesn't clear the other
+        if z0 is None:
             self.prototype_z0 = None
+        else:
+            if not isinstance(z0, torch.Tensor):
+                z0 = torch.tensor(z0, dtype=torch.float32)
+            self.prototype_z0 = z0.to(self.device)
+
+        if z1 is None:
             self.prototype_z1 = None
-            return
-        if not isinstance(z0, torch.Tensor):
-            z0 = torch.tensor(z0, dtype=torch.float32)
-        if not isinstance(z1, torch.Tensor):
-            z1 = torch.tensor(z1, dtype=torch.float32)
-        # keep prototypes on device for local loss computation
-        self.prototype_z0 = z0.to(self.device)
-        self.prototype_z1 = z1.to(self.device)
+        else:
+            if not isinstance(z1, torch.Tensor):
+                z1 = torch.tensor(z1, dtype=torch.float32)
+            self.prototype_z1 = z1.to(self.device)
 
     def get_nn_parameters(self):
         return self.net.state_dict()

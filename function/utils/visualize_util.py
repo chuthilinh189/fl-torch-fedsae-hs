@@ -7,6 +7,12 @@ import matplotlib.pyplot as plt
 from sklearn.manifold import TSNE
 from sklearn.metrics import roc_auc_score
 import torch
+from sklearn.preprocessing import StandardScaler
+try:
+    import umap
+    _HAS_UMAP = True
+except Exception:
+    _HAS_UMAP = False
 
 def visualize_parameters(epoch, clients, poisoned_workers, args, pdf_writer):
     client_weights = []
@@ -257,3 +263,157 @@ def compute_auc_per_attack_from_flat(y_true, re_scores):
         except Exception:
             aucs[atk] = None
     return aucs
+
+
+def collect_latents_and_labels_from_client(client, max_samples_per_class=None):
+    """
+    Collect per-sample latent vectors and raw labels from a client's test_data_loader.
+
+    Returns (latents_numpy_array, labels_list) where latents shape = (N, D).
+    If max_samples_per_class is provided, this will sample up to that many examples per label to keep embeddings fast.
+    """
+    client.net.eval()
+    latents = []
+    labels = []
+    device = client.device
+    with torch.no_grad():
+        for input, label in client.test_data_loader:
+            input = input.to(device)
+            label = label.to(device)
+            encode, decode = client.net(input)
+            enc_np = encode.view(encode.size(0), -1).cpu().numpy()
+            latents.append(enc_np)
+            labels.extend(label.cpu().numpy().astype(int).tolist())
+
+    if len(latents) == 0:
+        return np.zeros((0, 0)), []
+
+    latents = np.concatenate(latents, axis=0)
+
+    # optional balanced sampling per class to limit size
+    if max_samples_per_class is not None and max_samples_per_class > 0:
+        kept_idx = []
+        labels_arr = np.array(labels)
+        for lbl in np.unique(labels_arr):
+            idxs = np.where(labels_arr == lbl)[0]
+            if len(idxs) > max_samples_per_class:
+                chosen = np.random.choice(idxs, size=max_samples_per_class, replace=False)
+            else:
+                chosen = idxs
+            kept_idx.extend(chosen.tolist())
+        kept_idx = sorted(kept_idx)
+        latents = latents[kept_idx]
+        labels = labels_arr[kept_idx].tolist()
+
+    return latents, labels
+
+
+def plot_latent_embedding(latents, labels, out_dir, epoch, client_id=None, proto_z0=None, proto_z1=None, method="tsne", max_points=2000, random_state=42):
+    """
+    Create a 2D scatter of latent vectors using t-SNE or UMAP, color by label and overlay prototypes when provided.
+
+    - latents: numpy array shape (N, D)
+    - labels: list/array shape (N,)
+    - out_dir: directory to save images
+    - epoch, client_id: used for filename
+    - proto_z0/proto_z1: numpy arrays of same latent dimension or None
+    - method: 'tsne' or 'umap' (umap requires umap-learn installed)
+    """
+    os.makedirs(out_dir, exist_ok=True)
+    if latents is None or latents.shape[0] == 0:
+        return
+
+    N = latents.shape[0]
+    labels_arr = np.array(labels)
+
+    # sample if too many points
+    if N > max_points:
+        # sample balanced by label
+        kept = []
+        for lbl in np.unique(labels_arr):
+            idxs = np.where(labels_arr == lbl)[0]
+            k = max_points // max(1, len(np.unique(labels_arr)))
+            if len(idxs) > k:
+                chosen = np.random.choice(idxs, size=k, replace=False).tolist()
+            else:
+                chosen = idxs.tolist()
+            kept.extend(chosen)
+        kept = sorted(kept)
+        latents_plot = latents[kept]
+        labels_plot = labels_arr[kept]
+    else:
+        latents_plot = latents
+        labels_plot = labels_arr
+
+    # standardize
+    try:
+        scaler = StandardScaler()
+        latents_plot = scaler.fit_transform(latents_plot)
+    except Exception:
+        pass
+
+    # include prototypes in the embedding transform if present so they are mapped consistently
+    proto_stack = []
+    proto_labels = []
+    if proto_z0 is not None:
+        proto_stack.append(proto_z0.reshape(1, -1))
+        proto_labels.append(-1)
+    if proto_z1 is not None:
+        proto_stack.append(proto_z1.reshape(1, -1))
+        proto_labels.append(-2)
+
+    try:
+        if method == "umap" and _HAS_UMAP:
+            reducer = umap.UMAP(n_components=2, random_state=random_state)
+        else:
+            reducer = TSNE(n_components=2, init='pca', random_state=random_state)
+
+        if len(proto_stack) > 0:
+            combined = np.vstack([latents_plot] + proto_stack)
+            emb = reducer.fit_transform(combined)
+            emb_points = emb[: latents_plot.shape[0]]
+            emb_protos = emb[latents_plot.shape[0]:]
+        else:
+            emb_points = reducer.fit_transform(latents_plot)
+            emb_protos = None
+    except Exception as e:
+        # fallback to PCA if t-SNE/umap fails
+        try:
+            from sklearn.decomposition import PCA
+
+            pca = PCA(n_components=2)
+            emb_points = pca.fit_transform(latents_plot)
+            emb_protos = None
+        except Exception:
+            return
+
+    fname_base = f"epoch{epoch}"
+    if client_id is not None:
+        fname_base += f"_client{client_id}"
+
+    plt.figure(figsize=(7, 6))
+    unique_lbls = sorted(np.unique(labels_plot))
+    colors = plt.cm.tab10(np.linspace(0, 1, max(10, len(unique_lbls))))
+    for i, lbl in enumerate(unique_lbls):
+        mask = labels_plot == lbl
+        plt.scatter(emb_points[mask, 0], emb_points[mask, 1], s=8, c=[colors[i]], label=str(lbl), alpha=0.7)
+
+    # overlay prototypes
+    if emb_protos is not None:
+        for pidx, plabel in enumerate(proto_labels):
+            px, py = emb_protos[pidx]
+            if plabel == -1:
+                plt.scatter(px, py, c='green', marker='X', s=120, edgecolor='k', label='proto_z0')
+            elif plabel == -2:
+                plt.scatter(px, py, c='red', marker='X', s=120, edgecolor='k', label='proto_z1')
+
+    plt.legend(markerscale=2)
+    plt.title(f"Latent embedding ({method}) - epoch {epoch}" + (f" client {client_id}" if client_id is not None else ""))
+    plt.xlabel("dim1")
+    plt.ylabel("dim2")
+    plt.tight_layout()
+    out_path = os.path.join(out_dir, f"{fname_base}_{method}.png")
+    plt.savefig(out_path, dpi=150)
+    plt.close()
+
+    return out_path

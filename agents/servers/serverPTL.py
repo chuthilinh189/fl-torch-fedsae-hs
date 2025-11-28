@@ -15,6 +15,8 @@ from function.utils.visualize_util import (
     collect_re_and_labels_from_client,
     collect_z_norms_and_labels_from_client,
     log_z_boxplots_from_lists,
+    collect_latents_and_labels_from_client,
+    plot_latent_embedding,
     compute_auc_per_attack_from_flat,
 )
 import json
@@ -200,6 +202,22 @@ class ServerPTL:
                 log_z_boxplots_from_lists(client_z_list, client_z_labels, client_out_dir, epoch, client_id=client_idx)
             except Exception as e:
                 self.args.logger.warning(f"Failed to collect/log latent z for client {client_idx}: {e}")
+
+            # Collect full latent vectors and produce t-SNE/UMAP plots with prototype overlay
+            try:
+                latents, lat_labels = collect_latents_and_labels_from_client(client, max_samples_per_class=1000)
+                if latents is not None and latents.shape[0] > 0:
+                    try:
+                        plot_latent_embedding(latents, lat_labels, client_out_dir, epoch, client_id=client_idx, proto_z0=self.proto_z0, proto_z1=self.proto_z1, method='tsne')
+                    except Exception:
+                        pass
+                    try:
+                        # attempt UMAP if available; function will fall back if not
+                        plot_latent_embedding(latents, lat_labels, client_out_dir, epoch, client_id=client_idx, proto_z0=self.proto_z0, proto_z1=self.proto_z1, method='umap')
+                    except Exception:
+                        pass
+            except Exception as e:
+                self.args.logger.warning(f"Failed to collect/plot latent embedding for client {client_idx}: {e}")
 
             # accumulate for global aggregation
             global_re.extend(client_re_list)
