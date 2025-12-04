@@ -25,7 +25,7 @@ class ServerDualLossAE:
     def __init__(self, args):
         self.args = args
 
-    def train_on_clients(self, epoch, clients, poisoned_workers, pdf_writer):
+    def train_on_clients(self, epoch, clients, poisoned_workers):
         random_workers = list(range(self.args.num_workers))
         self.args.logger.info("Training {} model epoch #{}", self.args.model_type, str(epoch))
 
@@ -38,7 +38,7 @@ class ServerDualLossAE:
                 list_client_training.append(client_idx)
 
                 # DualLossAE: train trả về (reconstruction_loss, supervised_loss)
-                re_loss = client.train(epoch, pdf_writer)
+                re_loss = client.train(epoch)
                 train_loss = re_loss
 
                 list_loss.append(train_loss.item())

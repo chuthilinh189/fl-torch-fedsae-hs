@@ -33,7 +33,7 @@ class ServerPTL:
         # ema factor for prototype updates
         self.ema = getattr(args, "ptl_proto_ema", 0.9)
 
-    def train_on_clients(self, epoch, clients, poisoned_workers, pdf_writer):
+    def train_on_clients(self, epoch, clients, poisoned_workers):
         self.args.logger.info("Training {} model epoch #{}", self.args.model_type, str(epoch))
 
         list_loss = []
@@ -45,7 +45,7 @@ class ServerPTL:
                 list_client_training.append(client_idx)
 
                 # client.train returns (avg_loss, local_proto_stats)
-                result = client.train(epoch, pdf_writer)
+                result = client.train(epoch)
                 if isinstance(result, tuple):
                     train_loss, local_proto_stats = result
                 else:
@@ -176,6 +176,11 @@ class ServerPTL:
             recent_weight_model = client.get_nn_parameters()
             client.update_nn_parameters(client.best_weight_model)
 
+            # Ensure client uses the prototypes corresponding to its best checkpoint (if available)
+            bp0 = getattr(client, 'best_proto_z0', None)
+            bp1 = getattr(client, 'best_proto_z1', None)
+            client.set_prototypes(bp0, bp1)
+
             # Collect per-sample RE and raw labels from client's test set
             try:
                 client_re_list, client_raw_labels = collect_re_and_labels_from_client(client)
@@ -208,15 +213,8 @@ class ServerPTL:
             try:
                 latents, lat_labels = collect_latents_and_labels_from_client(client, max_samples_per_class=1000)
                 if latents is not None and latents.shape[0] > 0:
-                    try:
-                        plot_latent_embedding(latents, lat_labels, client_out_dir, epoch, client_id=client_idx, proto_z0=self.proto_z0, proto_z1=self.proto_z1, method='tsne')
-                    except Exception:
-                        pass
-                    try:
-                        # attempt UMAP if available; function will fall back if not
-                        plot_latent_embedding(latents, lat_labels, client_out_dir, epoch, client_id=client_idx, proto_z0=self.proto_z0, proto_z1=self.proto_z1, method='umap')
-                    except Exception:
-                        pass
+                    plot_latent_embedding(latents, lat_labels, client_out_dir, epoch, client_id=client_idx, proto_z0=bp0, proto_z1=bp1, method='tsne')
+
             except Exception as e:
                 self.args.logger.warning(f"Failed to collect/plot latent embedding for client {client_idx}: {e}")
 
@@ -327,8 +325,8 @@ class ServerPTL:
         import pandas as pd
         # prepare per-client recent prototypes for logging (convert to python lists or None)
         try:
-            rp0 = getattr(client, 'recent_proto_z0', None)
-            rp1 = getattr(client, 'recent_proto_z1', None)
+            rp0 = getattr(client, 'prototype_z0', None)
+            rp1 = getattr(client, 'prototype_z1', None)
             recent_proto_z0 = rp0.tolist() if (rp0 is not None and hasattr(rp0, 'tolist')) else (list(rp0) if rp0 is not None else None)
             recent_proto_z1 = rp1.tolist() if (rp1 is not None and hasattr(rp1, 'tolist')) else (list(rp1) if rp1 is not None else None)
         except Exception:

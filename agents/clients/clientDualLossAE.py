@@ -14,7 +14,6 @@ import numpy as np
 import copy
 from matplotlib import pyplot as plt
 from sklearn.manifold import TSNE
-from matplotlib.backends.backend_pdf import PdfPages
 from collections import defaultdict
 
 
@@ -172,7 +171,7 @@ class ClientDualLossAE:
         if self.model_type == "DualLossAE" or self.model_type == "SupAE":
             return self.net.calculate_loss(input, label)
 
-    def train(self, epoch, pdf_writer_z):
+    def train(self, epoch):
         self.net.train()
         for input, label in self.train_data_loader:
             input, label = input.to(self.device), label.to(self.device)
@@ -405,7 +404,7 @@ class ClientDualLossAE:
             )
             plt.close()
 
-    def visualize_z(self, epoch, pdf_writer):
+    def visualize_z(self, epoch):
         """
         Visualize latent z using t-SNE and save to a PDF.
 
@@ -453,7 +452,9 @@ class ClientDualLossAE:
         plt.grid()
 
         # Save to PDF
-        pdf_writer.savefig()
+    out_dir = os.path.join("visual", self.model_type)
+    os.makedirs(out_dir, exist_ok=True)
+    plt.savefig(os.path.join(out_dir, f"epoch_{epoch}_{self.model_type}_client{self.client_idx}_tsne.png"))
         plt.close()
 
     def visualize_validate(

@@ -17,7 +17,7 @@ class ServerSupAE:
     def __init__(self, args):
         self.args = args
 
-    def train_on_clients(self, epoch, clients, poisoned_workers, pdf_writer):
+    def train_on_clients(self, epoch, clients, poisoned_workers):
         random_workers = list(range(self.args.num_workers))
         self.args.logger.info("Training {} model epoch #{}", self.args.model_type, str(epoch))
 
@@ -30,7 +30,7 @@ class ServerSupAE:
                 list_client_training.append(client_idx)
 
                 # SupAE: train trả về supervised loss
-                supervised_loss = client.train(epoch, pdf_writer)
+                supervised_loss = client.train(epoch)
                 list_loss.append(supervised_loss.item())
 
                 val_loss, threshold_re, threshold_z = client.validate(epoch)

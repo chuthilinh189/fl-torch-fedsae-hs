@@ -17,7 +17,7 @@ class ServerAE:
     def __init__(self, args):
         self.args = args
 
-    def train_on_clients(self, epoch, clients, poisoned_workers, pdf_writer):
+    def train_on_clients(self, epoch, clients, poisoned_workers):
         random_workers = list(range(self.args.num_workers))
         self.args.logger.info("Training {} model epoch #{}", self.args.model_type, str(epoch))
 
@@ -30,7 +30,7 @@ class ServerAE:
                 list_client_training.append(client_idx)
 
                 # Train client
-                train_re = client.train(epoch, pdf_writer)
+                train_re = client.train(epoch)
                 train_re = train_re.item()
                 train_loss = train_re
 

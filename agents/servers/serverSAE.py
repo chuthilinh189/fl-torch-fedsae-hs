@@ -17,7 +17,7 @@ class ServerSAE:
     def __init__(self, args):
         self.args = args
 
-    def train_on_clients(self, epoch, clients, poisoned_workers, pdf_writer):
+    def train_on_clients(self, epoch, clients, poisoned_workers):
         random_workers = list(range(self.args.num_workers))
         self.args.logger.info("Training {} model epoch #{}", self.args.model_type, str(epoch))
 
@@ -30,7 +30,7 @@ class ServerSAE:
                 list_client_training.append(client_idx)
 
                 # SAE: train trả về (re_loss, latent_z_loss)
-                re_loss, latent_z_loss = client.train(epoch, pdf_writer)
+                re_loss, latent_z_loss = client.train(epoch)
                 train_loss = re_loss + self.args.coef_shrink_ae * latent_z_loss
 
                 list_loss.append(train_loss.item())

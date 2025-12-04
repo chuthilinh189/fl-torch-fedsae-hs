@@ -17,7 +17,7 @@ from sklearn.metrics import (
     recall_score,
 )
 
-class ClientPTL:
+class ClientPTLAE:
     def __init__(self, args, client_idx, train_data_loader, val_data_loader, test_data_loader):
         self.args = args
         self.client_idx = client_idx
@@ -39,9 +39,9 @@ class ClientPTL:
         self.recent_threshold_z = (1e9, 0.0)
 
         self.device = self.initialize_device()
-        # Use same net architecture as DualLossAE (encoder/decoder)
-        from function.nets.duallossae import DualLossAE
-        self.net = DualLossAE(self.args.dimension)
+        # Use AE net architecture for PTLAE
+        from function.nets.ae import AE
+        self.net = AE(self.args.dimension)
         self.net.to(self.device)
 
         self.optimizer = optim.Adam(self.net.parameters(), lr=self.args.learning_rate)
@@ -144,9 +144,9 @@ class ClientPTL:
         plt.ylabel("Dimension 2")
         plt.legend()
         plt.grid()
-    out_dir = os.path.join("visual", self.model_type)
-    os.makedirs(out_dir, exist_ok=True)
-    plt.savefig(os.path.join(out_dir, f"epoch_{epoch}_{self.model_type}_client{self.client_idx}_tsne.png"))
+        out_dir = os.path.join("visual", self.model_type)
+        os.makedirs(out_dir, exist_ok=True)
+        plt.savefig(os.path.join(out_dir, f"epoch_{epoch}_{self.model_type}_client{self.client_idx}_tsne.png"))
         plt.close()
 
     def set_prototypes(self, z0, z1):
@@ -209,17 +209,12 @@ class ClientPTL:
         total_re = 0.0
         total_z_norm = 0.0
         for input, label in self.train_data_loader:
-            input = input.to(self.device)
-            label = label.to(self.device)
-
+            input, label = input.to(self.device), label.to(self.device)
             self.optimizer.zero_grad()
             encode, decode = self.net(input)
-
-            # reconstruction loss (mean over batch)
             re_loss = self.loss_function(decode, input)
 
             # prototype triplet loss
-            # use prototypes set by server (may be None on first rounds)
             ptl = self.prototype_triplet_loss(encode, label, self.prototype_z0, self.prototype_z1, margin=1.0, distance='euclid')
 
             lambda_ptl = getattr(self.args, 'ptl_lambda', 1.0)
@@ -227,14 +222,13 @@ class ClientPTL:
             loss.backward()
             self.optimizer.step()
 
-            # reconstruction loss is a tensor; take its scalar value
             try:
                 re_val = float(re_loss.item())
             except Exception:
                 re_val = float(re_loss)
             total_re += re_val
             total_loss += loss.item()
-            # accumulate mean latent norm for logging
+            # accumulate latent norm
             z_norms = torch.norm(encode.view(encode.size(0), -1), p=2, dim=1)
             total_z_norm += float(z_norms.mean().item())
             it += 1
@@ -247,13 +241,6 @@ class ClientPTL:
 
         avg_loss = total_loss / it if it > 0 else 0.0
 
-        # set recent metrics for logging (so server can read client.recent_re)
-        avg_re = total_re / it if it > 0 else 0.0
-        avg_z = total_z_norm / it if it > 0 else 0.0
-        self.recent_re = avg_re
-        self.recent_latent_z = avg_z
-        self.recent_train_loss = avg_loss
-
         # compute sums and counts per class
         local_proto_stats = {}
         for lab, latents in latent_z_dict.items():
@@ -264,21 +251,26 @@ class ClientPTL:
             count = stacked.size(0)
             local_proto_stats[int(lab)] = (sum_vec, int(count))
         # compute per-client mean prototypes (z0, z1) for logging
-        try:
-            z0 = None
-            z1 = None
-            if 0 in local_proto_stats:
-                s0, c0 = local_proto_stats[0]
-                z0 = (s0 / max(1, c0)).astype(float)
-            if 1 in local_proto_stats:
-                s1, c1 = local_proto_stats[1]
-                z1 = (s1 / max(1, c1)).astype(float)
-            # store as numpy arrays for later access
-            self.recent_proto_z0 = z0
-            self.recent_proto_z1 = z1
-        except Exception:
-            self.recent_proto_z0 = None
-            self.recent_proto_z1 = None
+        z0 = None
+        z1 = None
+        if 0 in local_proto_stats:
+            s0, c0 = local_proto_stats[0]
+            z0 = (s0 / max(1, c0)).astype(float)
+        if 1 in local_proto_stats:
+            s1, c1 = local_proto_stats[1]
+            z1 = (s1 / max(1, c1)).astype(float)
+        # store as numpy arrays for later access
+        if z0 is not None:
+            self.prototype_z0 = z0
+        if z1 is not None:
+            self.prototype_z1 = z1
+
+        # compute and store recent per-epoch metrics used by server logging
+        avg_re = total_re / it if it > 0 else 0.0
+        avg_z = total_z_norm / it if it > 0 else 0.0
+        self.recent_re = avg_re
+        self.recent_latent_z = avg_z
+        self.recent_train_loss = avg_loss
 
         return avg_loss, local_proto_stats
 
@@ -311,14 +303,17 @@ class ClientPTL:
         mean_re, std_re = self.threshold_re if hasattr(self, "threshold_re") and isinstance(self.threshold_re, tuple) else (0.0, 0.0)
 
         multipliers = np.arange(0.0, 5.1, 0.2)
-        decision_mode = getattr(self.args, 'ptl_decision_mode', 're')
 
+        # If using prototype-only decision, prototype distances don't depend on reconstruction-error thresholds.
+        # Compute metrics once and repeat across multipliers so server aggregation logic stays compatible.
+        decision_mode = getattr(self.args, 'ptl_decision_mode', 're')
         if decision_mode == 'proto':
-            # For proto-only decision, prototypes Z0/Z1 determine predictions; compute once and repeat.
+            # choose a fallback threshold_re for the (rare) case where proto path cannot compute distances
             threshold_re = mean_re
-            # Run proto-mode in verbose (non-check) runs so confusion matrices are logged
+            # When running proto-mode, produce verbose output (confusion matrix/class report) unless explicitly in check mode
             is_verbose = (not is_check)
             acc, precision, recall, f1, roc = self.test_with_thresholds(threshold_re, is_verbose)
+            # repeat results for each multiplier so caller (server) can iterate as before
             acc_list = [acc for _ in multipliers]
             precision_list = [precision for _ in multipliers]
             recall_list = [recall for _ in multipliers]
@@ -326,7 +321,7 @@ class ClientPTL:
             roc_list = [roc for _ in multipliers]
             return acc_list, precision_list, recall_list, f1_list, roc_list
 
-        # default behavior: sweep RE thresholds
+        # default: RE-based sweep
         for multiplier in multipliers:
             threshold_re = mean_re + multiplier * std_re
             is_verbose = (not is_check and abs(multiplier - self.args.threshold_multiplier) < 1e-4)
@@ -344,12 +339,8 @@ class ClientPTL:
         self.best_epoch = best_epoch
         self.threshold_re = threshold_re
         # store the client's best prototypes at the time of best checkpoint
-        try:
-            self.best_proto_z0 = getattr(self, 'recent_proto_z0', None)
-            self.best_proto_z1 = getattr(self, 'recent_proto_z1', None)
-        except Exception:
-            self.best_proto_z0 = None
-            self.best_proto_z1 = None
+        self.best_proto_z0 = getattr(self, 'prototype_z0', None)
+        self.best_proto_z1 = getattr(self, 'prototype_z1', None)
         self.best_weight_model = copy.deepcopy(best_weight_model)
 
     def set_training_status(self, status):
@@ -365,12 +356,19 @@ class ClientPTL:
             labels = []
             sample_list = []
 
+            # Decide mode: 're' (default), 'proto' (proto-only), or 'combined' (not used here)
+            decision_mode = getattr(self.args, 'ptl_decision_mode', 're')
+            encodes_for_proto = []
             for input, label in self.test_data_loader:
                 input, label = input.to(self.device), label.to(self.device)
-                _, decode = self.net(input)
+                encode, decode = self.net(input)
                 per_sample_re = ((decode - input) ** 2).mean(dim=1).cpu().numpy().tolist()
                 list_re.extend(per_sample_re)
                 labels += label.cpu().tolist()
+
+                if decision_mode == 'proto':
+                    # collect encodings for prototype distance decision
+                    encodes_for_proto.append(encode.detach().cpu())
 
                 if show_samples and len(sample_list) < sample_n:
                     for lab_val, re_val in zip(label.cpu().tolist(), per_sample_re):
@@ -381,14 +379,67 @@ class ClientPTL:
             if self.args.by_attack_type:
                 labels = [int(l != 0) for l in labels]
 
-            predictions = [1 if r > threshold_re else 0 for r in list_re]
+            # If prototype-only decision is requested and prototypes exist, use proto distances
+            if decision_mode == 'proto' and self.prototype_z0 is not None and self.prototype_z1 is not None:
+                # concatenate encodings
+                if len(encodes_for_proto) == 0:
+                    predictions = [1 if r > threshold_re else 0 for r in list_re]
+                else:
+                    enc_cat = torch.cat(encodes_for_proto, dim=0)
+                    # Log prototype info (shape, norm, head elements) for debugging before computing distances
+                    try:
+                        def _vec_info(v):
+                            try:
+                                if isinstance(v, torch.Tensor):
+                                    arr = v.detach().cpu().numpy()
+                                else:
+                                    arr = np.array(v)
+                                return {"shape": tuple(arr.shape), "norm": float(np.linalg.norm(arr)), "head": arr.reshape(-1)[:6].tolist()}
+                            except Exception:
+                                return None
+
+                        z0_info = _vec_info(self.prototype_z0)
+                        z1_info = _vec_info(self.prototype_z1)
+                        try:
+                            self.args.logger.info(f"[Client {self.client_idx}] Using prototypes for proto decision: proto_z0={z0_info}, proto_z1={z1_info}")
+                        except Exception:
+                            print(f"[Client {self.client_idx}] Using prototypes for proto decision: proto_z0={z0_info}, proto_z1={z1_info}")
+                    except Exception:
+                        pass
+
+                    # move prototypes to CPU tensors
+                    z0 = self.prototype_z0.cpu() if isinstance(self.prototype_z0, torch.Tensor) else torch.tensor(self.prototype_z0)
+                    z1 = self.prototype_z1.cpu() if isinstance(self.prototype_z1, torch.Tensor) else torch.tensor(self.prototype_z1)
+                    # choose distance metric
+                    distance = getattr(self.args, 'ptl_distance', 'euclid')
+                    if distance == 'euclid':
+                        d_pos = torch.norm(enc_cat - z1.unsqueeze(0).expand(enc_cat.size(0), -1), dim=1).numpy().tolist()
+                        d_neg = torch.norm(enc_cat - z0.unsqueeze(0).expand(enc_cat.size(0), -1), dim=1).numpy().tolist()
+                    elif distance == 'cosine':
+                        import torch.nn.functional as F
+                        d_pos = (1 - F.cosine_similarity(enc_cat, z1.unsqueeze(0).expand(enc_cat.size(0), -1))).numpy().tolist()
+                        d_neg = (1 - F.cosine_similarity(enc_cat, z0.unsqueeze(0).expand(enc_cat.size(0), -1))).numpy().tolist()
+                    else:
+                        raise ValueError("Unsupported ptl_distance: {}".format(distance))
+
+                    # prediction: closer to malicious prototype -> predict malicious (1)
+                    # optionally apply margin
+                    margin = getattr(self.args, 'ptl_margin', 0.0)
+                    predictions = [1 if (dp + margin) < dn else 0 for dp, dn in zip(d_pos, d_neg)]
+                    # for ROC scoring use proto_score = d_neg - d_pos (higher -> more likely malicious)
+                    proto_scores = [dn - dp for dp, dn in zip(d_pos, d_neg)]
+            else:
+                predictions = [1 if r > threshold_re else 0 for r in list_re]
 
             acc = accuracy_score(labels, predictions)
             precision = precision_score(labels, predictions, zero_division=0)
             recall = recall_score(labels, predictions, zero_division=0)
             f1 = f1_score(labels, predictions, zero_division=0)
             try:
-                roc = roc_auc_score(labels, list_re) if len(set(labels)) > 1 else 0.0
+                if decision_mode == 'proto' and self.prototype_z0 is not None and self.prototype_z1 is not None:
+                    roc = roc_auc_score(labels, proto_scores) if len(set(labels)) > 1 else 0.0
+                else:
+                    roc = roc_auc_score(labels, list_re) if len(set(labels)) > 1 else 0.0
             except Exception:
                 roc = 0.0
 

@@ -17,7 +17,7 @@ class ServerDAE:
     def __init__(self, args):
         self.args = args
 
-    def train_on_clients(self, epoch, clients, poisoned_workers, pdf_writer):
+    def train_on_clients(self, epoch, clients, poisoned_workers):
         random_workers = list(range(self.args.num_workers))
         self.args.logger.info("Training {} model epoch #{}", self.args.model_type, str(epoch))
 
@@ -29,7 +29,7 @@ class ServerDAE:
             if client.is_training:
                 list_client_training.append(client_idx)
 
-                train_loss = client.train(epoch, pdf_writer)
+                train_loss = client.train(epoch)
                 train_loss = train_loss.item()
 
                 list_loss.append(train_loss)

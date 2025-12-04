@@ -45,7 +45,7 @@ class Arguments:
 
         # ⚙️ Các tham số nội bộ tự động gán
         self.num_workers = 20  # Tổng số client mặc định
-        self.es_offset = 100  # Offset cho early stopping
+        self.es_offset = 300  # Offset cho early stopping
         self.threshold_factor = 0  # Threshold scaling
         self.cuda = True  # Luôn bật GPU
         self.shuffle = False  # Không shuffle dữ liệu

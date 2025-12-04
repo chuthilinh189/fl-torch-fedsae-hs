@@ -14,7 +14,7 @@ try:
 except Exception:
     _HAS_UMAP = False
 
-def visualize_parameters(epoch, clients, poisoned_workers, args, pdf_writer):
+def visualize_parameters(epoch, clients, poisoned_workers, args):
     client_weights = []
     client_labels = []
 
@@ -45,7 +45,9 @@ def visualize_parameters(epoch, clients, poisoned_workers, args, pdf_writer):
     plt.ylabel("t-SNE Dimension 2")
     plt.grid(True)
 
-    pdf_writer.savefig()
+    out_dir = os.path.join("visual", args.model_type if hasattr(args, 'model_type') else 'weights')
+    os.makedirs(out_dir, exist_ok=True)
+    plt.savefig(os.path.join(out_dir, f"epoch_{epoch}_client_weights_tsne.png"))
     plt.close()
 
 
@@ -355,11 +357,36 @@ def plot_latent_embedding(latents, labels, out_dir, epoch, client_id=None, proto
     # include prototypes in the embedding transform if present so they are mapped consistently
     proto_stack = []
     proto_labels = []
-    if proto_z0 is not None:
-        proto_stack.append(proto_z0.reshape(1, -1))
+
+    # helper: coerce different prototype representations to 1D numpy arrays
+    def _to_numpy_vec(v):
+        if v is None:
+            return None
+        # torch tensor -> numpy
+        try:
+            import torch as _torch
+        except Exception:
+            _torch = None
+        try:
+            if _torch is not None and isinstance(v, _torch.Tensor):
+                return v.detach().cpu().numpy().reshape(-1)
+        except Exception:
+            pass
+        # numpy or list -> numpy 1D
+        try:
+            arr = np.array(v)
+            return arr.reshape(-1)
+        except Exception:
+            return None
+
+    p0 = _to_numpy_vec(proto_z0)
+    p1 = _to_numpy_vec(proto_z1)
+
+    if p0 is not None:
+        proto_stack.append(np.atleast_2d(p0))
         proto_labels.append(-1)
-    if proto_z1 is not None:
-        proto_stack.append(proto_z1.reshape(1, -1))
+    if p1 is not None:
+        proto_stack.append(np.atleast_2d(p1))
         proto_labels.append(-2)
 
     try:
@@ -390,6 +417,60 @@ def plot_latent_embedding(latents, labels, out_dir, epoch, client_id=None, proto
     fname_base = f"epoch{epoch}"
     if client_id is not None:
         fname_base += f"_client{client_id}"
+
+    # write a small proto debug file so it's easy to see which prototypes were used (and their shapes)
+    try:
+        proto_info = {
+            "proto_z0_present": p0 is not None,
+            "proto_z1_present": p1 is not None,
+            "proto_z0_shape": tuple(p0.shape) if p0 is not None else None,
+            "proto_z1_shape": tuple(p1.shape) if p1 is not None else None,
+            "emb_protos_count": int(emb_protos.shape[0]) if emb_protos is not None else 0,
+        }
+
+        # include raw prototype values (as lists) and distance between them if both present
+        try:
+            if p0 is not None:
+                proto_info["proto_z0_values"] = p0.reshape(-1).astype(float).tolist()
+            else:
+                proto_info["proto_z0_values"] = None
+            if p1 is not None:
+                proto_info["proto_z1_values"] = p1.reshape(-1).astype(float).tolist()
+            else:
+                proto_info["proto_z1_values"] = None
+
+            if p0 is not None and p1 is not None:
+                try:
+                    d = float(np.linalg.norm(p0 - p1))
+                except Exception:
+                    d = None
+                proto_info["proto_z0z1_distance"] = d
+                proto_info["proto_z0z1_same_eps_1e-6"] = (d is not None and d < 1e-6)
+            else:
+                proto_info["proto_z0z1_distance"] = None
+                proto_info["proto_z0z1_same_eps_1e-6"] = None
+        except Exception:
+            # fallback if conversion fails
+            proto_info["proto_z0_values"] = None
+            proto_info["proto_z1_values"] = None
+            proto_info["proto_z0z1_distance"] = None
+            proto_info["proto_z0z1_same_eps_1e-6"] = None
+
+        # include embedded prototype coordinates if available
+        try:
+            if emb_protos is not None:
+                proto_info["emb_protos_coords"] = emb_protos.tolist()
+            else:
+                proto_info["emb_protos_coords"] = None
+        except Exception:
+            proto_info["emb_protos_coords"] = None
+
+        import json as _json
+        info_path = os.path.join(out_dir, f"{fname_base}_proto_info.json")
+        with open(info_path, "w") as _jf:
+            _json.dump(proto_info, _jf, indent=2)
+    except Exception:
+        pass
 
     plt.figure(figsize=(7, 6))
     unique_lbls = sorted(np.unique(labels_plot))
