@@ -655,3 +655,70 @@ def plot_latent_embedding_non_iid_dir(latents, labels, seen_classes, attack_labe
     plt.close()
 
     return out_path
+
+
+def plot_latent_first_component_hist_from_latents(latents, out_dir, epoch, client_id=None, bins=50):
+    """
+    Plot and save a histogram of the first component (index 0) of the latent vectors.
+    Also save the raw values as a CSV for further analysis.
+
+    - latents: numpy array shape (N, D)
+    - out_dir: directory to save outputs
+    - epoch, client_id: used for filenames
+    - bins: number of histogram bins
+    Returns path to saved PNG or None if nothing saved.
+    """
+    os.makedirs(out_dir, exist_ok=True)
+    if latents is None or latents.shape[0] == 0:
+        return None
+
+    try:
+        first_comp = np.asarray(latents)[:, 0]
+    except Exception:
+        return None
+
+    fname_base = f"epoch{epoch}"
+    if client_id is not None:
+        fname_base += f"_client{client_id}"
+
+    # save CSV of values
+    csv_path = os.path.join(out_dir, f"{fname_base}_latent_dim0_values.csv")
+    try:
+        with open(csv_path, 'w', newline='') as f:
+            writer = csv.writer(f)
+            writer.writerow(["latent_dim0"])
+            for v in first_comp.tolist():
+                writer.writerow([float(v)])
+    except Exception:
+        # ignore CSV failures
+        pass
+
+    # histogram
+    try:
+        plt.figure(figsize=(6, 4))
+        plt.hist(first_comp, bins=bins, color="C2", alpha=0.85)
+        plt.title(f"Latent dim[0] histogram - epoch {epoch}" + (f" client {client_id}" if client_id is not None else ""))
+        plt.xlabel("latent[0]")
+        plt.ylabel("count")
+        plt.tight_layout()
+        out_path = os.path.join(out_dir, f"{fname_base}_latent_dim0_hist.png")
+        plt.savefig(out_path, dpi=150)
+        plt.close()
+        return out_path
+    except Exception:
+        try:
+            plt.close()
+        except Exception:
+            pass
+        return None
+
+
+def plot_latent_first_component_hist_from_client(client, out_dir, epoch, client_id=None, max_samples_per_class=None, bins=50):
+    """
+    Convenience wrapper: collect latents from a client and plot the first-dimension histogram.
+    """
+    try:
+        latents, _ = collect_latents_and_labels_from_client(client, max_samples_per_class=max_samples_per_class)
+        return plot_latent_first_component_hist_from_latents(latents, out_dir, epoch, client_id=client_id, bins=bins)
+    except Exception:
+        return None

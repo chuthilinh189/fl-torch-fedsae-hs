@@ -30,13 +30,29 @@ class Arguments:
         self.threshold_multiplier = config["threshold_multiplier"]
         self.num_multi_class_clients = config["num_multi_class_clients"]
         self.by_attack_type = config["by_attack_type"]
-        # ----- ptl (Prototype-Triplet) hyperparameters -----
+        # ---- Partition strategy for client data distribution ----
+        # 'original' (default) -> existing behavior (batch-wise round robin)
+        # 'hybrid' -> deterministic class-assignment + Dirichlet splitting inside assigned classes
+        # If an overall experiment type is provided, adapt some defaults
+        # experiment_type can be: 'normal' | 'by_attack_type' | 'non_iid_dir'
+        self.experiment_type = config.get("experiment_type", "normal")
+
+        # For non_iid_dir experiments we want the hybrid partitioning
+        default_partition = "hybrid" if self.experiment_type == "non_iid_dir" else "original"
+        self.partition_strategy = config.get("partition_strategy", default_partition)
+        # Number of classes (including normal class 0) each client should see when using hybrid
+        self.seen_per_client = config.get("seen_per_client", 5)
+        # Dirichlet alpha used for splitting samples of each class across clients
+        self.dir_alpha = config.get("dir_alpha", 0.5)
+        # Seed used for deterministic assignment of seen classes
+        self.assign_seed = config.get("assign_seed", 0)
+            # ----- ptl (Prototype-Triplet) hyperparameters -----
         # Lambda weight for prototype-triplet loss term
         self.ptl_lambda = config.get("ptl_lambda", 1.0)
         # EMA coefficient for server-side prototype updates (0..1)
         self.ptl_proto_ema = config.get("ptl_proto_ema", 0.9)
         # Margin used in triplet-style loss (d_pos - d_neg + margin)
-        self.ptl_margin = config.get("ptl_margin", 1.0)
+        self.ptl_margin = config.get("ptl_margin", 10.0)
         # Distance metric for prototypes: 'euclid' or 'cosine'
         self.ptl_distance = config.get("ptl_distance", "euclid")
         # Decision mode for PTL at test time: 're' | 'proto' | 'combined'
@@ -76,7 +92,26 @@ class Arguments:
         self.test_data_loader_by_attack_type_pickle_path = (
             f"data_loaders_by_attack_type/{self.dataset}/test_data_loader.pickle"
         )
+        self.train_data_loader_full_attack_type_pickle_path = (
+            f"data_loaders_full_attack_type/{self.dataset}/train_data_loader.pickle"
+        )
+        self.val_data_loader_full_attack_type_pickle_path = (
+            f"data_loaders_full_attack_type/{self.dataset}/val_data_loader.pickle"
+        )
+        self.test_data_loader_full_attack_type_pickle_path = (
+            f"data_loaders_full_attack_type/{self.dataset}/test_data_loader.pickle"
+        )
+        self.mal_data_loader_full_attack_type_pickle_path = (
+            f"data_loaders_full_attack_type/{self.dataset}/mal_data_loader.pickle"
+        )
         self.default_model_folder_path = f"default_models/{self.dataset}"
+
+        # If experiment_type requests full-attack-type data, point defaults to those pickles
+        if self.experiment_type == "non_iid_dir":
+            self.train_data_loader_pickle_path = self.train_data_loader_full_attack_type_pickle_path
+            self.val_data_loader_pickle_path = self.val_data_loader_full_attack_type_pickle_path
+            self.test_data_loader_pickle_path = self.test_data_loader_full_attack_type_pickle_path
+            self.mal_data_loader_pickle_path = self.mal_data_loader_full_attack_type_pickle_path
 
         # 🛠 Tạo biến để lưu log train/test sau này
         self.train_log_df = None
@@ -155,5 +190,9 @@ class Arguments:
             + "\nTest Data Path: {}".format(self.test_data_loader_pickle_path)
             + "\nMalicious Data Path: {}".format(self.mal_data_loader_pickle_path)
             + "\nDefault Model Save Path: {}".format(self.default_model_folder_path)
+            + "\nPartition Strategy: {}".format(self.partition_strategy)
+            + "\nSeen per client (hybrid): {}".format(self.seen_per_client)
+            + "\nDirichlet alpha (hybrid): {}".format(self.dir_alpha)
+            + "\nAssign seed (hybrid): {}".format(self.assign_seed)
             + "\n"
         )

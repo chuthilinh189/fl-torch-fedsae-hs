@@ -85,7 +85,7 @@ nohup python evaluate.py -d unsw -m DualLossAE -tbs 128 -vbs 1 -di 196 -ep 1000 
 nohup python evaluate.py -d unsw -m DualLossAE -tbs 128 -vbs 1 -di 196 -ep 400 -tm 1 --model_dir saved_models/DualLossAE5/average/unsw --log_csv logs/unsw_DualLossAE > logger/unsw_DualLossAE5_400_1.log 2>&1 &
 nohup python evaluate.py -d unsw -m DualLossAE -tbs 128 -vbs 1 -di 196 -ep 1000 -tm 1.4 --model_dir saved_models/DualLossAE20/average/unsw --log_csv logs/DualLossAE20/unsw_DualLossAE > logger/unsw_DualLossAE20_1000_1.4.log 2>&1 &
 
-
+nohup python main.py -d unsw -m PTLAE -tbs 128 -vbs 1 -di 196 -lr 0.001 -ep 200 -agg average -nt label_flipping -pw 0 -pr 1 -ns 0.001 -ans 1 -cs 1 -tm 0 -mc 10 -at 1 > logger/unsw_log.out 2>&1 &
 nohup python main.py -d unsw -m DualLossAE -tbs 128 -vbs 1 -di 196 -lr 0.001 -ep 1000 -agg average -nt label_flipping -pw 0 -pr 1 -ns 0.001 -ans 1 -cs 1 -tm 0 -mc 2 -at 1 > logger/unsw_log.out 2>&1 &
 nohup python evaluate_attack_type.py -d unsw -m AE -tbs 128 -vbs 128 -di 196 -ep 1000 -tm 1.2 --model_dir saved_models/AE/average/unsw --log_csv logs/AE/unsw_AE_ > evaluate_results/attacktype_unsw_AE_1000_1.2.log 2>&1 &
 nohup python evaluate_attack_type.py -d unsw -m DAE -tbs 128 -vbs 128 -di 196 -ep 1000 -tm 1.5 --model_dir saved_models/DAE/average/unsw --log_csv logs/DAE/unsw_DAE_ > evaluate_results/attacktype_unsw_DAE_1000_1.5.log 2>&1 &

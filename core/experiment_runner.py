@@ -17,6 +17,10 @@ import os
 import random
 from function.utils.experiment_util import create_dev_dataset_from_clients
 from visualize import visualize
+from function.utils.visualize_util import (
+    collect_latents_and_labels_from_client,
+    plot_latent_embedding_non_iid_dir,
+)
 
 def run_exp(config):
     log_file = generate_experiment_ids(
@@ -84,6 +88,14 @@ def run_exp(config):
             args.train_batch_size,
             poison=True
         )
+        # capture partition metadata generated during this call (seen_sets etc.)
+        train_seen_sets_multi = None
+        try:
+            train_seen_sets_multi = getattr(args, 'last_partition_meta', None)
+            if train_seen_sets_multi is not None:
+                train_seen_sets_multi = train_seen_sets_multi.get('seen_sets')
+        except Exception:
+            train_seen_sets_multi = None
     
     if len(multi_class_client_ids) < original_num_workers:
         # Nhóm chỉ lớp 0: lọc DataLoader gốc để chỉ giữ lại các mẫu có nhãn 0
@@ -155,6 +167,37 @@ def run_exp(config):
     # -------------------------------
     # Tạo các client từ DataLoader train, val và test
     clients = create_clients(args, final_train_loaders, final_val_loaders, test_data_loaders)
+
+    # If this is a non-iid-dir experiment, auto-visualize per-client latent embeddings
+    if getattr(args, 'experiment_type', None) == 'non_iid_dir':
+        try:
+            # train_seen_sets_multi captured earlier; if absent, try last_partition_meta
+            seen_sets_list = locals().get('train_seen_sets_multi')
+            if seen_sets_list is None:
+                last_meta = getattr(args, 'last_partition_meta', None)
+                seen_sets_list = last_meta.get('seen_sets') if last_meta is not None else None
+
+            if seen_sets_list is not None:
+                viz_out_dir = os.path.join('visualizes', args.dataset, 'non_iid_dir')
+                os.makedirs(viz_out_dir, exist_ok=True)
+                for idx, cid in enumerate(multi_class_client_ids):
+                    try:
+                        client_obj = clients[cid]
+                    except Exception:
+                        continue
+                    latents, labels = collect_latents_and_labels_from_client(client_obj, max_samples_per_class=200)
+                    seen_for_client = seen_sets_list[idx] if idx < len(seen_sets_list) else []
+                    out = plot_latent_embedding_non_iid_dir(latents, labels, seen_for_client,
+                                                            attack_label=1,
+                                                            out_dir=viz_out_dir,
+                                                            epoch=0,
+                                                            client_id=cid,
+                                                            method='umap',
+                                                            max_points=2000,
+                                                            random_state=getattr(args, 'assign_seed', 0))
+                    args.logger.info("Wrote non-iid-dir latent viz for client {} -> {}", cid, out)
+        except Exception as e:
+            args.logger.warning("Failed to auto-visualize non-iid-dir partitions: {}", str(e))
 
     # Chỉ tạo dev_dataset khi dùng phương pháp fedmse
     if args.aggregation_type == "FedMSE":
