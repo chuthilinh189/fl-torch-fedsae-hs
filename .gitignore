@@ -13,6 +13,7 @@ data/
 develop-eggs/
 data_loaders/
 data_loaders_by_attack_type/
+data_loaders_full_attack_type/
 default_models/
 dist/
 saved_models/

@@ -82,6 +82,56 @@ if __name__ == "__main__":
             save_data_loader_to_file(mal_data_loader, f)
 
         # -------------------------------------------
+        # ----------- Full attack-type experiment ----------
+        # -------------------------------------------
+        # Prepare dataset that preserves full attack-type labels (0,1,2,3,...)
+        # It expects a loader function in function.datasets.data_load named
+        # <dataset>_full_attack_type(), e.g. unsw_full_attack_type()
+        args.full_attack_type = True
+        try:
+            # Try to import module function dynamically
+            import importlib
+
+            module_name = f"function.datasets.data_load.{args.dataset}_full_attack_type"
+            func_name = f"{args.dataset}_full_attack_type"
+            mod = importlib.import_module(module_name)
+            loader_func = getattr(mod, func_name)
+
+            # call loader to get arrays
+            X_train, y_train, X_val, y_val, X_test, y_test, X_mal, y_mal = loader_func()
+
+            # ensure output dir exists
+            if not os.path.exists(f"data_loaders_full_attack_type/{args.dataset}"):
+                pathlib.Path(f"data_loaders_full_attack_type/{args.dataset}").mkdir(
+                    parents=True, exist_ok=True
+                )
+
+            # Use Dataset static helper to create DataLoaders
+            from function.datasets.dataset import Dataset
+
+            train_data_loader = Dataset.get_data_loader_from_data(args.train_batch_size, X_train, y_train)
+            val_data_loader = Dataset.get_data_loader_from_data(args.val_batch_size, X_val, y_val)
+            test_data_loader = Dataset.get_data_loader_from_data(args.test_batch_size, X_test, y_test)
+            mal_data_loader = Dataset.get_data_loader_from_data(args.mal_batch_size, X_mal, y_mal)
+
+            with open(args.train_data_loader_full_attack_type_pickle_path, "wb") as f:
+                save_data_loader_to_file(train_data_loader, f)
+
+            with open(args.val_data_loader_full_attack_type_pickle_path, "wb") as f:
+                save_data_loader_to_file(val_data_loader, f)
+
+            with open(args.test_data_loader_full_attack_type_pickle_path, "wb") as f:
+                save_data_loader_to_file(test_data_loader, f)
+
+            with open(args.mal_data_loader_full_attack_type_pickle_path, "wb") as f:
+                save_data_loader_to_file(mal_data_loader, f)
+
+            args.logger.info("Prepared full-attack-type data loaders and saved to data_loaders_full_attack_type/{}", args.dataset)
+
+        except Exception as e:
+            args.logger.warning("Could not prepare full-attack-type loaders for {}: {}", args.dataset, str(e))
+
+        # -------------------------------------------
         # ----------- Model Initialization ----------
         # -------------------------------------------
 

@@ -62,22 +62,25 @@ def load_train_data_loader(logger, args):
     :param logger: loguru.Logger
     :param args: Arguments
     """
+    # Priority: full_attack_type -> by_attack_type -> original
+    if getattr(args, "full_attack_type", False):
+        if os.path.exists(args.train_data_loader_full_attack_type_pickle_path):
+            return load_data_loader_from_file(logger, args.train_data_loader_full_attack_type_pickle_path)
+        else:
+            logger.error("Couldn't find train data loader full attack type stored in file")
+            raise FileNotFoundError("Couldn't find train data loader full attack type stored in file")
     if args.by_attack_type:
         if os.path.exists(args.train_data_loader_by_attack_type_pickle_path):
             return load_data_loader_from_file(logger, args.train_data_loader_by_attack_type_pickle_path)
         else:
             logger.error("Couldn't find train data loader by attack type stored in file")
-
-            raise FileNotFoundError(
-                "Couldn't find train data loader by attack type stored in file")
+            raise FileNotFoundError("Couldn't find train data loader by attack type stored in file")
     else:
         if os.path.exists(args.train_data_loader_pickle_path):
             return load_data_loader_from_file(logger, args.train_data_loader_pickle_path)
         else:
             logger.error("Couldn't find train data loader stored in file")
-
-            raise FileNotFoundError(
-                "Couldn't find train data loader stored in file")
+            raise FileNotFoundError("Couldn't find train data loader stored in file")
 
 
 def generate_train_loader(args, dataset):
@@ -94,20 +97,23 @@ def load_val_data_loader(logger, args):
     :param logger: loguru.Logger
     :param args: Arguments
     """
+    if getattr(args, "full_attack_type", False):
+        if os.path.exists(args.val_data_loader_full_attack_type_pickle_path):
+            return load_data_loader_from_file(logger, args.val_data_loader_full_attack_type_pickle_path)
+        else:
+            logger.error("Couldn't find val data loader full attack type stored in file")
+            raise FileNotFoundError("Couldn't find val data loader full attack type stored in file")
     if args.by_attack_type:
         if os.path.exists(args.val_data_loader_by_attack_type_pickle_path):
             return load_data_loader_from_file(logger, args.val_data_loader_by_attack_type_pickle_path)
         else:
             logger.error("Couldn't find val data loader by attack type stored in file")
-
-            raise FileNotFoundError(
-                "Couldn't find val data loader by attack type stored in file")
+            raise FileNotFoundError("Couldn't find val data loader by attack type stored in file")
     else:
         if os.path.exists(args.val_data_loader_pickle_path):
             return load_data_loader_from_file(logger, args.val_data_loader_pickle_path)
         else:
             logger.error("Couldn't find val data loader stored in file")
-
             raise FileNotFoundError("Couldn't find val data loader stored in file")
 
 
@@ -125,22 +131,24 @@ def load_test_data_loader(logger, args):
     :param logger: loguru.Logger
     :param args: Arguments
     """
+    if getattr(args, "full_attack_type", False):
+        if os.path.exists(args.test_data_loader_full_attack_type_pickle_path):
+            return load_data_loader_from_file(logger, args.test_data_loader_full_attack_type_pickle_path)
+        else:
+            logger.error("Couldn't find test data loader full attack type stored in file")
+            raise FileNotFoundError("Couldn't find test data loader full attack type stored in file")
     if args.by_attack_type:
         if os.path.exists(args.test_data_loader_by_attack_type_pickle_path):
             return load_data_loader_from_file(logger, args.test_data_loader_by_attack_type_pickle_path)
         else:
             logger.error("Couldn't find test data loader by attack type stored in file")
-
-            raise FileNotFoundError(
-                "Couldn't find test data loader by attack type stored in file")
+            raise FileNotFoundError("Couldn't find test data loader by attack type stored in file")
     else:
         if os.path.exists(args.test_data_loader_pickle_path):
             return load_data_loader_from_file(logger, args.test_data_loader_pickle_path)
         else:
             logger.error("Couldn't find test data loader stored in file")
-
-            raise FileNotFoundError(
-                "Couldn't find test data loader stored in file")
+            raise FileNotFoundError("Couldn't find test data loader stored in file")
 
 
 def generate_test_loader(args, dataset):
@@ -157,20 +165,23 @@ def load_mal_data_loader(logger, args):
     :param logger: loguru.Logger
     :param args: Arguments
     """
+    if getattr(args, "full_attack_type", False):
+        if os.path.exists(args.mal_data_loader_full_attack_type_pickle_path):
+            return load_data_loader_from_file(logger, args.mal_data_loader_full_attack_type_pickle_path)
+        else:
+            logger.error("Couldn't find mal data loader full attack type stored in file")
+            raise FileNotFoundError("Couldn't find mal data loader full attack type stored in file")
     if args.by_attack_type:
         if os.path.exists(args.mal_data_loader_by_attack_type_pickle_path):
             return load_data_loader_from_file(logger, args.mal_data_loader_by_attack_type_pickle_path)
         else:
             logger.error("Couldn't find mal data loader by attack type stored in file")
-
-            raise FileNotFoundError(
-                "Couldn't find mal data loader by attack type stored in file")
+            raise FileNotFoundError("Couldn't find mal data loader by attack type stored in file")
     else:
         if os.path.exists(args.mal_data_loader_pickle_path):
             return load_data_loader_from_file(logger, args.mal_data_loader_pickle_path)
         else:
             logger.error("Couldn't find mal data loader stored in file")
-
             raise FileNotFoundError("Couldn't find mal data loader stored in file")
 
 

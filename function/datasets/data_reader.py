@@ -22,7 +22,9 @@ class DataReader(Dataset):
         if self.data_name == "bot_iot":
             X_train, y_train, X_val, y_val, X_test, y_test, X_mal, y_mal = bot_iot()
         if self.data_name == "cic_ids":
-            if(self.args.by_attack_type):
+            if getattr(self.args, "full_attack_type", False):
+                X_train, y_train, X_val, y_val, X_test, y_test, X_mal, y_mal = cic_ids_full_attack_type()
+            elif self.args.by_attack_type:
                 X_train, y_train, X_val, y_val, X_test, y_test, X_mal, y_mal = cic_ids_by_attack_type()
             else:
                 X_train, y_train, X_val, y_val, X_test, y_test, X_mal, y_mal = cic_ids()
@@ -35,7 +37,9 @@ class DataReader(Dataset):
                 nsl_kdd_one_class()
             )
         if self.data_name == "unsw":
-            if(self.args.by_attack_type):
+            if getattr(self.args, "full_attack_type", False):
+                X_train, y_train, X_val, y_val, X_test, y_test, X_mal, y_mal = unsw_full_attack_type()
+            elif self.args.by_attack_type:
                 X_train, y_train, X_val, y_val, X_test, y_test, X_mal, y_mal = unsw_by_attack_type()
             else:
                 X_train, y_train, X_val, y_val, X_test, y_test, X_mal, y_mal = unsw()

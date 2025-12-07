@@ -498,3 +498,160 @@ def plot_latent_embedding(latents, labels, out_dir, epoch, client_id=None, proto
     plt.close()
 
     return out_path
+
+
+def plot_latent_embedding_non_iid_dir(latents, labels, seen_classes, attack_label=1,
+                                      out_dir="visual", epoch=0, client_id=None,
+                                      proto_z0=None, proto_z1=None, method="tsne",
+                                      max_points=2000, random_state=42):
+    """
+    Variant of plot_latent_embedding for non-iid-dir experiments.
+    Colors points into three categories:
+      - benign (label 0)
+      - attack_label seen by this client (label == attack_label and in seen_classes)
+      - attack_label unseen by this client (label == attack_label and not in seen_classes)
+
+    Parameters:
+      - latents, labels: same as plot_latent_embedding
+      - seen_classes: iterable of class ids that this client has seen (set/list)
+      - attack_label: which attack id to split into seen/unseen (default 1)
+    """
+    os.makedirs(out_dir, exist_ok=True)
+    if latents is None or latents.shape[0] == 0:
+        return
+
+    labels_arr = np.array(labels)
+    seen_set = set(int(x) for x in (seen_classes or []))
+
+    # Build new 3-way labels: 0=benign, 1=attack_seen, 2=attack_unseen, others -> 3 (other attacks)
+    cat_labels = np.full(labels_arr.shape, 3, dtype=int)
+    cat_labels[labels_arr == 0] = 0
+    # attack_label split
+    mask_attack = labels_arr == attack_label
+    for i in np.where(mask_attack)[0]:
+        lbl = int(labels_arr[i])
+        cat_labels[i] = 1 if lbl in seen_set else 2
+
+    # limit number of points similar to plot_latent_embedding (balanced by original label groups)
+    N = latents.shape[0]
+    if N > max_points:
+        kept = []
+        unique_orig = np.unique(labels_arr)
+        k_per = max_points // max(1, len(unique_orig))
+        for lbl in unique_orig:
+            idxs = np.where(labels_arr == lbl)[0]
+            if len(idxs) > k_per:
+                chosen = np.random.choice(idxs, size=k_per, replace=False).tolist()
+            else:
+                chosen = idxs.tolist()
+            kept.extend(chosen)
+        kept = sorted(kept)
+        latents_plot = latents[kept]
+        labels_plot = labels_arr[kept]
+        cat_plot = cat_labels[kept]
+    else:
+        latents_plot = latents
+        labels_plot = labels_arr
+        cat_plot = cat_labels
+
+    # standardize
+    try:
+        scaler = StandardScaler()
+        latents_plot = scaler.fit_transform(latents_plot)
+    except Exception:
+        pass
+
+    # helper to coerce prototypes
+    def _to_numpy_vec(v):
+        if v is None:
+            return None
+        try:
+            import torch as _torch
+        except Exception:
+            _torch = None
+        try:
+            if _torch is not None and isinstance(v, _torch.Tensor):
+                return v.detach().cpu().numpy().reshape(-1)
+        except Exception:
+            pass
+        try:
+            arr = np.array(v)
+            return arr.reshape(-1)
+        except Exception:
+            return None
+
+    p0 = _to_numpy_vec(proto_z0)
+    p1 = _to_numpy_vec(proto_z1)
+    proto_stack = []
+    proto_labels = []
+    if p0 is not None:
+        proto_stack.append(np.atleast_2d(p0)); proto_labels.append(-1)
+    if p1 is not None:
+        proto_stack.append(np.atleast_2d(p1)); proto_labels.append(-2)
+
+    try:
+        if method == "umap" and _HAS_UMAP:
+            reducer = umap.UMAP(n_components=2, random_state=random_state)
+        else:
+            reducer = TSNE(n_components=2, init='pca', random_state=random_state)
+
+        if len(proto_stack) > 0:
+            combined = np.vstack([latents_plot] + proto_stack)
+            emb = reducer.fit_transform(combined)
+            emb_points = emb[: latents_plot.shape[0]]
+            emb_protos = emb[latents_plot.shape[0]:]
+        else:
+            emb_points = reducer.fit_transform(latents_plot)
+            emb_protos = None
+    except Exception:
+        try:
+            from sklearn.decomposition import PCA
+            pca = PCA(n_components=2)
+            emb_points = pca.fit_transform(latents_plot)
+            emb_protos = None
+        except Exception:
+            return
+
+    fname_base = f"epoch{epoch}"
+    if client_id is not None:
+        fname_base += f"_client{client_id}"
+
+    # write proto info
+    try:
+        proto_info = {"proto_z0_present": p0 is not None, "proto_z1_present": p1 is not None,
+                      "seen_classes": list(sorted(seen_set))}
+        import json as _json
+        info_path = os.path.join(out_dir, f"{fname_base}_non_iid_proto_info.json")
+        with open(info_path, "w") as _jf:
+            _json.dump(proto_info, _jf, indent=2)
+    except Exception:
+        pass
+
+    # Plot: three main categories + optional others
+    plt.figure(figsize=(7, 6))
+    palette = {0: 'tab:blue', 1: 'tab:orange', 2: 'tab:red', 3: 'tab:gray'}
+    labels_for_legend = {0: 'benign', 1: f'attack_{attack_label}_seen', 2: f'attack_{attack_label}_unseen', 3: 'other_attack'}
+    unique_cats = sorted(np.unique(cat_plot))
+    for c in unique_cats:
+        mask = cat_plot == c
+        plt.scatter(emb_points[mask, 0], emb_points[mask, 1], s=8, c=palette.get(c, 'black'), label=labels_for_legend.get(c, str(c)), alpha=0.8)
+
+    # overlay prototypes
+    if emb_protos is not None:
+        for pidx, plabel in enumerate(proto_labels):
+            px, py = emb_protos[pidx]
+            if plabel == -1:
+                plt.scatter(px, py, c='green', marker='X', s=120, edgecolor='k', label='proto_z0')
+            elif plabel == -2:
+                plt.scatter(px, py, c='red', marker='X', s=120, edgecolor='k', label='proto_z1')
+
+    plt.legend(markerscale=2)
+    plt.title(f"Latent embedding (non-iid-dir) ({method}) - epoch {epoch}" + (f" client {client_id}" if client_id is not None else ""))
+    plt.xlabel("dim1")
+    plt.ylabel("dim2")
+    plt.tight_layout()
+    out_path = os.path.join(out_dir, f"{fname_base}_{method}_non_iid.png")
+    plt.savefig(out_path, dpi=150)
+    plt.close()
+
+    return out_path

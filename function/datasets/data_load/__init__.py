@@ -6,6 +6,7 @@ from .nsl_kdd import nsl_kdd
 from .nsl_kdd_one_class import nsl_kdd_one_class
 from .unsw import unsw
 from .unsw_by_attack_type import unsw_by_attack_type
+from .unsw_full_attack_type import unsw_full_attack_type
 from .unsw_big import unsw_big
 from .unsw_one_class import unsw_one_class
 from .spambase import spambase
