@@ -77,36 +77,6 @@ def log_re_distributions_from_lists(list_re, raw_labels, out_dir, epoch, client_
     if client_id is not None:
         fname_base += f"_client{client_id}"
 
-    # write per-attack CSVs and create simple plots
-    for atk, rlist in grouped.items():
-        rarr = np.array(rlist)
-        summary[atk] = {"count": int(len(rarr)), "mean": float(rarr.mean()), "std": float(rarr.std())}
-
-        csv_path = os.path.join(out_dir, f"{fname_base}_attack{atk}_re.csv")
-        with open(csv_path, "w", newline="") as f:
-            writer = csv.writer(f)
-            writer.writerow(["re"])
-            for v in rarr:
-                writer.writerow([v])
-
-        # histogram
-        plt.figure(figsize=(6, 4))
-        plt.hist(rarr, bins=40, color="C0", alpha=0.8)
-        plt.title(f"RE histogram - attack {atk} | epoch {epoch} | cnt={len(rarr)}")
-        plt.xlabel("Reconstruction error")
-        plt.ylabel("Count")
-        plt.tight_layout()
-        plt.savefig(os.path.join(out_dir, f"{fname_base}_attack{atk}_hist.png"))
-        plt.close()
-
-        # boxplot (single)
-        plt.figure(figsize=(3, 4))
-        plt.boxplot(rarr, vert=False)
-        plt.title(f"RE box - attack {atk}")
-        plt.tight_layout()
-        plt.savefig(os.path.join(out_dir, f"{fname_base}_attack{atk}_box.png"))
-        plt.close()
-
     # overall box across attacks
     if len(grouped) > 1:
         atk_ids = sorted(grouped.keys())
@@ -523,14 +493,21 @@ def plot_latent_embedding_non_iid_dir(latents, labels, seen_classes, attack_labe
     labels_arr = np.array(labels)
     seen_set = set(int(x) for x in (seen_classes or []))
 
-    # Build new 3-way labels: 0=benign, 1=attack_seen, 2=attack_unseen, others -> 3 (other attacks)
-    cat_labels = np.full(labels_arr.shape, 3, dtype=int)
+    # Keep only samples that are either benign (0) or the chosen attack_label.
+    keep_mask = np.isin(labels_arr, [0, attack_label])
+    if not np.any(keep_mask):
+        return None
+
+    labels_arr = labels_arr[keep_mask]
+    latents = latents[keep_mask]
+
+    # Build 3-way category labels for plotting:
+    # 0 = benign, 1 = attack_label seen by this client, 2 = attack_label unseen by this client
+    cat_labels = np.full(labels_arr.shape, 2, dtype=int)
     cat_labels[labels_arr == 0] = 0
-    # attack_label split
-    mask_attack = labels_arr == attack_label
-    for i in np.where(mask_attack)[0]:
-        lbl = int(labels_arr[i])
-        cat_labels[i] = 1 if lbl in seen_set else 2
+    attack_idxs = np.where(labels_arr == attack_label)[0]
+    for i in attack_idxs:
+        cat_labels[i] = 1 if int(labels_arr[i]) in set(int(x) for x in (seen_classes or [])) else 2
 
     # limit number of points similar to plot_latent_embedding (balanced by original label groups)
     N = latents.shape[0]
@@ -627,10 +604,10 @@ def plot_latent_embedding_non_iid_dir(latents, labels, seen_classes, attack_labe
     except Exception:
         pass
 
-    # Plot: three main categories + optional others
+    # Plot: three categories only (benign, attack_seen, attack_unseen)
     plt.figure(figsize=(7, 6))
-    palette = {0: 'tab:blue', 1: 'tab:orange', 2: 'tab:red', 3: 'tab:gray'}
-    labels_for_legend = {0: 'benign', 1: f'attack_{attack_label}_seen', 2: f'attack_{attack_label}_unseen', 3: 'other_attack'}
+    palette = {0: 'tab:blue', 1: 'tab:orange', 2: 'tab:red'}
+    labels_for_legend = {0: 'benign', 1: f'attack_{attack_label}_seen', 2: f'attack_{attack_label}_unseen'}
     unique_cats = sorted(np.unique(cat_plot))
     for c in unique_cats:
         mask = cat_plot == c

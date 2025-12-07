@@ -376,8 +376,15 @@ class ClientPTLAE:
                             break
                         sample_list.append((int(lab_val), float(re_val)))
 
-            if self.args.by_attack_type:
-                labels = [int(l != 0) for l in labels]
+            # Ensure labels are binary (benign=0, malicious=1) when computing binary metrics.
+            # Some datasets may carry multi-class attack ids; convert them to binary here.
+            try:
+                labels_bin = [int(l != 0) for l in labels]
+            except Exception:
+                labels_bin = labels
+            # If by_attack_type is set, original code expected labels to be binary already; keep for compatibility
+            if getattr(self.args, 'by_attack_type', False):
+                labels = labels_bin
 
             # If prototype-only decision is requested and prototypes exist, use proto distances
             if decision_mode == 'proto' and self.prototype_z0 is not None and self.prototype_z1 is not None:
@@ -431,22 +438,37 @@ class ClientPTLAE:
             else:
                 predictions = [1 if r > threshold_re else 0 for r in list_re]
 
-            acc = accuracy_score(labels, predictions)
-            precision = precision_score(labels, predictions, zero_division=0)
-            recall = recall_score(labels, predictions, zero_division=0)
-            f1 = f1_score(labels, predictions, zero_division=0)
+            # Use binarized labels for binary classification metrics
             try:
-                if decision_mode == 'proto' and self.prototype_z0 is not None and self.prototype_z1 is not None:
-                    roc = roc_auc_score(labels, proto_scores) if len(set(labels)) > 1 else 0.0
-                else:
-                    roc = roc_auc_score(labels, list_re) if len(set(labels)) > 1 else 0.0
+                y_true_bin = labels_bin
+            except Exception:
+                y_true_bin = [int(l != 0) for l in labels]
+            acc = accuracy_score(y_true_bin, predictions)
+            precision = precision_score(y_true_bin, predictions, zero_division=0)
+            recall = recall_score(y_true_bin, predictions, zero_division=0)
+            f1 = f1_score(y_true_bin, predictions, zero_division=0)
+            try:
+                try:
+                    # ROC needs binary labels as well
+                    if decision_mode == 'proto' and self.prototype_z0 is not None and self.prototype_z1 is not None:
+                        roc = roc_auc_score(y_true_bin, proto_scores) if len(set(y_true_bin)) > 1 else 0.0
+                    else:
+                        roc = roc_auc_score(y_true_bin, list_re) if len(set(y_true_bin)) > 1 else 0.0
+                except Exception:
+                    roc = 0.0
             except Exception:
                 roc = 0.0
 
             if verbose:
                 try:
-                    self.args.logger.debug("Classification Report:\n" + classification_report(labels, predictions))
-                    self.args.logger.debug("Confusion Matrix:\n" + str(confusion_matrix(labels, predictions)))
+                    # show report/confusion on binarized labels
+                    try:
+                        self.args.logger.debug("Classification Report:\n" + classification_report(y_true_bin, predictions))
+                        self.args.logger.debug("Confusion Matrix:\n" + str(confusion_matrix(y_true_bin, predictions)))
+                    except Exception:
+                        # fallback to original labels if something unexpected
+                        self.args.logger.debug("Classification Report:\n" + classification_report(labels, predictions))
+                        self.args.logger.debug("Confusion Matrix:\n" + str(confusion_matrix(labels, predictions)))
                     self.args.logger.debug("ROC AUC Score: {}".format(roc))
                 except Exception:
                     pass

@@ -17,6 +17,7 @@ from function.utils.visualize_util import (
     log_z_boxplots_from_lists,
     collect_latents_and_labels_from_client,
     plot_latent_embedding,
+    plot_latent_embedding_non_iid_dir,
     plot_latent_first_component_hist_from_latents,
     plot_latent_first_component_hist_from_client,
     compute_auc_per_attack_from_flat,
@@ -222,6 +223,33 @@ class ServerPTL:
                 latents, lat_labels = collect_latents_and_labels_from_client(client, max_samples_per_class=1000)
                 if latents is not None and latents.shape[0] > 0:
                     plot_latent_embedding(latents, lat_labels, client_out_dir, epoch, client_id=client_idx, proto_z0=bp0, proto_z1=bp1, method='tsne')
+                    # For non-iid-dir experiments, also produce the specialized 3-color embedding
+                    try:
+                        if getattr(self.args, 'experiment_type', None) == 'non_iid_dir':
+                            # obtain seen_set for this client from partition metadata if available
+                            seen_sets = getattr(self.args, 'last_partition_meta', {}) or {}
+                            seen_list = seen_sets.get('seen_sets', []) if isinstance(seen_sets, dict) else []
+                            seen_for_client = []
+                            try:
+                                if isinstance(seen_list, list) and client_idx < len(seen_list):
+                                    seen_for_client = list(map(int, seen_list[client_idx]))
+                            except Exception:
+                                seen_for_client = []
+
+                            out = plot_latent_embedding_non_iid_dir(latents, lat_labels, seen_for_client,
+                                                                    attack_label=getattr(self.args, 'attack_label', 1),
+                                                                    out_dir=client_out_dir,
+                                                                    epoch=epoch,
+                                                                    client_id=client_idx,
+                                                                    proto_z0=bp0,
+                                                                    proto_z1=bp1,
+                                                                    method='tsne',
+                                                                    max_points=2000,
+                                                                    random_state=getattr(self.args, 'assign_seed', 0))
+                            if out:
+                                self.args.logger.info(f"Saved non-iid-dir latent viz for client {client_idx} -> {out}")
+                    except Exception:
+                        pass
                     # if non-iid-dir experiments, save histogram of first latent component per-client
                     try:
                         if getattr(self.args, 'experiment_type', None) == 'non_iid_dir':
