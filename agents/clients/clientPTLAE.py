@@ -179,6 +179,16 @@ class ClientPTLAE:
             # no prototype available yet
             return torch.tensor(0.0, device=z_i.device)
 
+        # ensure z0, z1 are torch tensors on the same device as z_i
+        if not isinstance(z0, torch.Tensor):
+            z0 = torch.tensor(z0, dtype=torch.float32, device=z_i.device)
+        else:
+            z0 = z0.to(z_i.device).float()
+        if not isinstance(z1, torch.Tensor):
+            z1 = torch.tensor(z1, dtype=torch.float32, device=z_i.device)
+        else:
+            z1 = z1.to(z_i.device).float()
+
         if distance == 'euclid':
             d = lambda a, b: torch.norm(a - b, dim=1)
         elif distance == 'cosine':
@@ -261,9 +271,17 @@ class ClientPTLAE:
             z1 = (s1 / max(1, c1)).astype(float)
         # store as numpy arrays for later access
         if z0 is not None:
-            self.prototype_z0 = z0
+            if not isinstance(z0, torch.Tensor):
+                z0_t = torch.tensor(z0, dtype=torch.float32, device=self.device)
+            else:
+                z0_t = z0.to(self.device).float()
+            self.prototype_z0 = z0_t
         if z1 is not None:
-            self.prototype_z1 = z1
+            if not isinstance(z1, torch.Tensor):
+                z1_t = torch.tensor(z1, dtype=torch.float32, device=self.device)
+            else:
+                z1_t = z1.to(self.device).float()
+            self.prototype_z1 = z1_t
 
         # compute and store recent per-epoch metrics used by server logging
         avg_re = total_re / it if it > 0 else 0.0
@@ -275,18 +293,31 @@ class ClientPTLAE:
         return avg_loss, local_proto_stats
 
     def validate(self, epoch):
-        # similar to ClientDualLossAE validate: compute val loss and threshold based on benign
+        # Compute validation loss as RE loss + lambda_ptl * PTL loss (with binarized labels)
+        # Threshold_re remains computed from benign RE only
         self.net.eval()
         with torch.no_grad():
             re_loss_label_0 = []
             list_loss = []
             for input, label in self.val_data_loader:
                 input, label = input.to(self.device), label.to(self.device)
-                _, decode = self.net(input)
-                re_loss = self.loss_function(decode, input).mean().item()
-                list_loss.append(re_loss)
+                # forward
+                encode, decode = self.net(input)
+                # reconstruction loss (mean scalar)
+                re_loss_tensor = self.loss_function(decode, input)
+                if hasattr(re_loss_tensor, 'mean'):
+                    re_loss_tensor = re_loss_tensor.mean()
+                # prototype triplet loss with binarized labels
+                label_bin = (label != 0).int()
+                lambda_ptl = getattr(self.args, 'ptl_lambda', 1.0)
+                ptl = self.prototype_triplet_loss(encode, label_bin, self.prototype_z0, self.prototype_z1, margin=10.0, distance='euclid')
+                # total validation loss
+                total_loss = re_loss_tensor + lambda_ptl * ptl
+                list_loss.append(float(total_loss.item()))
+                # keep benign REs for threshold estimation
+                re_val = float(re_loss_tensor.item())
                 if label.item() == 0:
-                    re_loss_label_0.append(re_loss)
+                    re_loss_label_0.append(re_val)
 
             avg_loss = float(np.mean(list_loss)) if list_loss else 0.0
             threshold_re = ((np.mean(re_loss_label_0), np.std(re_loss_label_0)) if re_loss_label_0 else (0,0))
