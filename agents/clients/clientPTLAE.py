@@ -210,12 +210,14 @@ class ClientPTLAE:
         total_z_norm = 0.0
         for input, label in self.train_data_loader:
             input, label = input.to(self.device), label.to(self.device)
+            # binarize labels for loss/prototype: 0 -> 0, others -> 1
+            label_bin = (label != 0).int()
             self.optimizer.zero_grad()
             encode, decode = self.net(input)
             re_loss = self.loss_function(decode, input)
 
             # prototype triplet loss
-            ptl = self.prototype_triplet_loss(encode, label, self.prototype_z0, self.prototype_z1, margin=1.0, distance='euclid')
+            ptl = self.prototype_triplet_loss(encode, label_bin, self.prototype_z0, self.prototype_z1, margin=1.0, distance='euclid')
 
             lambda_ptl = getattr(self.args, 'ptl_lambda', 1.0)
             loss = re_loss + lambda_ptl * ptl
@@ -232,9 +234,10 @@ class ClientPTLAE:
 
             # accumulate latents per-sample for prototype stats (CPU)
             encode_cpu = encode.detach().cpu()
-            labels_cpu = label.detach().cpu().tolist()
-            for idx, lab in enumerate(labels_cpu):
-                latent_z_dict[int(lab)].append(encode_cpu[idx])
+            labels_bin_cpu = label_bin.detach().cpu().tolist()
+            for idx, labb in enumerate(labels_bin_cpu):
+                # accumulate by binarized label for prototype stats (0 vs 1)
+                latent_z_dict[int(labb)].append(encode_cpu[idx])
 
         avg_loss = total_loss / it if it > 0 else 0.0
 

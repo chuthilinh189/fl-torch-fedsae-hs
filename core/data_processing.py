@@ -96,17 +96,9 @@ def generate_hybrid_client_dataset(args, data_loader, num_clients, seen_per_clie
 
 def client_data_process(args, data_loader, poisoned_workers, mal_data_loader, batch_size, poison=True, data_stage="train"):
     # Support new hybrid partition strategy (deterministic class-assignment + Dirichlet within classes)
-    if getattr(args, "partition_strategy", "original") == "hybrid":
-        args.logger.info("Using hybrid partition strategy: seen_per_client={}, dir_alpha={}, seed={}",
-                         args.seen_per_client, args.dir_alpha, args.assign_seed)
-        # generate_hybrid_client_dataset expects the full data_loader (will iterate it)
-        # For test stage: make each client see all classes (0 + all attacks)
-        force_seen_sets = None
-        if data_stage == "test":
-            # build full class list from incoming loader
-            Y_all_tmp = np.array([tensor.numpy() for batch in data_loader for tensor in batch[1]]).astype(int)
-            classes_tmp = sorted(np.unique(Y_all_tmp).tolist())
-            force_seen_sets = [set(int(c) for c in classes_tmp) for _ in range(args.num_workers)]
+    if getattr(args, "partition_strategy", "original") == "hybrid" and data_stage in ("train", "val"):
+        args.logger.info("Using hybrid partition ({} stage): seen_per_client={}, dir_alpha={}, seed={}",
+                         data_stage, args.seen_per_client, args.dir_alpha, args.assign_seed)
 
         distributed_dataset, seen_sets = generate_hybrid_client_dataset(
             args,
@@ -115,19 +107,17 @@ def client_data_process(args, data_loader, poisoned_workers, mal_data_loader, ba
             seen_per_client=args.seen_per_client,
             alpha=args.dir_alpha,
             assign_seed=args.assign_seed,
-            force_seen_sets=force_seen_sets,
+            force_seen_sets=None,
         )
 
         # Log per-client counts per class
         for i, (Xc, Yc) in enumerate(distributed_dataset):
-            # build counts dict
             unique, counts = np.unique(Yc, return_counts=True) if Yc.size > 0 else ([], [])
             counts_dict = {int(u): int(c) for u, c in zip(unique, counts)}
             args.logger.info("Client {}: total_samples={}, class_counts={}", i, Yc.shape[0], counts_dict)
-        # also log seen_sets mapping
         args.logger.info("Seen classes per client: {}", [sorted(list(s)) for s in seen_sets])
-        # persist partition metadata for experiment provenance
-        # build client class counts
+
+        # persist partition metadata
         client_counts = []
         for i, (Xc, Yc) in enumerate(distributed_dataset):
             unique, counts = np.unique(Yc, return_counts=True) if Yc.size > 0 else ([], [])
@@ -144,24 +134,20 @@ def client_data_process(args, data_loader, poisoned_workers, mal_data_loader, ba
             "generated_at": datetime.utcnow().isoformat() + "Z",
             "seen_sets": [[int(x) for x in sorted(list(s))] for s in seen_sets],
             "client_class_counts": client_counts,
+            "stage": data_stage,
         }
-        # store meta on args for later steps (experiment runner can read it)
         if not hasattr(args, 'partition_meta_history'):
             args.partition_meta_history = []
         args.partition_meta_history.append(meta)
-        # track by stage to use train seen_sets during test/visualize
         if data_stage == "train":
             args.train_partition_meta = meta
+            args.last_partition_meta = meta
         elif data_stage == "val":
             args.val_partition_meta = meta
-        elif data_stage == "test":
-            args.test_partition_meta = meta
-        # keep last_partition_meta pointing to train if available else current
-        if hasattr(args, 'train_partition_meta'):
-            args.last_partition_meta = args.train_partition_meta
-        else:
-            args.last_partition_meta = meta
+            # prefer train for last if exists
+            args.last_partition_meta = getattr(args, 'train_partition_meta', meta)
     else:
+        # For non-hybrid or test stage, use equal distribution
         distributed_dataset = distribute_batches_equally(data_loader, args.num_workers)
         distributed_dataset = convert_distributed_data_into_numpy(distributed_dataset)
 
