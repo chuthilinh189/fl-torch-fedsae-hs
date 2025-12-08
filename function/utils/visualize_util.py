@@ -241,7 +241,7 @@ def collect_latents_and_labels_from_client(client, max_samples_per_class=None):
     return latents, labels
 
 
-def plot_latent_embedding(latents, labels, out_dir, epoch, client_id=None, proto_z0=None, proto_z1=None, method="tsne", max_points=200, random_state=42):
+def plot_latent_embedding(latents, labels, out_dir, epoch, client_id=None, proto_z0=None, proto_z1=None, method="tsne", max_points=1000, random_state=42):
     """
     Create a 2D scatter of latent vectors using t-SNE or UMAP, color by label and overlay prototypes when provided.
 
@@ -434,18 +434,19 @@ def plot_latent_embedding(latents, labels, out_dir, epoch, client_id=None, proto
 def plot_latent_embedding_non_iid_dir(latents, labels, seen_classes, attack_label=1,
                                       out_dir="visual", epoch=0, client_id=None,
                                       proto_z0=None, proto_z1=None, method="tsne",
-                                      max_points=200, random_state=42):
+                                      max_points=1000, random_state=42):
     """
-    Variant of plot_latent_embedding for non-iid-dir experiments.
-    Colors points into three categories:
-      - benign (label 0)
-      - attack_label seen by this client (label == attack_label and in seen_classes)
-      - attack_label unseen by this client (label == attack_label and not in seen_classes)
+        Variant of plot_latent_embedding for non-iid-dir experiments.
+        Supports a single attack label (int) or multiple attack labels (list/tuple/set/ndarray).
+        Colors points into three categories:
+            - benign (label 0)
+            - attack_seen: labels in intersection of attack_labels and seen_classes
+            - attack_unseen: labels in attack_labels but NOT in seen_classes
 
-    Parameters:
-      - latents, labels: same as plot_latent_embedding
-      - seen_classes: iterable of class ids that this client has seen (set/list)
-      - attack_label: which attack id to split into seen/unseen (default 1)
+        Parameters:
+            - latents, labels: same as plot_latent_embedding
+            - seen_classes: iterable of class ids that this client has seen (set/list)
+            - attack_label: int or iterable of attack ids to split into seen/unseen
     """
     os.makedirs(out_dir, exist_ok=True)
     if latents is None or latents.shape[0] == 0:
@@ -454,8 +455,18 @@ def plot_latent_embedding_non_iid_dir(latents, labels, seen_classes, attack_labe
     labels_arr = np.array(labels)
     seen_set = set(int(x) for x in (seen_classes or []))
 
-    # Keep only samples that are either benign (0) or the chosen attack_label.
-    keep_mask = np.isin(labels_arr, [0, attack_label])
+    # normalize attack_label to a set of ints (allow int or iterable)
+    if isinstance(attack_label, (list, tuple, set, np.ndarray)):
+        attack_labels_set = set(int(x) for x in attack_label)
+    else:
+        try:
+            attack_labels_set = {int(attack_label)}
+        except Exception:
+            attack_labels_set = set()
+
+    # Keep only samples that are either benign (0) or any of the chosen attack labels.
+    keep_vals = [0] + sorted(attack_labels_set)
+    keep_mask = np.isin(labels_arr, keep_vals)
     if not np.any(keep_mask):
         return None
 
@@ -463,12 +474,12 @@ def plot_latent_embedding_non_iid_dir(latents, labels, seen_classes, attack_labe
     latents = latents[keep_mask]
 
     # Build 3-way category labels for plotting:
-    # 0 = benign, 1 = attack_label seen by this client, 2 = attack_label unseen by this client
+    # 0 = benign, 1 = attack_seen (label in attack_labels_set ∩ seen_set), 2 = attack_unseen (label in attack_labels_set \ seen_set)
     cat_labels = np.full(labels_arr.shape, 2, dtype=int)
     cat_labels[labels_arr == 0] = 0
-    attack_idxs = np.where(labels_arr == attack_label)[0]
+    attack_idxs = np.where(np.isin(labels_arr, list(attack_labels_set)))[0]
     for i in attack_idxs:
-        cat_labels[i] = 1 if int(labels_arr[i]) in set(int(x) for x in (seen_classes or [])) else 2
+        cat_labels[i] = 1 if int(labels_arr[i]) in seen_set else 2
 
     # limit number of points similar to plot_latent_embedding (balanced by original label groups)
     N = latents.shape[0]
@@ -557,7 +568,8 @@ def plot_latent_embedding_non_iid_dir(latents, labels, seen_classes, attack_labe
     # write proto info
     try:
         proto_info = {"proto_z0_present": p0 is not None, "proto_z1_present": p1 is not None,
-                      "seen_classes": list(sorted(seen_set))}
+                      "seen_classes": list(sorted(seen_set)),
+                      "attack_labels": list(sorted(attack_labels_set))}
         import json as _json
         info_path = os.path.join(out_dir, f"{fname_base}_non_iid_proto_info.json")
         with open(info_path, "w") as _jf:
@@ -568,7 +580,12 @@ def plot_latent_embedding_non_iid_dir(latents, labels, seen_classes, attack_labe
     # Plot: three categories only (benign, attack_seen, attack_unseen)
     plt.figure(figsize=(7, 6))
     palette = {0: 'tab:blue', 1: 'tab:orange', 2: 'tab:red'}
-    labels_for_legend = {0: 'benign', 1: f'attack_{attack_label}_seen', 2: f'attack_{attack_label}_unseen'}
+    # summarize attack labels for legend clarity
+    try:
+        atk_str = ','.join(str(a) for a in sorted(attack_labels_set)) if len(attack_labels_set) > 0 else 'N/A'
+    except Exception:
+        atk_str = 'N/A'
+    labels_for_legend = {0: 'benign', 1: f'attack_seen ({atk_str})', 2: f'attack_unseen ({atk_str})'}
     unique_cats = sorted(np.unique(cat_plot))
     for c in unique_cats:
         mask = cat_plot == c

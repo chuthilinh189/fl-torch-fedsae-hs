@@ -145,15 +145,6 @@ def client_data_process(args, data_loader, poisoned_workers, mal_data_loader, ba
             "seen_sets": [[int(x) for x in sorted(list(s))] for s in seen_sets],
             "client_class_counts": client_counts,
         }
-
-        logs_dir = os.path.join("logs")
-        os.makedirs(logs_dir, exist_ok=True)
-        timestamp = datetime.utcnow().strftime("%Y%m%dT%H%M%SZ")
-        fname = f"partition_{meta['dataset']}_{timestamp}.json"
-        fp = os.path.join(logs_dir, fname)
-        with open(fp, "w") as f:
-            json.dump(meta, f, indent=2)
-        args.logger.info("Wrote hybrid partition metadata to {}", fp)
         # store meta on args for later steps (experiment runner can read it)
         if not hasattr(args, 'partition_meta_history'):
             args.partition_meta_history = []

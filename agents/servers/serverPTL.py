@@ -237,15 +237,27 @@ class ServerPTL:
                             except Exception:
                                 seen_for_client = []
 
+                            # build full set of attack labels from args if available; fallback to unique labels
+                            try:
+                                num_attacks = getattr(self.args, 'num_attack_labels', None)
+                                if isinstance(num_attacks, int) and num_attacks > 0:
+                                    attack_labels = list(range(1, num_attacks + 1))
+                                else:
+                                    # fallback: infer from labels present
+                                    uniq = sorted(set(int(x) for x in lat_labels if int(x) != 0))
+                                    attack_labels = uniq
+                            except Exception:
+                                attack_labels = [getattr(self.args, 'attack_label', 1)]
+
                             out = plot_latent_embedding_non_iid_dir(latents, lat_labels, seen_for_client,
-                                                                    attack_label=getattr(self.args, 'attack_label', 1),
+                                                                    attack_label=attack_labels,
                                                                     out_dir=client_out_dir,
                                                                     epoch=epoch,
                                                                     client_id=client_idx,
                                                                     proto_z0=bp0,
                                                                     proto_z1=bp1,
                                                                     method='tsne',
-                                                                    max_points=200,
+                                                                    max_points=1000,
                                                                     random_state=getattr(self.args, 'assign_seed', 0))
                             if out:
                                 self.args.logger.info(f"Saved non-iid-dir latent viz for client {client_idx} -> {out}")
