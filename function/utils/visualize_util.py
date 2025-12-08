@@ -169,31 +169,6 @@ def log_z_boxplots_from_lists(list_z, raw_labels, out_dir, epoch, client_id=None
     for z, l in zip(z_arr.tolist(), labels_arr.tolist()):
         grouped[l].append(z)
 
-    # write per-label CSVs
-    for lbl, zlist in grouped.items():
-        csv_path = os.path.join(out_dir, f"{fname_base}_label{lbl}_z_norm.csv")
-        with open(csv_path, "w", newline="") as f:
-            writer = csv.writer(f)
-            writer.writerow(["z_norm"])
-            for v in zlist:
-                writer.writerow([v])
-
-    # For each attack (label != 0) create a combined boxplot (benign vs attack)
-    ben_list = grouped.get(0, [])
-    for atk, atk_list in grouped.items():
-        if atk == 0:
-            continue
-
-        data = [ben_list, atk_list]
-        plt.figure(figsize=(6, 4))
-        plt.boxplot(data)
-        plt.xticks([1, 2], ["benign", f"attack_{atk}"])
-        plt.title(f"Latent L2-norm: benign vs attack {atk} | epoch {epoch}")
-        plt.ylabel("L2 norm of latent z")
-        plt.tight_layout()
-        plt.savefig(os.path.join(out_dir, f"{fname_base}_attack{atk}_z_box_compare.png"))
-        plt.close()
-
     # overall per-attack box (for visualization across attacks show distribution of z-norm per attack)
     atk_ids = sorted([k for k in grouped.keys()])
     if len(atk_ids) > 1:
@@ -657,18 +632,6 @@ def plot_latent_first_component_hist_from_latents(latents, out_dir, epoch, clien
     fname_base = f"epoch{epoch}"
     if client_id is not None:
         fname_base += f"_client{client_id}"
-
-    # save CSV of values
-    csv_path = os.path.join(out_dir, f"{fname_base}_latent_dim0_values.csv")
-    try:
-        with open(csv_path, 'w', newline='') as f:
-            writer = csv.writer(f)
-            writer.writerow(["latent_dim0"])
-            for v in first_comp.tolist():
-                writer.writerow([float(v)])
-    except Exception:
-        # ignore CSV failures
-        pass
 
     # histogram
     try:
