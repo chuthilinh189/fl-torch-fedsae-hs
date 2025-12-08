@@ -279,11 +279,8 @@ def plot_latent_embedding(latents, labels, out_dir, epoch, client_id=None, proto
         labels_plot = labels_arr
 
     # standardize
-    try:
-        scaler = StandardScaler()
-        latents_plot = scaler.fit_transform(latents_plot)
-    except Exception:
-        pass
+    scaler = StandardScaler()
+    latents_plot = scaler.fit_transform(latents_plot)
 
     # include prototypes in the embedding transform if present so they are mapped consistently
     proto_stack = []
@@ -320,88 +317,56 @@ def plot_latent_embedding(latents, labels, out_dir, epoch, client_id=None, proto
         proto_stack.append(np.atleast_2d(p1))
         proto_labels.append(-2)
 
-    try:
-        if method == "umap" and _HAS_UMAP:
-            reducer = umap.UMAP(n_components=2, random_state=random_state)
-        else:
-            reducer = TSNE(n_components=2, init='pca', random_state=random_state)
+    if method == "umap" and _HAS_UMAP:
+        reducer = umap.UMAP(n_components=2, random_state=random_state)
+    else:
+        reducer = TSNE(n_components=2, init='pca', random_state=random_state)
 
-        if len(proto_stack) > 0:
-            combined = np.vstack([latents_plot] + proto_stack)
-            emb = reducer.fit_transform(combined)
-            emb_points = emb[: latents_plot.shape[0]]
-            emb_protos = emb[latents_plot.shape[0]:]
-        else:
-            emb_points = reducer.fit_transform(latents_plot)
-            emb_protos = None
-    except Exception as e:
-        # fallback to PCA if t-SNE/umap fails
-        try:
-            from sklearn.decomposition import PCA
-
-            pca = PCA(n_components=2)
-            emb_points = pca.fit_transform(latents_plot)
-            emb_protos = None
-        except Exception:
-            return
+    if len(proto_stack) > 0:
+        combined = np.vstack([latents_plot] + proto_stack)
+        emb = reducer.fit_transform(combined)
+        emb_points = emb[: latents_plot.shape[0]]
+        emb_protos = emb[latents_plot.shape[0]:]
+    else:
+        emb_points = reducer.fit_transform(latents_plot)
+        emb_protos = None
 
     fname_base = f"epoch{epoch}"
     if client_id is not None:
         fname_base += f"_client{client_id}"
 
     # write a small proto debug file so it's easy to see which prototypes were used (and their shapes)
-    try:
-        proto_info = {
-            "proto_z0_present": p0 is not None,
-            "proto_z1_present": p1 is not None,
-            "proto_z0_shape": tuple(p0.shape) if p0 is not None else None,
-            "proto_z1_shape": tuple(p1.shape) if p1 is not None else None,
-            "emb_protos_count": int(emb_protos.shape[0]) if emb_protos is not None else 0,
-        }
+    proto_info = {
+        "proto_z0_present": p0 is not None,
+        "proto_z1_present": p1 is not None,
+        "proto_z0_shape": tuple(p0.shape) if p0 is not None else None,
+        "proto_z1_shape": tuple(p1.shape) if p1 is not None else None,
+        "emb_protos_count": int(emb_protos.shape[0]) if emb_protos is not None else 0,
+    }
+    if p0 is not None:
+        proto_info["proto_z0_values"] = p0.reshape(-1).astype(float).tolist()
+    else:
+        proto_info["proto_z0_values"] = None
+    if p1 is not None:
+        proto_info["proto_z1_values"] = p1.reshape(-1).astype(float).tolist()
+    else:
+        proto_info["proto_z1_values"] = None
+    if p0 is not None and p1 is not None:
+        d = float(np.linalg.norm(p0 - p1))
+        proto_info["proto_z0z1_distance"] = d
+        proto_info["proto_z0z1_same_eps_1e-6"] = (d < 1e-6)
+    else:
+        proto_info["proto_z0z1_distance"] = None
+        proto_info["proto_z0z1_same_eps_1e-6"] = None
+    if emb_protos is not None:
+        proto_info["emb_protos_coords"] = emb_protos.tolist()
+    else:
+        proto_info["emb_protos_coords"] = None
 
-        # include raw prototype values (as lists) and distance between them if both present
-        try:
-            if p0 is not None:
-                proto_info["proto_z0_values"] = p0.reshape(-1).astype(float).tolist()
-            else:
-                proto_info["proto_z0_values"] = None
-            if p1 is not None:
-                proto_info["proto_z1_values"] = p1.reshape(-1).astype(float).tolist()
-            else:
-                proto_info["proto_z1_values"] = None
-
-            if p0 is not None and p1 is not None:
-                try:
-                    d = float(np.linalg.norm(p0 - p1))
-                except Exception:
-                    d = None
-                proto_info["proto_z0z1_distance"] = d
-                proto_info["proto_z0z1_same_eps_1e-6"] = (d is not None and d < 1e-6)
-            else:
-                proto_info["proto_z0z1_distance"] = None
-                proto_info["proto_z0z1_same_eps_1e-6"] = None
-        except Exception:
-            # fallback if conversion fails
-            proto_info["proto_z0_values"] = None
-            proto_info["proto_z1_values"] = None
-            proto_info["proto_z0z1_distance"] = None
-            proto_info["proto_z0z1_same_eps_1e-6"] = None
-
-        # include embedded prototype coordinates if available
-        try:
-            if emb_protos is not None:
-                proto_info["emb_protos_coords"] = emb_protos.tolist()
-            else:
-                proto_info["emb_protos_coords"] = None
-        except Exception:
-            proto_info["emb_protos_coords"] = None
-
-        import json as _json
-        info_path = os.path.join(out_dir, f"{fname_base}_proto_info.json")
-        with open(info_path, "w") as _jf:
-            _json.dump(proto_info, _jf, indent=2)
-    except Exception:
-        pass
+    import json as _json
+    info_path = os.path.join(out_dir, f"{fname_base}_proto_info.json")
+    with open(info_path, "w") as _jf:
+        _json.dump(proto_info, _jf, indent=2)
 
     plt.figure(figsize=(7, 6))
     unique_lbls = sorted(np.unique(labels_plot))
@@ -455,29 +420,18 @@ def plot_latent_embedding_non_iid_dir(latents, labels, seen_classes, attack_labe
     labels_arr = np.array(labels)
     seen_set = set(int(x) for x in (seen_classes or []))
 
-    # normalize attack_label to a set of ints (allow int or iterable)
+    # normalize attack_label to a set of ints (allow int or iterable). Expect full attack set (1..K)
     if isinstance(attack_label, (list, tuple, set, np.ndarray)):
         attack_labels_set = set(int(x) for x in attack_label)
     else:
-        try:
-            attack_labels_set = {int(attack_label)}
-        except Exception:
-            attack_labels_set = set()
+        attack_labels_set = {int(attack_label)}
 
-    # Keep only samples that are either benign (0) or any of the chosen attack labels.
-    keep_vals = [0] + sorted(attack_labels_set)
-    keep_mask = np.isin(labels_arr, keep_vals)
-    if not np.any(keep_mask):
-        return None
-
-    labels_arr = labels_arr[keep_mask]
-    latents = latents[keep_mask]
-
-    # Build 3-way category labels for plotting:
+    # Build 3-way category labels for plotting WITHOUT filtering any attack samples:
     # 0 = benign, 1 = attack_seen (label in attack_labels_set ∩ seen_set), 2 = attack_unseen (label in attack_labels_set \ seen_set)
     cat_labels = np.full(labels_arr.shape, 2, dtype=int)
     cat_labels[labels_arr == 0] = 0
-    attack_idxs = np.where(np.isin(labels_arr, list(attack_labels_set)))[0]
+    attack_mask = np.isin(labels_arr, list(attack_labels_set))
+    attack_idxs = np.where(attack_mask)[0]
     for i in attack_idxs:
         cat_labels[i] = 1 if int(labels_arr[i]) in seen_set else 2
 
@@ -504,11 +458,8 @@ def plot_latent_embedding_non_iid_dir(latents, labels, seen_classes, attack_labe
         cat_plot = cat_labels
 
     # standardize
-    try:
-        scaler = StandardScaler()
-        latents_plot = scaler.fit_transform(latents_plot)
-    except Exception:
-        pass
+    scaler = StandardScaler()
+    latents_plot = scaler.fit_transform(latents_plot)
 
     # helper to coerce prototypes
     def _to_numpy_vec(v):
@@ -538,58 +489,50 @@ def plot_latent_embedding_non_iid_dir(latents, labels, seen_classes, attack_labe
     if p1 is not None:
         proto_stack.append(np.atleast_2d(p1)); proto_labels.append(-2)
 
-    try:
-        if method == "umap" and _HAS_UMAP:
-            reducer = umap.UMAP(n_components=2, random_state=random_state)
-        else:
-            reducer = TSNE(n_components=2, init='pca', random_state=random_state)
+    if method == "umap" and _HAS_UMAP:
+        reducer = umap.UMAP(n_components=2, random_state=random_state)
+    else:
+        reducer = TSNE(n_components=2, init='pca', random_state=random_state)
 
-        if len(proto_stack) > 0:
-            combined = np.vstack([latents_plot] + proto_stack)
-            emb = reducer.fit_transform(combined)
-            emb_points = emb[: latents_plot.shape[0]]
-            emb_protos = emb[latents_plot.shape[0]:]
-        else:
-            emb_points = reducer.fit_transform(latents_plot)
-            emb_protos = None
-    except Exception:
-        try:
-            from sklearn.decomposition import PCA
-            pca = PCA(n_components=2)
-            emb_points = pca.fit_transform(latents_plot)
-            emb_protos = None
-        except Exception:
-            return
+    if len(proto_stack) > 0:
+        combined = np.vstack([latents_plot] + proto_stack)
+        emb = reducer.fit_transform(combined)
+        emb_points = emb[: latents_plot.shape[0]]
+        emb_protos = emb[latents_plot.shape[0]:]
+    else:
+        emb_points = reducer.fit_transform(latents_plot)
+        emb_protos = None
 
     fname_base = f"epoch{epoch}"
     if client_id is not None:
         fname_base += f"_client{client_id}"
 
-    # write proto info
-    try:
-        proto_info = {"proto_z0_present": p0 is not None, "proto_z1_present": p1 is not None,
-                      "seen_classes": list(sorted(seen_set)),
-                      "attack_labels": list(sorted(attack_labels_set))}
-        import json as _json
-        info_path = os.path.join(out_dir, f"{fname_base}_non_iid_proto_info.json")
-        with open(info_path, "w") as _jf:
-            _json.dump(proto_info, _jf, indent=2)
-    except Exception:
-        pass
+    # write proto info, include seen and unseen classes wrt attack set
+    unseen_classes = sorted([a for a in attack_labels_set if a not in seen_set])
+    proto_info = {"proto_z0_present": p0 is not None, "proto_z1_present": p1 is not None,
+                  "seen_classes": list(sorted(seen_set)),
+                  "attack_labels": list(sorted(attack_labels_set)),
+                  "unseen_classes": unseen_classes}
+    import json as _json
+    info_path = os.path.join(out_dir, f"{fname_base}_non_iid_proto_info.json")
+    with open(info_path, "w") as _jf:
+        _json.dump(proto_info, _jf, indent=2)
 
     # Plot: three categories only (benign, attack_seen, attack_unseen)
     plt.figure(figsize=(7, 6))
-    palette = {0: 'tab:blue', 1: 'tab:orange', 2: 'tab:red'}
-    # summarize attack labels for legend clarity
-    try:
-        atk_str = ','.join(str(a) for a in sorted(attack_labels_set)) if len(attack_labels_set) > 0 else 'N/A'
-    except Exception:
-        atk_str = 'N/A'
-    labels_for_legend = {0: 'benign', 1: f'attack_seen ({atk_str})', 2: f'attack_unseen ({atk_str})'}
-    unique_cats = sorted(np.unique(cat_plot))
-    for c in unique_cats:
-        mask = cat_plot == c
-        plt.scatter(emb_points[mask, 0], emb_points[mask, 1], s=8, c=palette.get(c, 'black'), label=labels_for_legend.get(c, str(c)), alpha=0.8)
+    palette = {0: 'tab:green', 1: 'tab:orange', 2: 'tab:blue'}
+    # summarize attack labels for legend clarity: split into seen vs unseen sets (intersect with data labels)
+    present_attacks = set(int(x) for x in np.unique(labels_arr) if int(x) != 0)
+    seen_attacks = sorted(list((attack_labels_set & seen_set) & present_attacks))
+    unseen_attacks = sorted(list((attack_labels_set - seen_set) & present_attacks))
+    seen_str = ','.join(str(a) for a in seen_attacks) if len(seen_attacks) > 0 else 'Ø'
+    unseen_str = ','.join(str(a) for a in unseen_attacks) if len(unseen_attacks) > 0 else 'Ø'
+    labels_for_legend = {0: 'benign', 1: f'attack_seen ({seen_str})', 2: f'attack_unseen ({unseen_str})'}
+    # Plot attack groups first (1: seen, 2: unseen), then benign (0)
+    for c in [1, 2, 0]:
+        if c in set(np.unique(cat_plot)):
+            mask = cat_plot == c
+            plt.scatter(emb_points[mask, 0], emb_points[mask, 1], s=8, c=palette.get(c, 'black'), label=labels_for_legend.get(c, str(c)), alpha=0.8)
 
     # overlay prototypes
     if emb_protos is not None:

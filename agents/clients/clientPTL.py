@@ -173,7 +173,7 @@ class ClientPTL:
     def update_nn_parameters(self, new_params):
         self.net.load_state_dict(copy.deepcopy(new_params), strict=True)
 
-    def prototype_triplet_loss(self, z_i, y_i, z0, z1, margin=1.0, distance='euclid'):
+    def prototype_triplet_loss(self, z_i, y_i, z0, z1, margin=10.0, distance='euclid'):
         """z_i: (B, dim), y_i: (B,), z0,z1: (dim,)"""
         if z0 is None or z1 is None:
             # no prototype available yet
@@ -220,7 +220,7 @@ class ClientPTL:
 
             # prototype triplet loss
             # use prototypes set by server (may be None on first rounds)
-            ptl = self.prototype_triplet_loss(encode, label, self.prototype_z0, self.prototype_z1, margin=1.0, distance='euclid')
+            ptl = self.prototype_triplet_loss(encode, label, self.prototype_z0, self.prototype_z1, margin=10.0, distance='euclid')
 
             lambda_ptl = getattr(self.args, 'ptl_lambda', 1.0)
             loss = re_loss + lambda_ptl * ptl
