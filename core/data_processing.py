@@ -12,7 +12,7 @@ import os
 from datetime import datetime
 
 
-def generate_hybrid_client_dataset(args, data_loader, num_clients, seen_per_client=5, alpha=0.5, assign_seed=0):
+def generate_hybrid_client_dataset(args, data_loader, num_clients, seen_per_client=5, alpha=0.5, assign_seed=0, force_seen_sets=None):
     """
     Hybrid partition:
       - deterministically choose seen classes per client (always include class 0)
@@ -31,18 +31,20 @@ def generate_hybrid_client_dataset(args, data_loader, num_clients, seen_per_clie
     attack_classes = [c for c in classes if c != 0]
 
     # decide seen-sets per client
-    seen_sets = []
-    for i in range(num_clients):
-        k = max(0, seen_per_client - 1)
-        # choose without replacement from attack classes where possible
-        k_eff = min(k, len(attack_classes))
-        if k_eff > 0:
-            chosen = list(rng.choice(attack_classes, size=k_eff, replace=False))
-        else:
-            chosen = []
-        # ensure python ints
-        chosen = [0] + [int(c) for c in chosen]
-        seen_sets.append(set(chosen))
+    if force_seen_sets is not None:
+        seen_sets = [set(s) for s in force_seen_sets]
+    else:
+        seen_sets = []
+        for i in range(num_clients):
+            k = max(0, seen_per_client - 1)
+            # if k covers all attack classes, just take all
+            if k >= len(attack_classes):
+                chosen_attacks = attack_classes
+            else:
+                k_eff = min(k, len(attack_classes))
+                chosen_attacks = list(rng.choice(attack_classes, size=k_eff, replace=False)) if k_eff > 0 else []
+            chosen = [0] + [int(c) for c in chosen_attacks]
+            seen_sets.append(set(chosen))
 
     # ensure coverage: every attack class seen by at least one client
     for c in attack_classes:
@@ -92,12 +94,20 @@ def generate_hybrid_client_dataset(args, data_loader, num_clients, seen_per_clie
 
     return distributed_dataset, seen_sets
 
-def client_data_process(args, data_loader, poisoned_workers, mal_data_loader, batch_size, poison=True):
+def client_data_process(args, data_loader, poisoned_workers, mal_data_loader, batch_size, poison=True, data_stage="train"):
     # Support new hybrid partition strategy (deterministic class-assignment + Dirichlet within classes)
     if getattr(args, "partition_strategy", "original") == "hybrid":
         args.logger.info("Using hybrid partition strategy: seen_per_client={}, dir_alpha={}, seed={}",
                          args.seen_per_client, args.dir_alpha, args.assign_seed)
         # generate_hybrid_client_dataset expects the full data_loader (will iterate it)
+        # For test stage: make each client see all classes (0 + all attacks)
+        force_seen_sets = None
+        if data_stage == "test":
+            # build full class list from incoming loader
+            Y_all_tmp = np.array([tensor.numpy() for batch in data_loader for tensor in batch[1]]).astype(int)
+            classes_tmp = sorted(np.unique(Y_all_tmp).tolist())
+            force_seen_sets = [set(int(c) for c in classes_tmp) for _ in range(args.num_workers)]
+
         distributed_dataset, seen_sets = generate_hybrid_client_dataset(
             args,
             data_loader,
@@ -105,6 +115,7 @@ def client_data_process(args, data_loader, poisoned_workers, mal_data_loader, ba
             seen_per_client=args.seen_per_client,
             alpha=args.dir_alpha,
             assign_seed=args.assign_seed,
+            force_seen_sets=force_seen_sets,
         )
 
         # Log per-client counts per class
@@ -114,49 +125,40 @@ def client_data_process(args, data_loader, poisoned_workers, mal_data_loader, ba
             counts_dict = {int(u): int(c) for u, c in zip(unique, counts)}
             args.logger.info("Client {}: total_samples={}, class_counts={}", i, Yc.shape[0], counts_dict)
         # also log seen_sets mapping
-        try:
-            args.logger.info("Seen classes per client: {}", [sorted(list(s)) for s in seen_sets])
-        except Exception:
-            pass
+        args.logger.info("Seen classes per client: {}", [sorted(list(s)) for s in seen_sets])
         # persist partition metadata for experiment provenance
-        try:
-            # build client class counts
-            client_counts = []
-            for i, (Xc, Yc) in enumerate(distributed_dataset):
-                unique, counts = np.unique(Yc, return_counts=True) if Yc.size > 0 else ([], [])
-                counts_dict = {int(u): int(c) for u, c in zip(unique, counts)}
-                client_counts.append(counts_dict)
+        # build client class counts
+        client_counts = []
+        for i, (Xc, Yc) in enumerate(distributed_dataset):
+            unique, counts = np.unique(Yc, return_counts=True) if Yc.size > 0 else ([], [])
+            counts_dict = {int(u): int(c) for u, c in zip(unique, counts)}
+            client_counts.append(counts_dict)
 
-            meta = {
-                "dataset": getattr(args, "dataset", "unknown"),
-                "partition_strategy": getattr(args, "partition_strategy", "original"),
-                "seen_per_client": getattr(args, "seen_per_client", None),
-                "dir_alpha": getattr(args, "dir_alpha", None),
-                "assign_seed": getattr(args, "assign_seed", None),
-                "num_clients": args.num_workers,
-                "generated_at": datetime.utcnow().isoformat() + "Z",
-                "seen_sets": [[int(x) for x in sorted(list(s))] for s in seen_sets],
-                "client_class_counts": client_counts,
-            }
+        meta = {
+            "dataset": getattr(args, "dataset", "unknown"),
+            "partition_strategy": getattr(args, "partition_strategy", "original"),
+            "seen_per_client": getattr(args, "seen_per_client", None),
+            "dir_alpha": getattr(args, "dir_alpha", None),
+            "assign_seed": getattr(args, "assign_seed", None),
+            "num_clients": args.num_workers,
+            "generated_at": datetime.utcnow().isoformat() + "Z",
+            "seen_sets": [[int(x) for x in sorted(list(s))] for s in seen_sets],
+            "client_class_counts": client_counts,
+        }
 
-            logs_dir = os.path.join("logs")
-            os.makedirs(logs_dir, exist_ok=True)
-            timestamp = datetime.utcnow().strftime("%Y%m%dT%H%M%SZ")
-            fname = f"partition_{meta['dataset']}_{timestamp}.json"
-            fp = os.path.join(logs_dir, fname)
-            with open(fp, "w") as f:
-                json.dump(meta, f, indent=2)
-            args.logger.info("Wrote hybrid partition metadata to {}", fp)
-            # store meta on args for later steps (experiment runner can read it)
-            try:
-                if not hasattr(args, 'partition_meta_history'):
-                    args.partition_meta_history = []
-                args.partition_meta_history.append(meta)
-                args.last_partition_meta = meta
-            except Exception:
-                pass
-        except Exception as e:
-            args.logger.warning("Failed to persist partition metadata: {}", str(e))
+        logs_dir = os.path.join("logs")
+        os.makedirs(logs_dir, exist_ok=True)
+        timestamp = datetime.utcnow().strftime("%Y%m%dT%H%M%SZ")
+        fname = f"partition_{meta['dataset']}_{timestamp}.json"
+        fp = os.path.join(logs_dir, fname)
+        with open(fp, "w") as f:
+            json.dump(meta, f, indent=2)
+        args.logger.info("Wrote hybrid partition metadata to {}", fp)
+        # store meta on args for later steps (experiment runner can read it)
+        if not hasattr(args, 'partition_meta_history'):
+            args.partition_meta_history = []
+        args.partition_meta_history.append(meta)
+        args.last_partition_meta = meta
     else:
         distributed_dataset = distribute_batches_equally(data_loader, args.num_workers)
         distributed_dataset = convert_distributed_data_into_numpy(distributed_dataset)

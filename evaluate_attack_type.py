@@ -89,6 +89,10 @@ def main():
     test_data_loaders = client_data_process(
         args, test_data_loader, None, None, args.test_batch_size, poison=False
     )
+    # ensure stage awareness for full coverage in test
+    test_data_loaders = client_data_process(
+        args, test_data_loader, None, None, args.test_batch_size, poison=False, data_stage="test"
+    )
     clients = create_clients(args, [None]*args.num_workers, [None]*args.num_workers, test_data_loaders)
 
     logger.info("🔍 Evaluate ACC per attack type for model: {}, epoch: {}", args.model_type, args_ns.epochs)

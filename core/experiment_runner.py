@@ -86,7 +86,8 @@ def run_exp(config):
             poisoned_workers_multi,
             mal_data_loader,
             args.train_batch_size,
-            poison=True
+            poison=True,
+            data_stage="train",
         )
         # capture partition metadata generated during this call (seen_sets etc.)
         train_seen_sets_multi = None
@@ -107,7 +108,8 @@ def run_exp(config):
             poisoned_workers_single,
             mal_data_loader,
             args.train_batch_size,
-            poison=True
+            poison=True,
+            data_stage="train",
         )
 
     # Gán lại cho đúng thứ tự client ban đầu bằng cách sử dụng dict
@@ -131,7 +133,8 @@ def run_exp(config):
             poisoned_workers_multi,
             mal_data_loader,
             args.val_batch_size,
-            poison=True
+            poison=True,
+            data_stage="val",
         )
 
     if len(multi_class_client_ids) < original_num_workers:   
@@ -143,7 +146,8 @@ def run_exp(config):
             poisoned_workers_single,
             mal_data_loader,
             args.val_batch_size,
-            poison=True
+            poison=True,
+            data_stage="val",
         )
 
     val_loaders_dict = {}
@@ -163,6 +167,7 @@ def run_exp(config):
         mal_data_loader,
         args.test_batch_size,
         poison=False,
+        data_stage="test",
     )
     # -------------------------------
     # Tạo các client từ DataLoader train, val và test

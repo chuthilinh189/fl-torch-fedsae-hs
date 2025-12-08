@@ -165,6 +165,7 @@ def main():
         None,
         args.test_batch_size,
         poison=False,
+        data_stage="test",
     )
     train_loaders = [None] * args.num_workers
     val_loaders = [None] * args.num_workers
