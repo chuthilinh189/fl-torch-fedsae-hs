@@ -77,20 +77,6 @@ def log_re_distributions_from_lists(list_re, raw_labels, out_dir, epoch, client_
     if client_id is not None:
         fname_base += f"_client{client_id}"
 
-    # overall box across attacks
-    if len(grouped) > 1:
-        atk_ids = sorted(grouped.keys())
-        data = [grouped[a] for a in atk_ids]
-        plt.figure(figsize=(max(6, len(atk_ids) * 0.6), 4))
-        plt.boxplot(data)
-        plt.xticks(range(1, len(atk_ids) + 1), [str(a) for a in atk_ids])
-        plt.title(f"RE per attack type - epoch {epoch}")
-        plt.xlabel("attack id")
-        plt.ylabel("Reconstruction error")
-        plt.tight_layout()
-        plt.savefig(os.path.join(out_dir, f"{fname_base}_per_attack_box.png"))
-        plt.close()
-
     return summary, grouped
 
 
@@ -255,7 +241,7 @@ def collect_latents_and_labels_from_client(client, max_samples_per_class=None):
     return latents, labels
 
 
-def plot_latent_embedding(latents, labels, out_dir, epoch, client_id=None, proto_z0=None, proto_z1=None, method="tsne", max_points=2000, random_state=42):
+def plot_latent_embedding(latents, labels, out_dir, epoch, client_id=None, proto_z0=None, proto_z1=None, method="tsne", max_points=200, random_state=42):
     """
     Create a 2D scatter of latent vectors using t-SNE or UMAP, color by label and overlay prototypes when provided.
 
@@ -448,7 +434,7 @@ def plot_latent_embedding(latents, labels, out_dir, epoch, client_id=None, proto
 def plot_latent_embedding_non_iid_dir(latents, labels, seen_classes, attack_label=1,
                                       out_dir="visual", epoch=0, client_id=None,
                                       proto_z0=None, proto_z1=None, method="tsne",
-                                      max_points=2000, random_state=42):
+                                      max_points=200, random_state=42):
     """
     Variant of plot_latent_embedding for non-iid-dir experiments.
     Colors points into three categories:

@@ -222,10 +222,7 @@ class ClientPTLAE:
             loss.backward()
             self.optimizer.step()
 
-            try:
-                re_val = float(re_loss.item())
-            except Exception:
-                re_val = float(re_loss)
+            re_val = float(re_loss.item())
             total_re += re_val
             total_loss += loss.item()
             # accumulate latent norm
@@ -378,10 +375,7 @@ class ClientPTLAE:
 
             # Ensure labels are binary (benign=0, malicious=1) when computing binary metrics.
             # Some datasets may carry multi-class attack ids; convert them to binary here.
-            try:
-                labels_bin = [int(l != 0) for l in labels]
-            except Exception:
-                labels_bin = labels
+            labels_bin = [int(l != 0) for l in labels]
             # If by_attack_type is set, original code expected labels to be binary already; keep for compatibility
             if getattr(self.args, 'by_attack_type', False):
                 labels = labels_bin
@@ -394,25 +388,16 @@ class ClientPTLAE:
                 else:
                     enc_cat = torch.cat(encodes_for_proto, dim=0)
                     # Log prototype info (shape, norm, head elements) for debugging before computing distances
-                    try:
-                        def _vec_info(v):
-                            try:
-                                if isinstance(v, torch.Tensor):
-                                    arr = v.detach().cpu().numpy()
-                                else:
-                                    arr = np.array(v)
-                                return {"shape": tuple(arr.shape), "norm": float(np.linalg.norm(arr)), "head": arr.reshape(-1)[:6].tolist()}
-                            except Exception:
-                                return None
+                    def _vec_info(v):
+                        if isinstance(v, torch.Tensor):
+                            arr = v.detach().cpu().numpy()
+                        else:
+                            arr = np.array(v)
+                        return {"shape": tuple(arr.shape), "norm": float(np.linalg.norm(arr)), "head": arr.reshape(-1)[:6].tolist()}
 
-                        z0_info = _vec_info(self.prototype_z0)
-                        z1_info = _vec_info(self.prototype_z1)
-                        try:
-                            self.args.logger.info(f"[Client {self.client_idx}] Using prototypes for proto decision: proto_z0={z0_info}, proto_z1={z1_info}")
-                        except Exception:
-                            print(f"[Client {self.client_idx}] Using prototypes for proto decision: proto_z0={z0_info}, proto_z1={z1_info}")
-                    except Exception:
-                        pass
+                    z0_info = _vec_info(self.prototype_z0)
+                    z1_info = _vec_info(self.prototype_z1)
+                    self.args.logger.info(f"[Client {self.client_idx}] Using prototypes for proto decision: proto_z0={z0_info}, proto_z1={z1_info}")
 
                     # move prototypes to CPU tensors
                     z0 = self.prototype_z0.cpu() if isinstance(self.prototype_z0, torch.Tensor) else torch.tensor(self.prototype_z0)
@@ -439,39 +424,22 @@ class ClientPTLAE:
                 predictions = [1 if r > threshold_re else 0 for r in list_re]
 
             # Use binarized labels for binary classification metrics
-            try:
-                y_true_bin = labels_bin
-            except Exception:
-                y_true_bin = [int(l != 0) for l in labels]
+            y_true_bin = labels_bin
             acc = accuracy_score(y_true_bin, predictions)
             precision = precision_score(y_true_bin, predictions, zero_division=0)
             recall = recall_score(y_true_bin, predictions, zero_division=0)
             f1 = f1_score(y_true_bin, predictions, zero_division=0)
-            try:
-                try:
-                    # ROC needs binary labels as well
-                    if decision_mode == 'proto' and self.prototype_z0 is not None and self.prototype_z1 is not None:
-                        roc = roc_auc_score(y_true_bin, proto_scores) if len(set(y_true_bin)) > 1 else 0.0
-                    else:
-                        roc = roc_auc_score(y_true_bin, list_re) if len(set(y_true_bin)) > 1 else 0.0
-                except Exception:
-                    roc = 0.0
-            except Exception:
-                roc = 0.0
+            # ROC needs binary labels as well
+            if decision_mode == 'proto' and self.prototype_z0 is not None and self.prototype_z1 is not None:
+                roc = roc_auc_score(y_true_bin, proto_scores) if len(set(y_true_bin)) > 1 else 0.0
+            else:
+                roc = roc_auc_score(y_true_bin, list_re) if len(set(y_true_bin)) > 1 else 0.0
 
             if verbose:
-                try:
-                    # show report/confusion on binarized labels
-                    try:
-                        self.args.logger.debug("Classification Report:\n" + classification_report(y_true_bin, predictions))
-                        self.args.logger.debug("Confusion Matrix:\n" + str(confusion_matrix(y_true_bin, predictions)))
-                    except Exception:
-                        # fallback to original labels if something unexpected
-                        self.args.logger.debug("Classification Report:\n" + classification_report(labels, predictions))
-                        self.args.logger.debug("Confusion Matrix:\n" + str(confusion_matrix(labels, predictions)))
-                    self.args.logger.debug("ROC AUC Score: {}".format(roc))
-                except Exception:
-                    pass
+                # show report/confusion on binarized labels
+                self.args.logger.debug("Classification Report:\n" + classification_report(y_true_bin, predictions))
+                self.args.logger.debug("Confusion Matrix:\n" + str(confusion_matrix(y_true_bin, predictions)))
+                self.args.logger.debug("ROC AUC Score: {}".format(roc))
 
             if show_samples and len(sample_list) > 0:
                 sample_with_pred = []
@@ -479,10 +447,7 @@ class ClientPTLAE:
                     lab_bin = int(lab_val != 0) if self.args.by_attack_type else int(lab_val)
                     pred = 1 if re_val > threshold_re else 0
                     sample_with_pred.append((lab_bin, float(re_val), int(pred)))
-                try:
-                    self.args.logger.info(f"Sample label, RE, pred (first {len(sample_with_pred)}): {sample_with_pred}")
-                except Exception:
-                    print(f"Sample label, RE, pred (first {len(sample_with_pred)}): {sample_with_pred}")
+                self.args.logger.info(f"Sample label, RE, pred (first {len(sample_with_pred)}): {sample_with_pred}")
 
             return acc, precision, recall, f1, roc
 

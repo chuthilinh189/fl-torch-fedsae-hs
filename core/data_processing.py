@@ -158,7 +158,18 @@ def client_data_process(args, data_loader, poisoned_workers, mal_data_loader, ba
         if not hasattr(args, 'partition_meta_history'):
             args.partition_meta_history = []
         args.partition_meta_history.append(meta)
-        args.last_partition_meta = meta
+        # track by stage to use train seen_sets during test/visualize
+        if data_stage == "train":
+            args.train_partition_meta = meta
+        elif data_stage == "val":
+            args.val_partition_meta = meta
+        elif data_stage == "test":
+            args.test_partition_meta = meta
+        # keep last_partition_meta pointing to train if available else current
+        if hasattr(args, 'train_partition_meta'):
+            args.last_partition_meta = args.train_partition_meta
+        else:
+            args.last_partition_meta = meta
     else:
         distributed_dataset = distribute_batches_equally(data_loader, args.num_workers)
         distributed_dataset = convert_distributed_data_into_numpy(distributed_dataset)

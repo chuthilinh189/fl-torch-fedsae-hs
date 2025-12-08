@@ -272,7 +272,7 @@ class ClientDualLossAE:
                             break
                         sample_list.append((int(lab_val), float(re_val)))
 
-            # nếu đang chạy thí nghiệm theo loạ attack type thì ép hết label tấn công về 1
+            # nếu đang chạy thí nghiệm theo loại attack type thì ép hết label tấn công về 1
             if self.args.by_attack_type:
                 labels = [int(l != 0) for l in labels]
 

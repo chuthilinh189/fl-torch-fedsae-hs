@@ -227,8 +227,9 @@ class ServerPTL:
                     try:
                         if getattr(self.args, 'experiment_type', None) == 'non_iid_dir':
                             # obtain seen_set for this client from partition metadata if available
-                            seen_sets = getattr(self.args, 'last_partition_meta', {}) or {}
-                            seen_list = seen_sets.get('seen_sets', []) if isinstance(seen_sets, dict) else []
+                            # Always use TRAIN partition metadata for seen/unseen determination
+                            pm_train = getattr(self.args, 'train_partition_meta', None) or {}
+                            seen_list = pm_train.get('seen_sets', []) if isinstance(pm_train, dict) else []
                             seen_for_client = []
                             try:
                                 if isinstance(seen_list, list) and client_idx < len(seen_list):
@@ -244,7 +245,7 @@ class ServerPTL:
                                                                     proto_z0=bp0,
                                                                     proto_z1=bp1,
                                                                     method='tsne',
-                                                                    max_points=2000,
+                                                                    max_points=200,
                                                                     random_state=getattr(self.args, 'assign_seed', 0))
                             if out:
                                 self.args.logger.info(f"Saved non-iid-dir latent viz for client {client_idx} -> {out}")
@@ -381,8 +382,8 @@ class ServerPTL:
             try:
                 if getattr(self.args, 'experiment_type', None) == 'non_iid_dir':
                     # load seen_sets from partition metadata if available
-                    pm = getattr(self.args, 'last_partition_meta', None) or {}
-                    seen_sets = pm.get('seen_sets', [])
+                    pm_train = getattr(self.args, 'train_partition_meta', None) or {}
+                    seen_sets = pm_train.get('seen_sets', [])
 
                     # per-client: compute per-attack AUCs and classification metrics (using client threshold)
                     for cidx, pdata in per_client_data.items():
@@ -408,15 +409,28 @@ class ServerPTL:
                             except Exception:
                                 seen_set = []
 
-                            out_payload = {
-                                'client_id': int(cidx),
-                                'seen_set': seen_set,
-                                'per_attack_auc': client_aucs_json,
-                                'per_attack_classification': classif,
-                            }
-                            client_metrics_path = os.path.join(client_dir, f"epoch{epoch}_client{cidx}_per_attack_metrics.json")
-                            with open(client_metrics_path, 'w') as _jf:
-                                json.dump(out_payload, _jf, indent=2)
+                            # Write per-attack metrics to CSV for easier comparison
+                            import pandas as pd
+                            rows = []
+                            # merge AUC and classification metrics per attack
+                            for atk_str, auc_val in client_aucs_json.items():
+                                atk_id = int(atk_str)
+                                cls_metrics = classif.get(atk_id, {})
+                                rows.append({
+                                    'epoch': int(epoch),
+                                    'client_id': int(cidx),
+                                    'attack_type': atk_id,
+                                    'auc': auc_val if auc_val is not None else 0.0,
+                                    'accuracy': float(cls_metrics.get('acc', 0.0)),
+                                    'precision': float(cls_metrics.get('precision', 0.0)),
+                                    'recall': float(cls_metrics.get('recall', 0.0)),
+                                    'f1': float(cls_metrics.get('f1-score', 0.0)),
+                                    'support': int(cls_metrics.get('support', 0)),
+                                })
+
+                            client_metrics_csv = os.path.join(client_dir, f"epoch{epoch}_client{cidx}_per_attack_metrics.csv")
+                            pd.DataFrame(rows).to_csv(client_metrics_csv, index=False)
+                            self.args.logger.info(f"Saved per-attack CSV metrics for client {cidx} -> {client_metrics_csv}")
                         except Exception as e:
                             self.args.logger.warning(f"Failed to compute/save per-client metrics for client {cidx}: {e}")
 
