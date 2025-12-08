@@ -387,18 +387,13 @@ class ClientPTL:
             precision = precision_score(labels, predictions, zero_division=0)
             recall = recall_score(labels, predictions, zero_division=0)
             f1 = f1_score(labels, predictions, zero_division=0)
-            try:
-                roc = roc_auc_score(labels, list_re) if len(set(labels)) > 1 else 0.0
-            except Exception:
-                roc = 0.0
+            roc = roc_auc_score(labels, list_re) if len(set(labels)) > 1 else 0.0
 
             if verbose:
-                try:
-                    self.args.logger.debug("Classification Report:\n" + classification_report(labels, predictions))
-                    self.args.logger.debug("Confusion Matrix:\n" + str(confusion_matrix(labels, predictions)))
-                    self.args.logger.debug("ROC AUC Score: {}".format(roc))
-                except Exception:
-                    pass
+                self.args.logger.debug("Classification Report:\n" + classification_report(labels, predictions))
+                self.args.logger.debug("Confusion Matrix:\n" + str(confusion_matrix(labels, predictions)))
+                self.args.logger.debug("ROC AUC Score: {}".format(roc))
+
 
             if show_samples and len(sample_list) > 0:
                 sample_with_pred = []
@@ -406,10 +401,8 @@ class ClientPTL:
                     lab_bin = int(lab_val != 0) if self.args.by_attack_type else int(lab_val)
                     pred = 1 if re_val > threshold_re else 0
                     sample_with_pred.append((lab_bin, float(re_val), int(pred)))
-                try:
-                    self.args.logger.info(f"Sample label, RE, pred (first {len(sample_with_pred)}): {sample_with_pred}")
-                except Exception:
-                    print(f"Sample label, RE, pred (first {len(sample_with_pred)}): {sample_with_pred}")
+
+                self.args.logger.info(f"Sample label, RE, pred (first {len(sample_with_pred)}): {sample_with_pred}")
 
             return acc, precision, recall, f1, roc
 

@@ -241,6 +241,27 @@ def collect_latents_and_labels_from_client(client, max_samples_per_class=None):
     return latents, labels
 
 
+# helper: coerce different prototype representations to 1D numpy arrays
+def _to_numpy_vec(v):
+    if v is None:
+        return None
+    # torch tensor -> numpy
+    try:
+        import torch as _torch
+    except Exception:
+        _torch = None
+    try:
+        if _torch is not None and isinstance(v, _torch.Tensor):
+            return v.detach().cpu().numpy().reshape(-1)
+    except Exception:
+        pass
+    # numpy or list -> numpy 1D
+    try:
+        arr = np.array(v)
+        return arr.reshape(-1)
+    except Exception:
+        return None
+
 def plot_latent_embedding(latents, labels, out_dir, epoch, client_id=None, proto_z0=None, proto_z1=None, method="tsne", max_points=1000, random_state=42):
     """
     Create a 2D scatter of latent vectors using t-SNE or UMAP, color by label and overlay prototypes when provided.
@@ -285,27 +306,6 @@ def plot_latent_embedding(latents, labels, out_dir, epoch, client_id=None, proto
     # include prototypes in the embedding transform if present so they are mapped consistently
     proto_stack = []
     proto_labels = []
-
-    # helper: coerce different prototype representations to 1D numpy arrays
-    def _to_numpy_vec(v):
-        if v is None:
-            return None
-        # torch tensor -> numpy
-        try:
-            import torch as _torch
-        except Exception:
-            _torch = None
-        try:
-            if _torch is not None and isinstance(v, _torch.Tensor):
-                return v.detach().cpu().numpy().reshape(-1)
-        except Exception:
-            pass
-        # numpy or list -> numpy 1D
-        try:
-            arr = np.array(v)
-            return arr.reshape(-1)
-        except Exception:
-            return None
 
     p0 = _to_numpy_vec(proto_z0)
     p1 = _to_numpy_vec(proto_z1)
@@ -461,25 +461,6 @@ def plot_latent_embedding_non_iid_dir(latents, labels, seen_classes, attack_labe
     scaler = StandardScaler()
     latents_plot = scaler.fit_transform(latents_plot)
 
-    # helper to coerce prototypes
-    def _to_numpy_vec(v):
-        if v is None:
-            return None
-        try:
-            import torch as _torch
-        except Exception:
-            _torch = None
-        try:
-            if _torch is not None and isinstance(v, _torch.Tensor):
-                return v.detach().cpu().numpy().reshape(-1)
-        except Exception:
-            pass
-        try:
-            arr = np.array(v)
-            return arr.reshape(-1)
-        except Exception:
-            return None
-
     p0 = _to_numpy_vec(proto_z0)
     p1 = _to_numpy_vec(proto_z1)
     proto_stack = []
@@ -570,41 +551,29 @@ def plot_latent_first_component_hist_from_latents(latents, out_dir, epoch, clien
     if latents is None or latents.shape[0] == 0:
         return None
 
-    try:
-        first_comp = np.asarray(latents)[:, 0]
-    except Exception:
-        return None
+    first_comp = np.asarray(latents)[:, 0]
 
     fname_base = f"epoch{epoch}"
     if client_id is not None:
         fname_base += f"_client{client_id}"
 
     # histogram
-    try:
-        plt.figure(figsize=(6, 4))
-        plt.hist(first_comp, bins=bins, color="C2", alpha=0.85)
-        plt.title(f"Latent dim[0] histogram - epoch {epoch}" + (f" client {client_id}" if client_id is not None else ""))
-        plt.xlabel("latent[0]")
-        plt.ylabel("count")
-        plt.tight_layout()
-        out_path = os.path.join(out_dir, f"{fname_base}_latent_dim0_hist.png")
-        plt.savefig(out_path, dpi=150)
-        plt.close()
-        return out_path
-    except Exception:
-        try:
-            plt.close()
-        except Exception:
-            pass
-        return None
+    plt.figure(figsize=(6, 4))
+    plt.hist(first_comp, bins=bins, color="C2", alpha=0.85)
+    plt.title(f"Latent dim[0] histogram - epoch {epoch}" + (f" client {client_id}" if client_id is not None else ""))
+    plt.xlabel("latent[0]")
+    plt.ylabel("count")
+    plt.tight_layout()
+    out_path = os.path.join(out_dir, f"{fname_base}_latent_dim0_hist.png")
+    plt.savefig(out_path, dpi=150)
+    plt.close()
+    return out_path
 
 
 def plot_latent_first_component_hist_from_client(client, out_dir, epoch, client_id=None, max_samples_per_class=None, bins=50):
     """
     Convenience wrapper: collect latents from a client and plot the first-dimension histogram.
     """
-    try:
-        latents, _ = collect_latents_and_labels_from_client(client, max_samples_per_class=max_samples_per_class)
-        return plot_latent_first_component_hist_from_latents(latents, out_dir, epoch, client_id=client_id, bins=bins)
-    except Exception:
-        return None
+    latents, _ = collect_latents_and_labels_from_client(client, max_samples_per_class=max_samples_per_class)
+    return plot_latent_first_component_hist_from_latents(latents, out_dir, epoch, client_id=client_id, bins=bins)
+

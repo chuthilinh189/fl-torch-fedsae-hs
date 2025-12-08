@@ -308,11 +308,8 @@ class ClientDualLossAE:
                     pred = 1 if re_val > threshold_re else 0
                     sample_list_with_pred.append((lab_bin, float(re_val), int(pred)))
 
-                try:
-                    self.args.logger.info(f"Sample label, RE, pred (first {len(sample_list_with_pred)}): {sample_list_with_pred}")
-                except Exception:
-                    print(f"Sample label, RE, pred (first {len(sample_list_with_pred)}): {sample_list_with_pred}")
-
+                self.args.logger.info(f"Sample label, RE, pred (first {len(sample_list_with_pred)}): {sample_list_with_pred}")
+               
             return acc, precision, recall, f1, roc
 
     def test_by_attack_type_full(self, threshold_re, threshold_z, verbose=False):
