@@ -487,13 +487,13 @@ class ClientPTLAE:
 
     def test_by_attack_type_full(self, threshold_re, threshold_z, verbose=False):
         """
-        Compute per-attack metrics using given threshold_re.
-        Returns dict attack_id -> metrics.
+        Tính metric theo từng attack type theo tinh thần nhị phân: benign (0) vs attack k (1).
+        Với mỗi attack k, chỉ giữ các mẫu có nhãn thật thuộc {0, k}; y_true = 1 nếu nhãn==k, ngược lại 0 (benign).
+        Trả về: dict attack_id -> metrics (acc, precision, recall, f1-score, support).
         """
         self.net.eval()
         with torch.no_grad():
             list_re = []
-            bin_labels = []
             raw_labels = []
 
             for input, label in self.test_data_loader:
@@ -501,35 +501,38 @@ class ClientPTLAE:
                 _, decode = self.net(input)
                 per_sample_re = ((decode - input) ** 2).mean(dim=1).cpu().numpy().tolist()
                 list_re.extend(per_sample_re)
-                for l in label.cpu().tolist():
-                    bin_labels.append(int(l != 0))
-                    raw_labels.append(int(l))
+                raw_labels.extend([int(l) for l in label.cpu().tolist()])
 
-            predictions = [1 if r > threshold_re else 0 for r in list_re]
-
-            results_by_type = defaultdict(lambda: {"y_true": [], "y_pred": []})
-            for y, pred, atk_type in zip(bin_labels, predictions, raw_labels):
-                results_by_type[atk_type]["y_true"].append(y)
-                results_by_type[atk_type]["y_pred"].append(pred)
+            predictions = np.array([1 if r > threshold_re else 0 for r in list_re], dtype=int)
+            labels_arr = np.array(raw_labels, dtype=int)
 
             metrics_by_type = {}
-            for atk_type, data in results_by_type.items():
-                y_true = data["y_true"]
-                y_pred = data["y_pred"]
-                report = classification_report(y_true, y_pred, output_dict=True, zero_division=0)
-                acc = accuracy_score(y_true, y_pred)
+            # duyệt các attack types xuất hiện (bỏ 0)
+            for atk_type in sorted(set(labels_arr.tolist())):
+                if atk_type == 0:
+                    continue
+                # giữ benign và attack k
+                mask = np.isin(labels_arr, [0, atk_type])
+                if mask.sum() == 0:
+                    continue
+                y_true_bin = (labels_arr[mask] == atk_type).astype(int)
+                y_pred_bin = predictions[mask]
+
+                acc = accuracy_score(y_true_bin, y_pred_bin)
+                report = classification_report(y_true_bin, y_pred_bin, output_dict=True, zero_division=0)
                 metrics_by_type[atk_type] = {
                     "acc": acc,
                     "precision": report.get("1", {}).get("precision", 0.0),
                     "recall": report.get("1", {}).get("recall", 0.0),
                     "f1-score": report.get("1", {}).get("f1-score", 0.0),
-                    "support": len(y_true),
+                    "support": int(len(y_true_bin)),
                 }
+
                 if verbose:
-                    print(f"\n=== Attack Type {atk_type} ===")
+                    print(f"\n=== Attack Type {atk_type} (vs benign) ===")
                     print(f"Accuracy: {acc:.4f}")
-                    print(classification_report(y_true, y_pred, zero_division=0))
+                    print(classification_report(y_true_bin, y_pred_bin, zero_division=0))
                     print("Confusion Matrix:")
-                    print(confusion_matrix(y_true, y_pred))
+                    print(confusion_matrix(y_true_bin, y_pred_bin))
 
             return metrics_by_type

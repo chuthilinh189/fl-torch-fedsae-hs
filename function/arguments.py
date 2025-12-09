@@ -43,16 +43,16 @@ class Arguments:
         # Number of classes (including normal class 0) each client should see when using hybrid
         self.seen_per_client = config.get("seen_per_client", 5)
         # Dirichlet alpha used for splitting samples of each class across clients
-        self.dir_alpha = config.get("dir_alpha", 0.5)
+        self.dir_alpha = config.get("dir_alpha", 0.7)
         # Seed used for deterministic assignment of seen classes
         self.assign_seed = config.get("assign_seed", 0)
             # ----- ptl (Prototype-Triplet) hyperparameters -----
         # Lambda weight for prototype-triplet loss term
-        self.ptl_lambda = config.get("ptl_lambda", 1.0)
+        self.ptl_lambda = config.get("ptl_lambda", 1)
         # EMA coefficient for server-side prototype updates (0..1)
         self.ptl_proto_ema = config.get("ptl_proto_ema", 0.9)
         # Margin used in triplet-style loss (d_pos - d_neg + margin)
-        self.ptl_margin = config.get("ptl_margin", 10.0)
+        self.ptl_margin = config.get("ptl_margin", 3.0)
         # Distance metric for prototypes: 'euclid' or 'cosine'
         self.ptl_distance = config.get("ptl_distance", "euclid")
         # Decision mode for PTL at test time: 're' | 'proto' | 'combined'
@@ -61,7 +61,7 @@ class Arguments:
 
         # ⚙️ Các tham số nội bộ tự động gán
         self.num_workers = 20  # Tổng số client mặc định
-        self.es_offset = 300  # Offset cho early stopping
+        self.es_offset = 500  # Offset cho early stopping
         self.threshold_factor = 0  # Threshold scaling
         self.cuda = True  # Luôn bật GPU
         self.shuffle = False  # Không shuffle dữ liệu

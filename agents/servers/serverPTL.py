@@ -120,6 +120,36 @@ class ServerPTL:
         for client_idx in list_client_training:
             clients[client_idx].update_nn_parameters(new_params)
 
+        # Train-time latent[0] histograms every 100 epochs for non_iid_dir, using TEST latents
+        if getattr(self.args, 'experiment_type', None) == 'non_iid_dir' and (epoch < 10 or (epoch % 10 == 0 and epoch<100) or epoch % 100 == 0):
+            out_dir = os.path.join(
+                "logs",
+                "re_distributions",
+                f"{self.args.model_type}_mc{self.args.num_multi_class_clients}",
+                "train_hist",
+            )
+            os.makedirs(out_dir, exist_ok=True)
+            global_latent_firstcomp_train = []
+            for client_idx, client in enumerate(clients):
+                # collect full TEST latents for consistent distribution view
+                latents, _ = collect_latents_and_labels_from_client(client, max_samples_per_class=None)
+                if latents is not None and latents.shape[0] > 0:
+                    client_out_dir = os.path.join(out_dir, f"client_{client_idx}")
+                    os.makedirs(client_out_dir, exist_ok=True)
+                    hist_p = plot_latent_first_component_hist_from_latents(latents, client_out_dir, epoch, client_id=client_idx)
+                    if hist_p:
+                        self.args.logger.info(f"[Train] Saved client {client_idx} latent-dim0 histogram to {hist_p}")
+                    # accumulate for global train histogram
+                    first_comp = np.asarray(latents)[:, 0].tolist()
+                    global_latent_firstcomp_train.extend(first_comp)
+
+            # Global train histogram
+            if len(global_latent_firstcomp_train) > 0:
+                arr = np.array(global_latent_firstcomp_train).reshape(-1, 1)
+                global_hist_path = plot_latent_first_component_hist_from_latents(arr, out_dir, epoch, client_id=None)
+                if global_hist_path:
+                    self.args.logger.info(f"[Train] Saved global latent-dim0 histogram to {global_hist_path}")
+
         return False
 
     def receive_proto_stats_and_update(self, proto_stats_list):

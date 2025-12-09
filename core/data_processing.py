@@ -12,7 +12,7 @@ import os
 from datetime import datetime
 
 
-def generate_hybrid_client_dataset(args, data_loader, num_clients, seen_per_client=5, alpha=0.5, assign_seed=0, force_seen_sets=None):
+def generate_hybrid_client_dataset(args, data_loader, num_clients, seen_per_client=5, alpha=0.7, assign_seed=0, force_seen_sets=None):
     """
     Hybrid partition:
       - deterministically choose seen classes per client (always include class 0)

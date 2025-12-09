@@ -501,7 +501,7 @@ def plot_latent_embedding_non_iid_dir(latents, labels, seen_classes, attack_labe
 
     # Plot: three categories only (benign, attack_seen, attack_unseen)
     plt.figure(figsize=(7, 6))
-    palette = {0: 'tab:green', 1: 'tab:orange', 2: 'tab:blue'}
+    palette = {0: 'tab:green', 1: 'tab:orange', 2: 'tab:pink'}
     # summarize attack labels for legend clarity: split into seen vs unseen sets (intersect with data labels)
     present_attacks = set(int(x) for x in np.unique(labels_arr) if int(x) != 0)
     seen_attacks = sorted(list((attack_labels_set & seen_set) & present_attacks))
