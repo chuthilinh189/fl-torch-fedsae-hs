@@ -495,15 +495,38 @@ class ClientPTLAE:
         with torch.no_grad():
             list_re = []
             raw_labels = []
+            encodes_for_proto = []
 
             for input, label in self.test_data_loader:
                 input, label = input.to(self.device), label.to(self.device)
-                _, decode = self.net(input)
+                encode, decode = self.net(input)
                 per_sample_re = ((decode - input) ** 2).mean(dim=1).cpu().numpy().tolist()
                 list_re.extend(per_sample_re)
                 raw_labels.extend([int(l) for l in label.cpu().tolist()])
+                # collect encodings if proto-decision is enabled
+                if getattr(self.args, 'ptl_decision_mode', 're') == 'proto':
+                    encodes_for_proto.append(encode.detach().cpu())
 
-            predictions = np.array([1 if r > threshold_re else 0 for r in list_re], dtype=int)
+            # Align prediction logic with test_with_thresholds
+            decision_mode = getattr(self.args, 'ptl_decision_mode', 're')
+            if decision_mode == 'proto' and self.prototype_z0 is not None and self.prototype_z1 is not None and len(encodes_for_proto) > 0:
+                enc_cat = torch.cat(encodes_for_proto, dim=0)
+                z0 = self.prototype_z0.cpu() if isinstance(self.prototype_z0, torch.Tensor) else torch.tensor(self.prototype_z0)
+                z1 = self.prototype_z1.cpu() if isinstance(self.prototype_z1, torch.Tensor) else torch.tensor(self.prototype_z1)
+                distance = getattr(self.args, 'ptl_distance', 'euclid')
+                if distance == 'euclid':
+                    d_pos = torch.norm(enc_cat - z1.unsqueeze(0).expand(enc_cat.size(0), -1), dim=1).numpy().tolist()
+                    d_neg = torch.norm(enc_cat - z0.unsqueeze(0).expand(enc_cat.size(0), -1), dim=1).numpy().tolist()
+                elif distance == 'cosine':
+                    import torch.nn.functional as F
+                    d_pos = (1 - F.cosine_similarity(enc_cat, z1.unsqueeze(0).expand(enc_cat.size(0), -1))).numpy().tolist()
+                    d_neg = (1 - F.cosine_similarity(enc_cat, z0.unsqueeze(0).expand(enc_cat.size(0), -1))).numpy().tolist()
+                else:
+                    raise ValueError("Unsupported ptl_distance: {}".format(distance))
+                margin = getattr(self.args, 'ptl_margin', 0.0)
+                predictions = np.array([1 if (dp + margin) < dn else 0 for dp, dn in zip(d_pos, d_neg)], dtype=int)
+            else:
+                predictions = np.array([1 if r > threshold_re else 0 for r in list_re], dtype=int)
             labels_arr = np.array(raw_labels, dtype=int)
 
             metrics_by_type = {}
