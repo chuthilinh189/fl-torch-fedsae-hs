@@ -253,21 +253,17 @@ class ClientSupAE:
             recall = recall_score(labels_bin, predictions, zero_division=0)
             f1 = f1_score(labels_bin, predictions, zero_division=0)
             roc = roc_auc_score(labels_bin, predictions) if len(set(labels_bin)) > 1 else 0.0
-
-            # Tính confusion matrix và FPR
-            confusion_mat = confusion_matrix(labels, predictions)
-            tn, fp, fn, tp = confusion_mat.ravel()
-            fpr = fp / (fp + tn) if (fp + tn) > 0 else 0.0
-
+            # Tính confusion matrix và FPR (binary on benign vs attack)
+            confusion_mat = confusion_matrix(labels_bin, predictions, labels=[0, 1])
+           
             if verbose:
-                confusion_mat = confusion_matrix(labels, predictions)
+                confusion_mat = confusion_matrix(labels_bin, predictions, labels=[0, 1])
                 self.args.logger.debug(
                     "Classification Report:\n"
                     + classification_report(labels_bin, predictions, zero_division=0)
                 )
                 self.args.logger.debug("Confusion Matrix:\n" + str(confusion_mat))
                 self.args.logger.debug("ROC AUC Score: {}".format(roc))
-                self.args.logger.debug("False Positive Rate (FPR): {:.4f}".format(fpr))
 
             return acc, precision, recall, f1, roc
 
