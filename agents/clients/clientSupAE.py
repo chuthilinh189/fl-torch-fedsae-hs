@@ -246,11 +246,13 @@ class ClientSupAE:
             for z in zip(list_latent_z):
                 predictions.append(1 - int(z[0].item() <= threshold_z))
 
-            acc = accuracy_score(labels, predictions)
-            precision = precision_score(labels, predictions)
-            recall = recall_score(labels, predictions)
-            f1 = f1_score(labels, predictions)
-            roc = roc_auc_score(labels, predictions)
+            # Binarize labels: benign=0, attack (any non-zero)=1
+            labels_bin = [int(l != 0) for l in labels]
+            acc = accuracy_score(labels_bin, predictions)
+            precision = precision_score(labels_bin, predictions, zero_division=0)
+            recall = recall_score(labels_bin, predictions, zero_division=0)
+            f1 = f1_score(labels_bin, predictions, zero_division=0)
+            roc = roc_auc_score(labels_bin, predictions) if len(set(labels_bin)) > 1 else 0.0
 
             # Tính confusion matrix và FPR
             confusion_mat = confusion_matrix(labels, predictions)
@@ -261,13 +263,69 @@ class ClientSupAE:
                 confusion_mat = confusion_matrix(labels, predictions)
                 self.args.logger.debug(
                     "Classification Report:\n"
-                    + classification_report(labels, predictions)
+                    + classification_report(labels_bin, predictions, zero_division=0)
                 )
                 self.args.logger.debug("Confusion Matrix:\n" + str(confusion_mat))
                 self.args.logger.debug("ROC AUC Score: {}".format(roc))
                 self.args.logger.debug("False Positive Rate (FPR): {:.4f}".format(fpr))
 
             return acc, precision, recall, f1, roc
+
+    def test_by_attack_type_full(self, threshold_re_unused, threshold_z, verbose=False):
+        """
+        Tính metric theo từng attack type theo tinh thần nhị phân: benign (0) vs attack k (1).
+        Với mỗi attack k, chỉ giữ các mẫu có nhãn thật thuộc {0, k}; y_true = 1 nếu nhãn==k, ngược lại 0 (benign).
+        Dự đoán nhãn nhất quán với SupAE: dùng latent z so với threshold_z.
+        Trả về: dict attack_id -> metrics (acc, precision, recall, f1-score, support).
+        """
+        self.net.eval()
+        with torch.no_grad():
+            labels = []
+            list_latent_z = []
+            # thu thập toàn bộ latent z và nhãn từ TEST
+            for input, label in self.test_data_loader:
+                input, label = input.to(self.device), label.to(self.device)
+                dummy_label = torch.zeros(input.size(0), dtype=torch.long, device=input.device)
+                _, z = self.calculate_loss(input, dummy_label)
+                list_latent_z.append(z)
+                labels += label.cpu().tolist()
+
+            # chuyển về numpy/float list cho dễ xử lý
+            z_vals = [float(t.item()) for t in list_latent_z]
+            labels_arr = np.array([int(l) for l in labels], dtype=int)
+            # dự đoán theo ngưỡng z, giống test_with_thresholds
+            predictions = np.array([1 - int(z <= float(threshold_z)) for z in z_vals], dtype=int)
+
+            metrics_by_type = {}
+            # duyệt các attack types xuất hiện (bỏ 0)
+            for atk_type in sorted(set(labels_arr.tolist())):
+                if atk_type == 0:
+                    continue
+                # giữ benign và attack k
+                mask = np.isin(labels_arr, [0, atk_type])
+                if mask.sum() == 0:
+                    continue
+                y_true_bin = (labels_arr[mask] == atk_type).astype(int)
+                y_pred_bin = predictions[mask]
+
+                acc = accuracy_score(y_true_bin, y_pred_bin)
+                report = classification_report(y_true_bin, y_pred_bin, output_dict=True, zero_division=0)
+                metrics_by_type[atk_type] = {
+                    "acc": acc,
+                    "precision": report.get("1", {}).get("precision", 0.0),
+                    "recall": report.get("1", {}).get("recall", 0.0),
+                    "f1-score": report.get("1", {}).get("f1-score", 0.0),
+                    "support": int(len(y_true_bin)),
+                }
+
+                if verbose:
+                    print(f"\n=== Attack Type {atk_type} (vs benign) ===")
+                    print(f"Accuracy: {acc:.4f}")
+                    print(classification_report(y_true_bin, y_pred_bin, zero_division=0))
+                    print("Confusion Matrix:")
+                    print(confusion_matrix(y_true_bin, y_pred_bin))
+
+            return metrics_by_type
 
     def visualize(self, epoch):
         self.net.eval()

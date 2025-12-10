@@ -192,6 +192,36 @@ class ServerSupAE:
             else:
                 multiplier_auc_benign[0].append(auc)
 
+            # Per-attack metrics CSV (benign vs attack k) using client's threshold_z mean
+            try:
+                out_dir = os.path.join(
+                    "logs",
+                    "re_distributions",
+                    f"{self.args.model_type}_mc{self.args.num_multi_class_clients}_epoch_{epoch}",
+                )
+                client_dir = os.path.join(out_dir, f"client_{client_idx}")
+                os.makedirs(client_dir, exist_ok=True)
+                th_z_mean = float(client.threshold_z[0]) if isinstance(client.threshold_z, (list, tuple)) else float(client.threshold_z)
+                classif = client.test_by_attack_type_full(None, th_z_mean, verbose=False)
+                rows = []
+                for atk_id, metrics in classif.items():
+                    rows.append({
+                        'epoch': int(epoch),
+                        'client_id': int(client_idx),
+                        'attack_type': int(atk_id),
+                        'auc': 0.0,
+                        'accuracy': float(metrics.get('acc', 0.0)),
+                        'precision': float(metrics.get('precision', 0.0)),
+                        'recall': float(metrics.get('recall', 0.0)),
+                        'f1': float(metrics.get('f1-score', 0.0)),
+                        'support': int(metrics.get('support', 0)),
+                    })
+                client_metrics_csv = os.path.join(client_dir, f"epoch{epoch}_client{client_idx}_per_attack_metrics.csv")
+                pd.DataFrame(rows).to_csv(client_metrics_csv, index=False)
+                self.args.logger.info(f"Saved per-attack CSV metrics for client {client_idx} -> {client_metrics_csv}")
+            except Exception as e:
+                self.args.logger.warning(f"Per-attack metrics generation failed for client {client_idx}: {e}")
+
         self._log_avg_auc(multiplier_auc_all, multiplier_auc_benign, multiplier_auc_poisoned)
 
     def _log_avg_auc(self, multiplier_auc_all, multiplier_auc_benign, multiplier_auc_poisoned):
