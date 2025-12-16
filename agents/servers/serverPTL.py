@@ -236,8 +236,16 @@ class ServerPTL:
                             except Exception:
                                 seen_for_client = []
 
+                            # Determine full attack label set (exclude benign=0)
+                            num_attacks = getattr(self.args, 'num_attack_labels', None)
+                            if isinstance(num_attacks, int) and num_attacks > 0:
+                                attack_labels = list(range(1, num_attacks + 1))
+                            else:
+                                uniq = sorted(set(int(x) for x in lat_labels if int(x) != 0))
+                                attack_labels = uniq
+
                             out = plot_latent_embedding_non_iid_dir(latents, lat_labels, seen_for_client,
-                                                                    attack_label=getattr(self.args, 'attack_label', 1),
+                                                                    attack_label=attack_labels,
                                                                     out_dir=client_out_dir,
                                                                     epoch=epoch,
                                                                     client_id=client_idx,

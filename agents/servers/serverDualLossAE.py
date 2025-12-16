@@ -139,7 +139,9 @@ class ServerDualLossAE:
     def test_on_clients(self, epoch, clients, poisoned_workers):
         self.args.logger.info("Testing {} model at epoch #{}", self.args.model_type, str(epoch))
 
-        multipliers = np.arange(0.0, 5.1, 0.2)
+        # Use a single threshold multiplier consistent with client.test()
+        tm = round(float(getattr(self.args, 'threshold_multiplier', 3.0)), 1)
+        multipliers = [tm]
 
         multiplier_auc_all = {m: [] for m in multipliers}
         multiplier_auc_benign = {m: [] for m in multipliers}
@@ -194,37 +196,32 @@ class ServerDualLossAE:
 
             client.update_nn_parameters(recent_weight_model)
 
-            for i, m in enumerate(multipliers):
-                acc, precision, recall, f1, auc = acc_list[i], precision_list[i], recall_list[i], f1_list[i], auc_list[i]
+            for m, acc, precision, recall, f1, auc in zip(multipliers, acc_list, precision_list, recall_list, f1_list, auc_list):
 
                 if m == 0.0:
                     self.args.logger.info(
                         f"[Client {client_idx}] Multiplier {m:.1f}: ACC={acc:.4f}, P={precision:.4f}, R={recall:.4f}, F1={f1:.4f}, AUC={auc:.4f}"
                     )
 
-                self.args.set_test_log_df(
-                    pd.concat(
-                        [
-                            self.args.get_test_log_df(),
-                            pd.DataFrame(
-                                [
-                                    {
-                                        "epoch": epoch,
-                                        "client_id": client_idx,
-                                        "is_mal": client_idx in poisoned_workers,
-                                        "threshold_multiplier": round(m, 1),
-                                        "auc": auc,
-                                        "accuracy": acc,
-                                        "precision": precision,
-                                        "recall": recall,
-                                        "f1": f1,
-                                    }
-                                ]
-                            ),
-                        ],
-                        ignore_index=True,
-                    )
-                )
+                # Append to test log DataFrame safely, avoiding concat with None
+                existing_df = self.args.get_test_log_df()
+                new_row = pd.DataFrame([
+                    {
+                        "epoch": epoch,
+                        "client_id": client_idx,
+                        "is_mal": client_idx in poisoned_workers,
+                        "threshold_multiplier": round(m, 1),
+                        "auc": auc,
+                        "accuracy": acc,
+                        "precision": precision,
+                        "recall": recall,
+                        "f1": f1,
+                    }
+                ])
+                if existing_df is None or (isinstance(existing_df, pd.DataFrame) and existing_df.empty):
+                    self.args.set_test_log_df(new_row)
+                else:
+                    self.args.set_test_log_df(pd.concat([existing_df, new_row], ignore_index=True))
 
                 multiplier_auc_all[m].append(auc)
                 if client_idx in poisoned_workers:
