@@ -17,6 +17,7 @@ from function.utils.visualize_util import visualize_parameters
 from function.utils.visualize_util import (
     plot_latent_first_component_hist_from_latents,
     collect_latents_and_labels_from_client,
+    collect_predictions_and_labels_from_client,
     plot_latent_embedding,
     plot_latent_embedding_non_iid_dir,
 )
@@ -186,6 +187,7 @@ class ServerSupAE:
         global_labels = []
         global_latent_firstcomp = []
         global_client_idxs = []
+        detailed_metrics_rows = []
 
         for client_idx, client in enumerate(clients):
             self.args.logger.info(
@@ -243,6 +245,54 @@ class ServerSupAE:
                 multiplier_auc_poisoned[0].append(auc)
             else:
                 multiplier_auc_benign[0].append(auc)
+
+            # Detailed metrics for non_iid_dir using client predictions
+            if getattr(self.args, 'experiment_type', None) == 'non_iid_dir':
+                try:
+                    preds, true_labels_raw = collect_predictions_and_labels_from_client(client)
+
+                    pm = getattr(self.args, 'last_partition_meta', None) or {}
+                    seen_list = pm.get('seen_sets', []) if isinstance(pm, dict) else []
+                    seen_for_client = set()
+                    if isinstance(seen_list, list) and client_idx < len(seen_list):
+                        seen_for_client = set(map(int, seen_list[client_idx]))
+
+                    preds_arr = np.array(preds, dtype=int)
+                    labels_arr = np.array(true_labels_raw, dtype=int)
+
+                    mask_normal = labels_arr == 0
+                    mask_attack_seen = np.array([lab in seen_for_client and lab != 0 for lab in labels_arr])
+                    mask_attack_unseen = np.array([lab not in seen_for_client and lab != 0 for lab in labels_arr])
+                    mask_attack_all = labels_arr != 0
+
+                    recall_seen = (preds_arr[mask_attack_seen] == 1).sum() / mask_attack_seen.sum() if mask_attack_seen.sum() > 0 else np.nan
+                    recall_unseen = (preds_arr[mask_attack_unseen] == 1).sum() / mask_attack_unseen.sum() if mask_attack_unseen.sum() > 0 else np.nan
+                    recall_normal = (preds_arr[mask_normal] == 0).sum() / mask_normal.sum() if mask_normal.sum() > 0 else np.nan
+
+                    predicted_attack = preds_arr == 1
+                    if predicted_attack.sum() > 0:
+                        correct_attack = predicted_attack & mask_attack_all
+                        precision_attack = correct_attack.sum() / predicted_attack.sum()
+                    else:
+                        precision_attack = np.nan
+
+                    predicted_normal = preds_arr == 0
+                    if predicted_normal.sum() > 0:
+                        correct_normal = predicted_normal & mask_normal
+                        precision_normal = correct_normal.sum() / predicted_normal.sum()
+                    else:
+                        precision_normal = np.nan
+
+                    detailed_metrics_rows.append({
+                        "Client": f"Client {client_idx}",
+                        "Recall_seen": recall_seen * 100 if not np.isnan(recall_seen) else np.nan,
+                        "Recall_unseen": recall_unseen * 100 if not np.isnan(recall_unseen) else np.nan,
+                        "Recall_normal": recall_normal * 100 if not np.isnan(recall_normal) else np.nan,
+                        "Precision_attack": precision_attack * 100 if not np.isnan(precision_attack) else np.nan,
+                        "Precision_normal": precision_normal * 100 if not np.isnan(precision_normal) else np.nan,
+                    })
+                except Exception as e:
+                    self.args.logger.warning(f"Failed detailed metrics for client {client_idx}: {e}")
 
             # Per-attack metrics CSV (benign vs attack k) using client's threshold_z mean
             out_dir = os.path.join(
@@ -343,6 +393,29 @@ class ServerSupAE:
             f"{self.args.model_type}_mc{self.args.num_multi_class_clients}_epoch_{epoch}",
         )
         os.makedirs(out_dir, exist_ok=True)
+
+        # Export detailed metrics CSV for non_iid_dir
+        if detailed_metrics_rows and getattr(self.args, 'experiment_type', None) == 'non_iid_dir':
+            df_det = pd.DataFrame(detailed_metrics_rows)
+            global_recall_seen = np.nanmean(df_det["Recall_seen"].values)
+            global_recall_unseen = np.nanmean(df_det["Recall_unseen"].values)
+            global_recall_normal = np.nanmean(df_det["Recall_normal"].values)
+            global_precision_attack = np.nanmean(df_det["Precision_attack"].values)
+            global_precision_normal = np.nanmean(df_det["Precision_normal"].values)
+
+            global_row = {
+                "Client": "All",
+                "Recall_seen": global_recall_seen,
+                "Recall_unseen": global_recall_unseen,
+                "Recall_normal": global_recall_normal,
+                "Precision_attack": global_precision_attack,
+                "Precision_normal": global_precision_normal,
+            }
+            df_det = pd.concat([df_det, pd.DataFrame([global_row])], ignore_index=True)
+
+            csv_path = os.path.join(out_dir, f"epoch{epoch}_detailed_metrics.csv")
+            df_det.to_csv(csv_path, index=False, encoding="utf-8-sig")
+            self.args.logger.info(f"Saved detailed seen/unseen metrics to {csv_path}")
 
         # Global histogram latent-dim0 (z) for non_iid_dir
         if getattr(self.args, 'experiment_type', None) == 'non_iid_dir' and len(global_latent_firstcomp) > 0:

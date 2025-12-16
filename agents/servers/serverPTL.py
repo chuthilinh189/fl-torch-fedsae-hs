@@ -16,6 +16,7 @@ from function.utils.visualize_util import (
     collect_z_norms_and_labels_from_client,
     log_z_boxplots_from_lists,
     collect_latents_and_labels_from_client,
+    collect_predictions_and_labels_from_client,
     plot_latent_embedding,
     plot_latent_embedding_non_iid_dir,
     plot_latent_first_component_hist_from_latents,
@@ -174,6 +175,8 @@ class ServerPTL:
         global_latent_firstcomp = []
         # also store per-client raw data to compute per-client seen/unseen metrics later
         per_client_data = {}
+        # detailed seen/unseen/normal metrics per client (non_iid_dir)
+        detailed_metrics_rows = []
 
         for client_idx, client in enumerate(clients):
             self.args.logger.info(
@@ -331,6 +334,54 @@ class ServerPTL:
                     multiplier_auc_poisoned[m].append(auc)
                 else:
                     multiplier_auc_benign[m].append(auc)
+
+            # Compute detailed metrics for non_iid_dir using client predictions
+            if getattr(self.args, 'experiment_type', None) == 'non_iid_dir':
+                try:
+                    preds, true_labels_raw = collect_predictions_and_labels_from_client(client)
+
+                    pm = getattr(self.args, 'last_partition_meta', None) or {}
+                    seen_list = pm.get('seen_sets', []) if isinstance(pm, dict) else []
+                    seen_for_client = set()
+                    if isinstance(seen_list, list) and client_idx < len(seen_list):
+                        seen_for_client = set(map(int, seen_list[client_idx]))
+
+                    preds_arr = np.array(preds, dtype=int)
+                    labels_arr = np.array(true_labels_raw, dtype=int)
+
+                    mask_normal = labels_arr == 0
+                    mask_attack_seen = np.array([lab in seen_for_client and lab != 0 for lab in labels_arr])
+                    mask_attack_unseen = np.array([lab not in seen_for_client and lab != 0 for lab in labels_arr])
+                    mask_attack_all = labels_arr != 0
+
+                    recall_seen = (preds_arr[mask_attack_seen] == 1).sum() / mask_attack_seen.sum() if mask_attack_seen.sum() > 0 else np.nan
+                    recall_unseen = (preds_arr[mask_attack_unseen] == 1).sum() / mask_attack_unseen.sum() if mask_attack_unseen.sum() > 0 else np.nan
+                    recall_normal = (preds_arr[mask_normal] == 0).sum() / mask_normal.sum() if mask_normal.sum() > 0 else np.nan
+
+                    predicted_attack = preds_arr == 1
+                    if predicted_attack.sum() > 0:
+                        correct_attack = predicted_attack & mask_attack_all
+                        precision_attack = correct_attack.sum() / predicted_attack.sum()
+                    else:
+                        precision_attack = np.nan
+
+                    predicted_normal = preds_arr == 0
+                    if predicted_normal.sum() > 0:
+                        correct_normal = predicted_normal & mask_normal
+                        precision_normal = correct_normal.sum() / predicted_normal.sum()
+                    else:
+                        precision_normal = np.nan
+
+                    detailed_metrics_rows.append({
+                        "Client": f"Client {client_idx}",
+                        "Recall_seen": recall_seen * 100 if not np.isnan(recall_seen) else np.nan,
+                        "Recall_unseen": recall_unseen * 100 if not np.isnan(recall_unseen) else np.nan,
+                        "Recall_normal": recall_normal * 100 if not np.isnan(recall_normal) else np.nan,
+                        "Precision_attack": precision_attack * 100 if not np.isnan(precision_attack) else np.nan,
+                        "Precision_normal": precision_normal * 100 if not np.isnan(precision_normal) else np.nan,
+                    })
+                except Exception as e:
+                    self.args.logger.warning(f"Failed detailed metrics for client {client_idx}: {e}")
 
         # After per-client collection, produce global RE plots and per-attack AUCs
         if 'global_re' in locals() and len(global_re) > 0:
