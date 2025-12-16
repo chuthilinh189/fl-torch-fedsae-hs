@@ -4,6 +4,8 @@ import copy
 import math
 import numpy as np
 import pandas as pd
+import json
+from sklearn.metrics import roc_auc_score, recall_score
 from loguru import logger
 from function.utils import (
     average_nn_parameters,
@@ -12,6 +14,12 @@ from function.utils import (
     kmeans_cluster_parameters_and_get_min_center,
 )
 from function.utils.visualize_util import visualize_parameters
+from function.utils.visualize_util import (
+    plot_latent_first_component_hist_from_latents,
+    collect_latents_and_labels_from_client,
+    plot_latent_embedding,
+    plot_latent_embedding_non_iid_dir,
+)
 
 class ServerSupAE:
     def __init__(self, args):
@@ -94,6 +102,45 @@ class ServerSupAE:
                 for client_idx in list_client_training:
                     clients[client_idx].update_nn_parameters(new_nn_params)
 
+        # Train-time latent[0] histograms every N epochs for non_iid_dir, using TEST latents (align with ServerPTL)
+        if (
+            getattr(self.args, 'experiment_type', None) == 'non_iid_dir'
+            and (epoch < 10 or (epoch % 10 == 0 and epoch < 100) or epoch % 100 == 0)
+        ):
+            out_dir = os.path.join(
+                "logs",
+                "re_distributions",
+                f"{self.args.model_type}_mc{self.args.num_multi_class_clients}",
+                "train_hist",
+            )
+            os.makedirs(out_dir, exist_ok=True)
+
+            global_latent_firstcomp_train = []
+            for client_idx, client in enumerate(clients):
+                # Collect TEST latent z per sample
+                z_list = []
+                for input, _ in client.test_data_loader:
+                    input = input.to(client.device)
+                    dummy_label = torch.zeros(input.size(0), dtype=torch.long, device=input.device)
+                    _, z = client.calculate_loss(input, dummy_label)
+                    z_list.append(float(z.item()))
+
+                if len(z_list) > 0:
+                    client_out_dir = os.path.join(out_dir, f"client_{client_idx}")
+                    os.makedirs(client_out_dir, exist_ok=True)
+                    arr = np.array(z_list, dtype=float).reshape(-1, 1)
+                    hist_p = plot_latent_first_component_hist_from_latents(arr, client_out_dir, epoch, client_id=client_idx)
+                    if hist_p:
+                        self.args.logger.info(f"[Train] Saved client {client_idx} latent-dim0 histogram to {hist_p}")
+                    global_latent_firstcomp_train.extend(z_list)
+
+            # Global train histogram
+            if len(global_latent_firstcomp_train) > 0:
+                arr = np.array(global_latent_firstcomp_train, dtype=float).reshape(-1, 1)
+                global_hist_path = plot_latent_first_component_hist_from_latents(arr, out_dir, epoch, client_id=None)
+                if global_hist_path:
+                    self.args.logger.info(f"[Train] Saved global latent-dim0 histogram to {global_hist_path}")
+
         return len(list_client_training) == 0
 
     def aggregate_parameters(self, parameters, list_loss):
@@ -135,6 +182,11 @@ class ServerSupAE:
         multiplier_auc_benign = {m: [] for m in multipliers}
         multiplier_auc_poisoned = {m: [] for m in multipliers}
 
+        # accumulate global labels and z-first-component across clients for epoch-level analysis
+        global_labels = []
+        global_latent_firstcomp = []
+        global_client_idxs = []
+
         for client_idx, client in enumerate(clients):
             self.args.logger.info(
             "Client {} test params:  threshold_z (mean={:.6f}, std={:.6f}), best epoch {}".format(
@@ -159,7 +211,7 @@ class ServerSupAE:
 
             
             self.args.logger.info(
-                f"[Client {client_idx}] Multiplier 0: ACC={acc:.4f}, P={precision:.4f}, R={recall:.4f}, F1={f1:.4f}, AUC={auc:.4f}"
+                f"[Client {client_idx}] ACC={acc:.4f}, P={precision:.4f}, R={recall:.4f}, F1={f1:.4f}, AUC={auc:.4f}"
             )
 
             self.args.set_test_log_df(
@@ -191,6 +243,137 @@ class ServerSupAE:
                 multiplier_auc_poisoned[0].append(auc)
             else:
                 multiplier_auc_benign[0].append(auc)
+
+            # Per-attack metrics CSV (benign vs attack k) using client's threshold_z mean
+            out_dir = os.path.join(
+                "logs",
+                "re_distributions",
+                f"{self.args.model_type}_mc{self.args.num_multi_class_clients}_epoch_{epoch}",
+            )
+            client_dir = os.path.join(out_dir, f"client_{client_idx}")
+            os.makedirs(client_dir, exist_ok=True)
+            th_z_mean = float(client.threshold_z[0]) if isinstance(client.threshold_z, (list, tuple)) else float(client.threshold_z)
+            classif = client.test_by_attack_type_full(None, th_z_mean, verbose=False)
+            # collect per-client z scores and labels to compute per-attack AUCs (using z as score)
+            z_scores = []
+            lbls = []
+            for input, label in client.test_data_loader:
+                input, label = input.to(client.device), label.to(client.device)
+                dummy_label = torch.zeros(input.size(0), dtype=torch.long, device=input.device)
+                _, z = client.calculate_loss(input, dummy_label)
+                z_scores.append(float(z.item()))
+                lbls.append(int(label.item()))
+            # compute per-attack AUCs: benign (0) vs attack k, using z_scores
+            per_attack_auc = {}
+            labels_arr = np.array(lbls, dtype=int)
+            scores_arr = np.array(z_scores, dtype=float)
+            for atk_type in sorted(set(labels_arr.tolist())):
+                if atk_type == 0:
+                    continue
+                mask = np.isin(labels_arr, [0, atk_type])
+                if mask.sum() == 0:
+                    per_attack_auc[atk_type] = None
+                    continue
+                y_bin = (labels_arr[mask] == atk_type).astype(int)
+                s = scores_arr[mask]
+                per_attack_auc[atk_type] = float(roc_auc_score(y_bin, s)) if len(np.unique(y_bin)) > 1 else None
+            rows = []
+            for atk_id, metrics in classif.items():
+                rows.append({
+                    'epoch': int(epoch),
+                    'client_id': int(client_idx),
+                    'attack_type': int(atk_id),
+                    'auc': float(per_attack_auc.get(int(atk_id), 0.0) or 0.0),
+                    'accuracy': float(metrics.get('acc', 0.0)),
+                    'precision': float(metrics.get('precision', 0.0)),
+                    'recall': float(metrics.get('recall', 0.0)),
+                    'f1': float(metrics.get('f1-score', 0.0)),
+                    'support': int(metrics.get('support', 0)),
+                })
+            client_metrics_csv = os.path.join(client_dir, f"epoch{epoch}_client{client_idx}_per_attack_metrics.csv")
+            pd.DataFrame(rows).to_csv(client_metrics_csv, index=False)
+            self.args.logger.info(f"Saved per-attack CSV metrics for client {client_idx} -> {client_metrics_csv}")
+
+            # Per-client latent embedding (t-SNE) and non-iid-dir specialized embedding
+            latents, lat_labels = collect_latents_and_labels_from_client(client, max_samples_per_class=1000)
+            if latents is not None and latents.shape[0] > 0:
+                # Standard t-SNE embedding
+                plot_latent_embedding(latents, lat_labels, client_dir, epoch, client_id=client_idx, method='tsne')
+                # For non-iid-dir experiments, also produce the specialized 3-color embedding
+                if getattr(self.args, 'experiment_type', None) == 'non_iid_dir':
+                    pm_train = getattr(self.args, 'train_partition_meta', None) or {}
+                    seen_list = pm_train.get('seen_sets', []) if isinstance(pm_train, dict) else []
+                    seen_for_client = []
+                    if isinstance(seen_list, list) and client_idx < len(seen_list):
+                        seen_for_client = list(map(int, seen_list[client_idx]))
+                    num_attacks = getattr(self.args, 'num_attack_labels', None)
+                    if isinstance(num_attacks, int) and num_attacks > 0:
+                        attack_labels = list(range(1, num_attacks + 1))
+                    else:
+                        uniq = sorted(set(int(x) for x in lat_labels if int(x) != 0))
+                        attack_labels = uniq
+                    out = plot_latent_embedding_non_iid_dir(
+                        latents,
+                        lat_labels,
+                        seen_for_client,
+                        attack_label=attack_labels,
+                        out_dir=client_dir,
+                        epoch=epoch,
+                        client_id=client_idx,
+                        method='tsne',
+                        max_points=1000,
+                        random_state=getattr(self.args, 'assign_seed', 0),
+                    )
+                    if out:
+                        self.args.logger.info(f"Saved non-iid-dir latent viz for client {client_idx} -> {out}")
+
+            # accumulate global labels and latent first component (z)
+            for input, label in client.test_data_loader:
+                input, label = input.to(client.device), label.to(client.device)
+                dummy_label = torch.zeros(input.size(0), dtype=torch.long, device=input.device)
+                _, z = client.calculate_loss(input, dummy_label)
+                global_latent_firstcomp.append(float(z.item()))
+                global_labels.append(int(label.item()))
+                global_client_idxs.append(client_idx)
+
+        # After per-client collection: for non_iid_dir, global histogram and per-attack recall
+        out_dir = os.path.join(
+            "logs",
+            "re_distributions",
+            f"{self.args.model_type}_mc{self.args.num_multi_class_clients}_epoch_{epoch}",
+        )
+        os.makedirs(out_dir, exist_ok=True)
+
+        # Global histogram latent-dim0 (z) for non_iid_dir
+        if getattr(self.args, 'experiment_type', None) == 'non_iid_dir' and len(global_latent_firstcomp) > 0:
+            arr = np.array(global_latent_firstcomp).reshape(-1, 1)
+            global_hist_path = plot_latent_first_component_hist_from_latents(arr, out_dir, epoch, client_id=None)
+            if global_hist_path:
+                self.args.logger.info(f"Saved global latent-dim0 histogram to {global_hist_path}")
+
+        # Global recall per attack (benign vs k) using z-threshold=0.5
+        if len(global_labels) > 0:
+            labels_arr = np.array(global_labels, dtype=int)
+            recall_dict = {}
+            for atk_type in sorted(set(labels_arr.tolist())):
+                if atk_type == 0:
+                    continue
+                y_true_bin_all = []
+                y_pred_bin_all = []
+                for cidx, client in enumerate(clients):
+                    for input, label in client.test_data_loader:
+                        input, label = input.to(client.device), label.to(client.device)
+                        dummy_label = torch.zeros(input.size(0), dtype=torch.long, device=input.device)
+                        _, z = client.calculate_loss(input, dummy_label)
+                        lab = int(label.item())
+                        if lab in (0, atk_type):
+                            y_true_bin_all.append(1 if lab == atk_type else 0)
+                            y_pred_bin_all.append(1 - int(float(z.item()) <= 0.5))
+                recall_dict[str(int(atk_type))] = (float(recall_score(y_true_bin_all, y_pred_bin_all, zero_division=0)) if len(y_true_bin_all) > 0 else None)
+            recall_path = os.path.join(out_dir, f"epoch{epoch}_recall_per_attack.json")
+            with open(recall_path, 'w') as jf:
+                json.dump(recall_dict, jf, indent=2)
+            self.args.logger.info(f"Saved global per-attack recall to {recall_path}")
 
         self._log_avg_auc(multiplier_auc_all, multiplier_auc_benign, multiplier_auc_poisoned)
 
