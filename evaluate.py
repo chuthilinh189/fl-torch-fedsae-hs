@@ -18,6 +18,7 @@ from function.utils.visualize_util import (
     collect_re_and_labels_from_client,
     collect_z_norms_and_labels_from_client,
     collect_latents_and_labels_from_client,
+    collect_predictions_and_labels_from_client,
     plot_latent_embedding,
     plot_latent_embedding_non_iid_dir,
     plot_latent_first_component_hist_from_latents,
@@ -225,6 +226,7 @@ def main():
     multiplier_auc_all = {m: [] for m in multipliers}
 
     summary_rows = []
+    detailed_metrics_rows = []  # For seen/unseen/normal metrics
     
     # Global containers for analysis
     global_re = []
@@ -425,6 +427,73 @@ def main():
 
             multiplier_auc_all[m].append(auc)
 
+        # ===== f) Collect predictions and compute detailed metrics =====
+        if args_ns.experiment_type == "non_iid_dir":
+            # Get predictions from client
+            predictions, true_labels_raw = collect_predictions_and_labels_from_client(client)
+            
+            # Get seen_set for this client
+            pm_train = getattr(args, 'train_partition_meta', None) or {}
+            seen_list = pm_train.get('seen_sets', []) if isinstance(pm_train, dict) else []
+            seen_for_client = set()
+            if isinstance(seen_list, list) and client_idx < len(seen_list):
+                seen_for_client = set(map(int, seen_list[client_idx]))
+            
+            # Categorize samples
+            preds_arr = np.array(predictions, dtype=int)
+            labels_arr = np.array(true_labels_raw, dtype=int)
+            
+            # Masks for different categories
+            mask_normal = labels_arr == 0
+            mask_attack_seen = np.array([lab in seen_for_client and lab != 0 for lab in labels_arr])
+            mask_attack_unseen = np.array([lab not in seen_for_client and lab != 0 for lab in labels_arr])
+            mask_attack_all = labels_arr != 0
+            
+            # Compute Recall_seen (TP rate for attack_seen)
+            if mask_attack_seen.sum() > 0:
+                recall_seen = (preds_arr[mask_attack_seen] == 1).sum() / mask_attack_seen.sum()
+            else:
+                recall_seen = np.nan
+            
+            # Compute Recall_unseen (TP rate for attack_unseen)
+            if mask_attack_unseen.sum() > 0:
+                recall_unseen = (preds_arr[mask_attack_unseen] == 1).sum() / mask_attack_unseen.sum()
+            else:
+                recall_unseen = np.nan
+            
+            # Compute Recall_normal (TN rate for normal)
+            if mask_normal.sum() > 0:
+                recall_normal = (preds_arr[mask_normal] == 0).sum() / mask_normal.sum()
+            else:
+                recall_normal = np.nan
+            
+            # Compute Precision_attack (correct attack predictions / all attack predictions)
+            predicted_attack = preds_arr == 1
+            if predicted_attack.sum() > 0:
+                # Correct attack predictions = predicted 1 AND true label is attack
+                correct_attack = predicted_attack & mask_attack_all
+                precision_attack = correct_attack.sum() / predicted_attack.sum()
+            else:
+                precision_attack = np.nan
+            
+            # Compute Precision_normal (correct normal predictions / all normal predictions)
+            predicted_normal = preds_arr == 0
+            if predicted_normal.sum() > 0:
+                # Correct normal predictions = predicted 0 AND true label is 0
+                correct_normal = predicted_normal & mask_normal
+                precision_normal = correct_normal.sum() / predicted_normal.sum()
+            else:
+                precision_normal = np.nan
+            
+            detailed_metrics_rows.append({
+                "Client": f"Client {client_idx + 1}",
+                "Recall_seen": recall_seen * 100 if not np.isnan(recall_seen) else np.nan,
+                "Recall_unseen": recall_unseen * 100 if not np.isnan(recall_unseen) else np.nan,
+                "Recall_normal": recall_normal * 100 if not np.isnan(recall_normal) else np.nan,
+                "Precision_attack": precision_attack * 100 if not np.isnan(precision_attack) else np.nan,
+                "Precision_normal": precision_normal * 100 if not np.isnan(precision_normal) else np.nan,
+            })
+
     # ====== GLOBAL ANALYSIS (sau khi hoàn thành tất cả clients) ======
     # 1) Global histogram nếu non_iid_dir
     if args_ns.experiment_type == "non_iid_dir" and global_latent_firstcomp:
@@ -513,6 +582,46 @@ def main():
 
     else:
         logger.warning("Không thu được thống kê nào tại multiplier yêu cầu.")
+
+    # ===== Export detailed metrics CSV (seen/unseen/normal) =====
+    if detailed_metrics_rows and args_ns.experiment_type == "non_iid_dir":
+        df_detailed = pd.DataFrame(detailed_metrics_rows)
+        
+        # Compute global averages (nanmean to ignore NaN values)
+        global_recall_seen = np.nanmean(df_detailed["Recall_seen"].values)
+        global_recall_unseen = np.nanmean(df_detailed["Recall_unseen"].values)
+        global_recall_normal = np.nanmean(df_detailed["Recall_normal"].values)
+        global_precision_attack = np.nanmean(df_detailed["Precision_attack"].values)
+        global_precision_normal = np.nanmean(df_detailed["Precision_normal"].values)
+        
+        # Log global detailed metrics
+        args.logger.info(
+            "\n====== GLOBAL DETAILED METRICS (Seen/Unseen/Normal) ======\n"
+            f"Recall_seen:       {global_recall_seen:.4f}\n"
+            f"Recall_unseen:     {global_recall_unseen:.4f}\n"
+            f"Recall_normal:     {global_recall_normal:.4f}\n"
+            f"Precision_attack:  {global_precision_attack:.4f}\n"
+            f"Precision_normal:  {global_precision_normal:.4f}\n"
+        )
+        
+        # Add global row to DataFrame
+        global_row = {
+            "Client": "All",
+            "Recall_seen": global_recall_seen,
+            "Recall_unseen": global_recall_unseen,
+            "Recall_normal": global_recall_normal,
+            "Precision_attack": global_precision_attack,
+            "Precision_normal": global_precision_normal,
+        }
+        df_detailed = pd.concat([df_detailed, pd.DataFrame([global_row])], ignore_index=True)
+        
+        # Export to CSV
+        out_dir = os.path.dirname(log_csv_path)
+        os.makedirs(out_dir, exist_ok=True)
+        base_name = f"{args.dataset}_{args.model_type}_epoch_{args_ns.epochs}_detailed_metrics"
+        csv_path_detailed = os.path.join(out_dir, base_name + ".csv")
+        df_detailed.to_csv(csv_path_detailed, index=False, encoding="utf-8-sig")
+        args.logger.info(f"Saved detailed metrics CSV to {csv_path_detailed}")
 
 
 if __name__ == "__main__":

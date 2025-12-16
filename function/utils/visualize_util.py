@@ -108,6 +108,84 @@ def collect_re_and_labels_from_client(client, normalize=False):
     return list_re, raw_labels
 
 
+def collect_predictions_and_labels_from_client(client):
+    """
+    Collect per-sample predictions and true labels from client test using the client's decision logic.
+    
+    For PTLAE: uses prototype-based decision
+    For others: uses threshold_re or threshold_z
+    
+    Returns (predictions, true_labels) where:
+        - predictions: list of 0/1 (0=benign, 1=attack)
+        - true_labels: list of raw label integers
+    """
+    client.net.eval()
+    predictions = []
+    true_labels = []
+    device = client.device
+    
+    # Get threshold or prototypes
+    model_type = getattr(client.args, 'model_type', 'AE')
+    
+    with torch.no_grad():
+        for input, label in client.test_data_loader:
+            input = input.to(device)
+            label = label.to(device)
+            
+            # Compute prediction based on model type
+            if model_type == "PTLAE" or model_type == "PTL":
+                # Use prototype decision
+                encode, decode = client.net(input)
+                
+                # Get prototypes
+                proto_z0 = getattr(client, 'prototype_z0', None)
+                proto_z1 = getattr(client, 'prototype_z1', None)
+                
+                if proto_z0 is not None and proto_z1 is not None:
+                    # Compute distances to prototypes
+                    z = encode.view(encode.size(0), -1)
+                    
+                    if isinstance(proto_z0, (list, tuple, np.ndarray)):
+                        proto_z0_t = torch.tensor(proto_z0, dtype=torch.float32, device=device)
+                    else:
+                        proto_z0_t = proto_z0
+                    
+                    if isinstance(proto_z1, (list, tuple, np.ndarray)):
+                        proto_z1_t = torch.tensor(proto_z1, dtype=torch.float32, device=device)
+                    else:
+                        proto_z1_t = proto_z1
+                    
+                    dist_to_z0 = torch.norm(z - proto_z0_t, p=2, dim=1)
+                    dist_to_z1 = torch.norm(z - proto_z1_t, p=2, dim=1)
+                    
+                    # Predict 0 if closer to z0, else 1
+                    pred = (dist_to_z1 < dist_to_z0).long().cpu().numpy()
+                else:
+                    # Fallback to RE threshold if no prototypes
+                    per_sample_re = ((decode - input) ** 2).mean(dim=1)
+                    threshold_re = client.threshold_re[0] if isinstance(client.threshold_re, (list, tuple)) else client.threshold_re
+                    pred = (per_sample_re > threshold_re).long().cpu().numpy()
+            
+            elif model_type == "SupAE":
+                # SupAE uses latent z norm threshold
+                encode, decode = client.net(input)
+                z_norm = torch.norm(encode.view(encode.size(0), -1), p=2, dim=1)
+                threshold_z = client.threshold_z[0] if isinstance(client.threshold_z, (list, tuple)) else client.threshold_z
+                pred = (z_norm > threshold_z).long().cpu().numpy()
+            
+            else:
+                # Default: use RE threshold
+                encode, decode = client.net(input)
+                per_sample_re = ((decode - input) ** 2).mean(dim=1)
+                threshold_re = client.threshold_re[0] if isinstance(client.threshold_re, (list, tuple)) else client.threshold_re
+                pred = (per_sample_re > threshold_re).long().cpu().numpy()
+            
+            predictions.extend(pred.tolist())
+            true_labels.extend(label.cpu().numpy().astype(int).tolist())
+    
+    return predictions, true_labels
+
+
 def collect_z_norms_and_labels_from_client(client, normalize=False):
     """
     Collect per-sample latent vector norms (L2) and raw labels from a client's test_data_loader.

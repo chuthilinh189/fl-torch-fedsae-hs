@@ -1,35 +1,35 @@
 nohup: ignoring input
-2025-12-16 15:35:29.492 | INFO     | function.utils.data_loader_util:load_data_loader_from_file:202 - Loading data loader from file: data_loaders_full_attack_type/unsw/test_data_loader.pickle
-2025-12-16 15:35:33.886 | INFO     | __main__:main:191 - Testing PTLAE model at epoch #100
-2025-12-16 15:35:33.886 | INFO     | function.utils.data_loader_util:load_data_loader_from_file:202 - Loading data loader from file: data_loaders_full_attack_type/unsw/train_data_loader.pickle
-2025-12-16 15:35:34.032 | INFO     | core.data_processing:client_data_process:100 - Using hybrid partition (train stage): seen_per_client=5, dir_alpha=0.7, seed=0
-2025-12-16 15:35:37.485 | INFO     | core.data_processing:client_data_process:117 - Client 0: total_samples=2295, class_counts={0: 942, 2: 89, 3: 770, 5: 295, 8: 199}
-2025-12-16 15:35:37.485 | INFO     | core.data_processing:client_data_process:117 - Client 1: total_samples=5754, class_counts={0: 3301, 2: 131, 4: 99, 7: 2136, 8: 87}
-2025-12-16 15:35:37.485 | INFO     | core.data_processing:client_data_process:117 - Client 2: total_samples=23244, class_counts={0: 8371, 3: 8, 4: 1667, 5: 53, 6: 13145}
-2025-12-16 15:35:37.486 | INFO     | core.data_processing:client_data_process:117 - Client 3: total_samples=11296, class_counts={0: 8319, 3: 15, 6: 1677, 7: 1282, 8: 3}
-2025-12-16 15:35:37.486 | INFO     | core.data_processing:client_data_process:117 - Client 4: total_samples=5300, class_counts={0: 1444, 5: 2983, 6: 646, 7: 65, 8: 162}
-2025-12-16 15:35:37.486 | INFO     | core.data_processing:client_data_process:117 - Client 5: total_samples=4705, class_counts={0: 1650, 3: 115, 5: 2871, 8: 53, 9: 16}
-2025-12-16 15:35:37.486 | INFO     | core.data_processing:client_data_process:117 - Client 6: total_samples=16501, class_counts={0: 6539, 1: 8947, 2: 35, 6: 965, 9: 15}
-2025-12-16 15:35:37.486 | INFO     | core.data_processing:client_data_process:117 - Client 7: total_samples=9741, class_counts={0: 1755, 2: 426, 3: 404, 4: 6154, 7: 1002}
-2025-12-16 15:35:37.486 | INFO     | core.data_processing:client_data_process:117 - Client 8: total_samples=12941, class_counts={0: 3428, 4: 1146, 6: 8203, 8: 156, 9: 8}
-2025-12-16 15:35:37.486 | INFO     | core.data_processing:client_data_process:117 - Client 9: total_samples=17340, class_counts={0: 3632, 1: 338, 2: 152, 5: 4093, 6: 9125}
-2025-12-16 15:35:37.486 | INFO     | core.data_processing:client_data_process:117 - Client 10: total_samples=5961, class_counts={0: 3894, 1: 290, 4: 1431, 7: 342, 9: 4}
-2025-12-16 15:35:37.486 | INFO     | core.data_processing:client_data_process:117 - Client 11: total_samples=10246, class_counts={0: 6710, 1: 2550, 2: 323, 3: 188, 6: 475}
-2025-12-16 15:35:37.487 | INFO     | core.data_processing:client_data_process:117 - Client 12: total_samples=2179, class_counts={0: 37, 2: 219, 7: 1871, 8: 10, 9: 42}
-2025-12-16 15:35:37.487 | INFO     | core.data_processing:client_data_process:117 - Client 13: total_samples=6739, class_counts={0: 854, 3: 42, 5: 4586, 7: 1256, 9: 1}
-2025-12-16 15:35:37.487 | INFO     | core.data_processing:client_data_process:117 - Client 14: total_samples=3414, class_counts={0: 1369, 2: 145, 5: 812, 7: 1088}
-2025-12-16 15:35:37.487 | INFO     | core.data_processing:client_data_process:117 - Client 15: total_samples=15788, class_counts={0: 298, 4: 997, 5: 14287, 7: 194, 8: 12}
-2025-12-16 15:35:37.487 | INFO     | core.data_processing:client_data_process:117 - Client 16: total_samples=2082, class_counts={0: 126, 1: 1113, 5: 279, 6: 545, 9: 19}
-2025-12-16 15:35:37.487 | INFO     | core.data_processing:client_data_process:117 - Client 17: total_samples=5040, class_counts={0: 348, 1: 3805, 2: 176, 6: 509, 8: 202}
-2025-12-16 15:35:37.487 | INFO     | core.data_processing:client_data_process:117 - Client 18: total_samples=11879, class_counts={0: 10861, 6: 339, 7: 517, 8: 148, 9: 14}
-2025-12-16 15:35:37.487 | INFO     | core.data_processing:client_data_process:117 - Client 19: total_samples=7925, class_counts={0: 1312, 2: 129, 3: 79, 5: 828, 6: 5577}
-2025-12-16 15:35:37.487 | INFO     | core.data_processing:client_data_process:118 - Seen classes per client: [[0, 2, 3, 5, 8], [0, 2, 4, 7, 8], [0, 3, 4, 5, 6], [0, 3, 6, 7, 8], [0, 5, 6, 7, 8], [0, 3, 5, 8, 9], [0, 1, 2, 6, 9], [0, 2, 3, 4, 7], [0, 4, 6, 8, 9], [0, 1, 2, 5, 6], [0, 1, 4, 7, 9], [0, 1, 2, 3, 6], [0, 2, 7, 8, 9], [0, 3, 5, 7, 9], [0, 2, 5, 7, 9], [0, 4, 5, 7, 8], [0, 1, 5, 6, 9], [0, 1, 2, 6, 8], [0, 6, 7, 8, 9], [0, 2, 3, 5, 6]]
-2025-12-16 15:35:37.489 | INFO     | __main__:main:218 - Loaded train partition meta: seen_sets=[[0, 2, 3, 5, 8], [0, 2, 4, 7, 8], [0, 3, 4, 5, 6], [0, 3, 6, 7, 8], [0, 5, 6, 7, 8], [0, 3, 5, 8, 9], [0, 1, 2, 6, 9], [0, 2, 3, 4, 7], [0, 4, 6, 8, 9], [0, 1, 2, 5, 6], [0, 1, 4, 7, 9], [0, 1, 2, 3, 6], [0, 2, 7, 8, 9], [0, 3, 5, 7, 9], [0, 2, 5, 7, 9], [0, 4, 5, 7, 8], [0, 1, 5, 6, 9], [0, 1, 2, 6, 8], [0, 6, 7, 8, 9], [0, 2, 3, 5, 6]]
-2025-12-16 15:35:37.491 | INFO     | __main__:main:288 - Client 0 test at epoch 100 with proto_z0: True, proto_z1: True
-2025-12-16 15:35:44.144 | INFO     | __main__:main:366 - Saved non-iid-dir latent viz for client 0 -> logs/re_distributions/PTLAE_mc20_epoch_100/client_0/epoch100_client0_tsne_non_iid.png
-2025-12-16 15:35:44.299 | INFO     | __main__:main:373 - Saved client 0 latent-dim0 histogram to logs/re_distributions/PTLAE_mc20_epoch_100/client_0/epoch100_client0_latent_dim0_hist.png
-2025-12-16 15:35:45.300 | INFO     | agents.clients.clientPTLAE:test_with_thresholds:434 - [Client 0] Using prototypes for proto decision: proto_z0={'shape': (15,), 'norm': 7.681693077087402, 'head': [-2.1206765174865723, 2.2203691005706787, 1.9803639650344849, -2.3417086601257324, -1.2375327348709106, 1.4907362461090088]}, proto_z1={'shape': (15,), 'norm': 10.098138809204102, 'head': [1.91110360622406, -2.3024420738220215, -1.7195361852645874, 2.281613826751709, 0.2993401288986206, -0.6850332021713257]}
-2025-12-16 15:35:45.324 | DEBUG    | agents.clients.clientPTLAE:test_with_thresholds:474 - Classification Report:
+2025-12-16 17:06:00.154 | INFO     | function.utils.data_loader_util:load_data_loader_from_file:202 - Loading data loader from file: data_loaders_full_attack_type/unsw/test_data_loader.pickle
+2025-12-16 17:06:04.465 | INFO     | __main__:main:192 - Testing PTLAE model at epoch #100
+2025-12-16 17:06:04.465 | INFO     | function.utils.data_loader_util:load_data_loader_from_file:202 - Loading data loader from file: data_loaders_full_attack_type/unsw/train_data_loader.pickle
+2025-12-16 17:06:04.606 | INFO     | core.data_processing:client_data_process:100 - Using hybrid partition (train stage): seen_per_client=5, dir_alpha=0.7, seed=0
+2025-12-16 17:06:07.904 | INFO     | core.data_processing:client_data_process:117 - Client 0: total_samples=2295, class_counts={0: 942, 2: 89, 3: 770, 5: 295, 8: 199}
+2025-12-16 17:06:07.905 | INFO     | core.data_processing:client_data_process:117 - Client 1: total_samples=5754, class_counts={0: 3301, 2: 131, 4: 99, 7: 2136, 8: 87}
+2025-12-16 17:06:07.905 | INFO     | core.data_processing:client_data_process:117 - Client 2: total_samples=23244, class_counts={0: 8371, 3: 8, 4: 1667, 5: 53, 6: 13145}
+2025-12-16 17:06:07.905 | INFO     | core.data_processing:client_data_process:117 - Client 3: total_samples=11296, class_counts={0: 8319, 3: 15, 6: 1677, 7: 1282, 8: 3}
+2025-12-16 17:06:07.905 | INFO     | core.data_processing:client_data_process:117 - Client 4: total_samples=5300, class_counts={0: 1444, 5: 2983, 6: 646, 7: 65, 8: 162}
+2025-12-16 17:06:07.905 | INFO     | core.data_processing:client_data_process:117 - Client 5: total_samples=4705, class_counts={0: 1650, 3: 115, 5: 2871, 8: 53, 9: 16}
+2025-12-16 17:06:07.905 | INFO     | core.data_processing:client_data_process:117 - Client 6: total_samples=16501, class_counts={0: 6539, 1: 8947, 2: 35, 6: 965, 9: 15}
+2025-12-16 17:06:07.905 | INFO     | core.data_processing:client_data_process:117 - Client 7: total_samples=9741, class_counts={0: 1755, 2: 426, 3: 404, 4: 6154, 7: 1002}
+2025-12-16 17:06:07.905 | INFO     | core.data_processing:client_data_process:117 - Client 8: total_samples=12941, class_counts={0: 3428, 4: 1146, 6: 8203, 8: 156, 9: 8}
+2025-12-16 17:06:07.906 | INFO     | core.data_processing:client_data_process:117 - Client 9: total_samples=17340, class_counts={0: 3632, 1: 338, 2: 152, 5: 4093, 6: 9125}
+2025-12-16 17:06:07.906 | INFO     | core.data_processing:client_data_process:117 - Client 10: total_samples=5961, class_counts={0: 3894, 1: 290, 4: 1431, 7: 342, 9: 4}
+2025-12-16 17:06:07.906 | INFO     | core.data_processing:client_data_process:117 - Client 11: total_samples=10246, class_counts={0: 6710, 1: 2550, 2: 323, 3: 188, 6: 475}
+2025-12-16 17:06:07.906 | INFO     | core.data_processing:client_data_process:117 - Client 12: total_samples=2179, class_counts={0: 37, 2: 219, 7: 1871, 8: 10, 9: 42}
+2025-12-16 17:06:07.906 | INFO     | core.data_processing:client_data_process:117 - Client 13: total_samples=6739, class_counts={0: 854, 3: 42, 5: 4586, 7: 1256, 9: 1}
+2025-12-16 17:06:07.906 | INFO     | core.data_processing:client_data_process:117 - Client 14: total_samples=3414, class_counts={0: 1369, 2: 145, 5: 812, 7: 1088}
+2025-12-16 17:06:07.906 | INFO     | core.data_processing:client_data_process:117 - Client 15: total_samples=15788, class_counts={0: 298, 4: 997, 5: 14287, 7: 194, 8: 12}
+2025-12-16 17:06:07.906 | INFO     | core.data_processing:client_data_process:117 - Client 16: total_samples=2082, class_counts={0: 126, 1: 1113, 5: 279, 6: 545, 9: 19}
+2025-12-16 17:06:07.906 | INFO     | core.data_processing:client_data_process:117 - Client 17: total_samples=5040, class_counts={0: 348, 1: 3805, 2: 176, 6: 509, 8: 202}
+2025-12-16 17:06:07.906 | INFO     | core.data_processing:client_data_process:117 - Client 18: total_samples=11879, class_counts={0: 10861, 6: 339, 7: 517, 8: 148, 9: 14}
+2025-12-16 17:06:07.907 | INFO     | core.data_processing:client_data_process:117 - Client 19: total_samples=7925, class_counts={0: 1312, 2: 129, 3: 79, 5: 828, 6: 5577}
+2025-12-16 17:06:07.907 | INFO     | core.data_processing:client_data_process:118 - Seen classes per client: [[0, 2, 3, 5, 8], [0, 2, 4, 7, 8], [0, 3, 4, 5, 6], [0, 3, 6, 7, 8], [0, 5, 6, 7, 8], [0, 3, 5, 8, 9], [0, 1, 2, 6, 9], [0, 2, 3, 4, 7], [0, 4, 6, 8, 9], [0, 1, 2, 5, 6], [0, 1, 4, 7, 9], [0, 1, 2, 3, 6], [0, 2, 7, 8, 9], [0, 3, 5, 7, 9], [0, 2, 5, 7, 9], [0, 4, 5, 7, 8], [0, 1, 5, 6, 9], [0, 1, 2, 6, 8], [0, 6, 7, 8, 9], [0, 2, 3, 5, 6]]
+2025-12-16 17:06:07.908 | INFO     | __main__:main:219 - Loaded train partition meta: seen_sets=[[0, 2, 3, 5, 8], [0, 2, 4, 7, 8], [0, 3, 4, 5, 6], [0, 3, 6, 7, 8], [0, 5, 6, 7, 8], [0, 3, 5, 8, 9], [0, 1, 2, 6, 9], [0, 2, 3, 4, 7], [0, 4, 6, 8, 9], [0, 1, 2, 5, 6], [0, 1, 4, 7, 9], [0, 1, 2, 3, 6], [0, 2, 7, 8, 9], [0, 3, 5, 7, 9], [0, 2, 5, 7, 9], [0, 4, 5, 7, 8], [0, 1, 5, 6, 9], [0, 1, 2, 6, 8], [0, 6, 7, 8, 9], [0, 2, 3, 5, 6]]
+2025-12-16 17:06:07.910 | INFO     | __main__:main:290 - Client 0 test at epoch 100 with proto_z0: True, proto_z1: True
+2025-12-16 17:06:13.574 | INFO     | __main__:main:368 - Saved non-iid-dir latent viz for client 0 -> logs/re_distributions/PTLAE_mc20_epoch_100/client_0/epoch100_client0_tsne_non_iid.png
+2025-12-16 17:06:13.729 | INFO     | __main__:main:375 - Saved client 0 latent-dim0 histogram to logs/re_distributions/PTLAE_mc20_epoch_100/client_0/epoch100_client0_latent_dim0_hist.png
+2025-12-16 17:06:14.741 | INFO     | agents.clients.clientPTLAE:test_with_thresholds:434 - [Client 0] Using prototypes for proto decision: proto_z0={'shape': (15,), 'norm': 7.681693077087402, 'head': [-2.1206765174865723, 2.2203691005706787, 1.9803639650344849, -2.3417086601257324, -1.2375327348709106, 1.4907362461090088]}, proto_z1={'shape': (15,), 'norm': 10.098138809204102, 'head': [1.91110360622406, -2.3024420738220215, -1.7195361852645874, 2.281613826751709, 0.2993401288986206, -0.6850332021713257]}
+2025-12-16 17:06:14.765 | DEBUG    | agents.clients.clientPTLAE:test_with_thresholds:474 - Classification Report:
               precision    recall  f1-score   support
 
            0       0.87      0.78      0.82       955
@@ -39,16 +39,16 @@ nohup: ignoring input
    macro avg       0.87      0.85      0.86      2577
 weighted avg       0.87      0.87      0.87      2577
 
-2025-12-16 15:35:45.326 | DEBUG    | agents.clients.clientPTLAE:test_with_thresholds:475 - Confusion Matrix:
+2025-12-16 17:06:14.767 | DEBUG    | agents.clients.clientPTLAE:test_with_thresholds:475 - Confusion Matrix:
 [[ 742  213]
  [ 115 1507]]
-2025-12-16 15:35:45.326 | DEBUG    | agents.clients.clientPTLAE:test_with_thresholds:476 - ROC AUC Score: 0.8572533424574406
-2025-12-16 15:35:45.327 | INFO     | __main__:main:411 - [Client 1] Multiplier 1.0: ACC=0.8727, P=0.8762, R=0.9291, F1=0.9019, AUC=0.8573
-2025-12-16 15:35:45.328 | INFO     | __main__:main:288 - Client 1 test at epoch 100 with proto_z0: True, proto_z1: True
-2025-12-16 15:35:51.353 | INFO     | __main__:main:366 - Saved non-iid-dir latent viz for client 1 -> logs/re_distributions/PTLAE_mc20_epoch_100/client_1/epoch100_client1_tsne_non_iid.png
-2025-12-16 15:35:51.501 | INFO     | __main__:main:373 - Saved client 1 latent-dim0 histogram to logs/re_distributions/PTLAE_mc20_epoch_100/client_1/epoch100_client1_latent_dim0_hist.png
-2025-12-16 15:35:52.495 | INFO     | agents.clients.clientPTLAE:test_with_thresholds:434 - [Client 1] Using prototypes for proto decision: proto_z0={'shape': (15,), 'norm': 7.328882217407227, 'head': [-2.007518768310547, 2.125627040863037, 1.9360207319259644, -2.2069084644317627, -1.2841659784317017, 1.5098373889923096]}, proto_z1={'shape': (15,), 'norm': 11.245017051696777, 'head': [2.7790920734405518, -3.146808624267578, -2.5872671604156494, 3.116934061050415, 1.094496488571167, -1.518100380897522]}
-2025-12-16 15:35:52.518 | DEBUG    | agents.clients.clientPTLAE:test_with_thresholds:474 - Classification Report:
+2025-12-16 17:06:14.767 | DEBUG    | agents.clients.clientPTLAE:test_with_thresholds:476 - ROC AUC Score: 0.8572533424574406
+2025-12-16 17:06:14.768 | INFO     | __main__:main:413 - [Client 1] Multiplier 1.0: ACC=0.8727, P=0.8762, R=0.9291, F1=0.9019, AUC=0.8573
+2025-12-16 17:06:15.912 | INFO     | __main__:main:290 - Client 1 test at epoch 100 with proto_z0: True, proto_z1: True
+2025-12-16 17:06:21.271 | INFO     | __main__:main:368 - Saved non-iid-dir latent viz for client 1 -> logs/re_distributions/PTLAE_mc20_epoch_100/client_1/epoch100_client1_tsne_non_iid.png
+2025-12-16 17:06:21.418 | INFO     | __main__:main:375 - Saved client 1 latent-dim0 histogram to logs/re_distributions/PTLAE_mc20_epoch_100/client_1/epoch100_client1_latent_dim0_hist.png
+2025-12-16 17:06:22.427 | INFO     | agents.clients.clientPTLAE:test_with_thresholds:434 - [Client 1] Using prototypes for proto decision: proto_z0={'shape': (15,), 'norm': 7.328882217407227, 'head': [-2.007518768310547, 2.125627040863037, 1.9360207319259644, -2.2069084644317627, -1.2841659784317017, 1.5098373889923096]}, proto_z1={'shape': (15,), 'norm': 11.245017051696777, 'head': [2.7790920734405518, -3.146808624267578, -2.5872671604156494, 3.116934061050415, 1.094496488571167, -1.518100380897522]}
+2025-12-16 17:06:22.449 | DEBUG    | agents.clients.clientPTLAE:test_with_thresholds:474 - Classification Report:
               precision    recall  f1-score   support
 
            0       0.75      0.91      0.82       934
@@ -58,16 +58,16 @@ weighted avg       0.87      0.87      0.87      2577
    macro avg       0.85      0.87      0.85      2577
 weighted avg       0.87      0.86      0.86      2577
 
-2025-12-16 15:35:52.520 | DEBUG    | agents.clients.clientPTLAE:test_with_thresholds:475 - Confusion Matrix:
+2025-12-16 17:06:22.451 | DEBUG    | agents.clients.clientPTLAE:test_with_thresholds:475 - Confusion Matrix:
 [[ 854   80]
  [ 284 1359]]
-2025-12-16 15:35:52.520 | DEBUG    | agents.clients.clientPTLAE:test_with_thresholds:476 - ROC AUC Score: 0.9614385081867008
-2025-12-16 15:35:52.521 | INFO     | __main__:main:411 - [Client 2] Multiplier 1.0: ACC=0.8588, P=0.9444, R=0.8271, F1=0.8819, AUC=0.9614
-2025-12-16 15:35:52.523 | INFO     | __main__:main:288 - Client 2 test at epoch 100 with proto_z0: True, proto_z1: True
-2025-12-16 15:36:00.251 | INFO     | __main__:main:366 - Saved non-iid-dir latent viz for client 2 -> logs/re_distributions/PTLAE_mc20_epoch_100/client_2/epoch100_client2_tsne_non_iid.png
-2025-12-16 15:36:00.398 | INFO     | __main__:main:373 - Saved client 2 latent-dim0 histogram to logs/re_distributions/PTLAE_mc20_epoch_100/client_2/epoch100_client2_latent_dim0_hist.png
-2025-12-16 15:36:01.389 | INFO     | agents.clients.clientPTLAE:test_with_thresholds:434 - [Client 2] Using prototypes for proto decision: proto_z0={'shape': (15,), 'norm': 9.204788208007812, 'head': [-2.5038421154022217, 2.6646642684936523, 2.3259010314941406, -2.801372766494751, -1.3189218044281006, 1.6562737226486206]}, proto_z1={'shape': (15,), 'norm': 9.007218360900879, 'head': [1.9199914932250977, -2.272696018218994, -1.9393848180770874, 2.2028448581695557, 0.8733981251716614, -1.159057855606079]}
-2025-12-16 15:36:01.412 | DEBUG    | agents.clients.clientPTLAE:test_with_thresholds:474 - Classification Report:
+2025-12-16 17:06:22.451 | DEBUG    | agents.clients.clientPTLAE:test_with_thresholds:476 - ROC AUC Score: 0.9614385081867008
+2025-12-16 17:06:22.452 | INFO     | __main__:main:413 - [Client 2] Multiplier 1.0: ACC=0.8588, P=0.9444, R=0.8271, F1=0.8819, AUC=0.9614
+2025-12-16 17:06:23.589 | INFO     | __main__:main:290 - Client 2 test at epoch 100 with proto_z0: True, proto_z1: True
+2025-12-16 17:06:28.827 | INFO     | __main__:main:368 - Saved non-iid-dir latent viz for client 2 -> logs/re_distributions/PTLAE_mc20_epoch_100/client_2/epoch100_client2_tsne_non_iid.png
+2025-12-16 17:06:28.975 | INFO     | __main__:main:375 - Saved client 2 latent-dim0 histogram to logs/re_distributions/PTLAE_mc20_epoch_100/client_2/epoch100_client2_latent_dim0_hist.png
+2025-12-16 17:06:29.990 | INFO     | agents.clients.clientPTLAE:test_with_thresholds:434 - [Client 2] Using prototypes for proto decision: proto_z0={'shape': (15,), 'norm': 9.204788208007812, 'head': [-2.5038421154022217, 2.6646642684936523, 2.3259010314941406, -2.801372766494751, -1.3189218044281006, 1.6562737226486206]}, proto_z1={'shape': (15,), 'norm': 9.007218360900879, 'head': [1.9199914932250977, -2.272696018218994, -1.9393848180770874, 2.2028448581695557, 0.8733981251716614, -1.159057855606079]}
+2025-12-16 17:06:30.012 | DEBUG    | agents.clients.clientPTLAE:test_with_thresholds:474 - Classification Report:
               precision    recall  f1-score   support
 
            0       0.84      0.76      0.80       903
@@ -77,16 +77,16 @@ weighted avg       0.87      0.86      0.86      2577
    macro avg       0.86      0.84      0.85      2577
 weighted avg       0.86      0.87      0.86      2577
 
-2025-12-16 15:36:01.414 | DEBUG    | agents.clients.clientPTLAE:test_with_thresholds:475 - Confusion Matrix:
+2025-12-16 17:06:30.014 | DEBUG    | agents.clients.clientPTLAE:test_with_thresholds:475 - Confusion Matrix:
 [[ 689  214]
  [ 132 1542]]
-2025-12-16 15:36:01.414 | DEBUG    | agents.clients.clientPTLAE:test_with_thresholds:476 - ROC AUC Score: 0.8267000612587009
-2025-12-16 15:36:01.415 | INFO     | __main__:main:411 - [Client 3] Multiplier 1.0: ACC=0.8657, P=0.8781, R=0.9211, F1=0.8991, AUC=0.8267
-2025-12-16 15:36:01.416 | INFO     | __main__:main:288 - Client 3 test at epoch 100 with proto_z0: True, proto_z1: True
-2025-12-16 15:36:09.372 | INFO     | __main__:main:366 - Saved non-iid-dir latent viz for client 3 -> logs/re_distributions/PTLAE_mc20_epoch_100/client_3/epoch100_client3_tsne_non_iid.png
-2025-12-16 15:36:09.526 | INFO     | __main__:main:373 - Saved client 3 latent-dim0 histogram to logs/re_distributions/PTLAE_mc20_epoch_100/client_3/epoch100_client3_latent_dim0_hist.png
-2025-12-16 15:36:10.519 | INFO     | agents.clients.clientPTLAE:test_with_thresholds:434 - [Client 3] Using prototypes for proto decision: proto_z0={'shape': (15,), 'norm': 6.27398157119751, 'head': [-1.6574137210845947, 1.812760829925537, 1.7309987545013428, -1.8121356964111328, -1.2664145231246948, 1.4349666833877563]}, proto_z1={'shape': (15,), 'norm': 10.72280216217041, 'head': [2.67031192779541, -2.9580507278442383, -2.449650764465332, 2.9910452365875244, 1.0552525520324707, -1.457080602645874]}
-2025-12-16 15:36:10.543 | DEBUG    | agents.clients.clientPTLAE:test_with_thresholds:474 - Classification Report:
+2025-12-16 17:06:30.014 | DEBUG    | agents.clients.clientPTLAE:test_with_thresholds:476 - ROC AUC Score: 0.8267000612587009
+2025-12-16 17:06:30.015 | INFO     | __main__:main:413 - [Client 3] Multiplier 1.0: ACC=0.8657, P=0.8781, R=0.9211, F1=0.8991, AUC=0.8267
+2025-12-16 17:06:31.158 | INFO     | __main__:main:290 - Client 3 test at epoch 100 with proto_z0: True, proto_z1: True
+2025-12-16 17:06:36.389 | INFO     | __main__:main:368 - Saved non-iid-dir latent viz for client 3 -> logs/re_distributions/PTLAE_mc20_epoch_100/client_3/epoch100_client3_tsne_non_iid.png
+2025-12-16 17:06:36.545 | INFO     | __main__:main:375 - Saved client 3 latent-dim0 histogram to logs/re_distributions/PTLAE_mc20_epoch_100/client_3/epoch100_client3_latent_dim0_hist.png
+2025-12-16 17:06:37.556 | INFO     | agents.clients.clientPTLAE:test_with_thresholds:434 - [Client 3] Using prototypes for proto decision: proto_z0={'shape': (15,), 'norm': 6.27398157119751, 'head': [-1.6574137210845947, 1.812760829925537, 1.7309987545013428, -1.8121356964111328, -1.2664145231246948, 1.4349666833877563]}, proto_z1={'shape': (15,), 'norm': 10.72280216217041, 'head': [2.67031192779541, -2.9580507278442383, -2.449650764465332, 2.9910452365875244, 1.0552525520324707, -1.457080602645874]}
+2025-12-16 17:06:37.579 | DEBUG    | agents.clients.clientPTLAE:test_with_thresholds:474 - Classification Report:
               precision    recall  f1-score   support
 
            0       0.90      0.80      0.84       929
@@ -96,16 +96,16 @@ weighted avg       0.86      0.87      0.86      2577
    macro avg       0.90      0.87      0.88      2577
 weighted avg       0.89      0.89      0.89      2577
 
-2025-12-16 15:36:10.544 | DEBUG    | agents.clients.clientPTLAE:test_with_thresholds:475 - Confusion Matrix:
+2025-12-16 17:06:37.581 | DEBUG    | agents.clients.clientPTLAE:test_with_thresholds:475 - Confusion Matrix:
 [[ 741  188]
  [  84 1564]]
-2025-12-16 15:36:10.544 | DEBUG    | agents.clients.clientPTLAE:test_with_thresholds:476 - ROC AUC Score: 0.9684459487704705
-2025-12-16 15:36:10.545 | INFO     | __main__:main:411 - [Client 4] Multiplier 1.0: ACC=0.8945, P=0.8927, R=0.9490, F1=0.9200, AUC=0.9684
-2025-12-16 15:36:10.547 | INFO     | __main__:main:288 - Client 4 test at epoch 100 with proto_z0: True, proto_z1: True
-2025-12-16 15:36:19.901 | INFO     | __main__:main:366 - Saved non-iid-dir latent viz for client 4 -> logs/re_distributions/PTLAE_mc20_epoch_100/client_4/epoch100_client4_tsne_non_iid.png
-2025-12-16 15:36:20.059 | INFO     | __main__:main:373 - Saved client 4 latent-dim0 histogram to logs/re_distributions/PTLAE_mc20_epoch_100/client_4/epoch100_client4_latent_dim0_hist.png
-2025-12-16 15:36:21.061 | INFO     | agents.clients.clientPTLAE:test_with_thresholds:434 - [Client 4] Using prototypes for proto decision: proto_z0={'shape': (15,), 'norm': 10.272100448608398, 'head': [-2.8132734298706055, 3.041698694229126, 2.623657703399658, -3.183626890182495, -1.4750865697860718, 1.848677158355713]}, proto_z1={'shape': (15,), 'norm': 10.233209609985352, 'head': [1.9051263332366943, -2.4437057971954346, -2.314689874649048, 2.1313788890838623, 1.4463783502578735, -1.6328802108764648]}
-2025-12-16 15:36:21.084 | DEBUG    | agents.clients.clientPTLAE:test_with_thresholds:474 - Classification Report:
+2025-12-16 17:06:37.581 | DEBUG    | agents.clients.clientPTLAE:test_with_thresholds:476 - ROC AUC Score: 0.9684459487704705
+2025-12-16 17:06:37.582 | INFO     | __main__:main:413 - [Client 4] Multiplier 1.0: ACC=0.8945, P=0.8927, R=0.9490, F1=0.9200, AUC=0.9684
+2025-12-16 17:06:38.708 | INFO     | __main__:main:290 - Client 4 test at epoch 100 with proto_z0: True, proto_z1: True
+2025-12-16 17:06:43.959 | INFO     | __main__:main:368 - Saved non-iid-dir latent viz for client 4 -> logs/re_distributions/PTLAE_mc20_epoch_100/client_4/epoch100_client4_tsne_non_iid.png
+2025-12-16 17:06:44.120 | INFO     | __main__:main:375 - Saved client 4 latent-dim0 histogram to logs/re_distributions/PTLAE_mc20_epoch_100/client_4/epoch100_client4_latent_dim0_hist.png
+2025-12-16 17:06:45.139 | INFO     | agents.clients.clientPTLAE:test_with_thresholds:434 - [Client 4] Using prototypes for proto decision: proto_z0={'shape': (15,), 'norm': 10.272100448608398, 'head': [-2.8132734298706055, 3.041698694229126, 2.623657703399658, -3.183626890182495, -1.4750865697860718, 1.848677158355713]}, proto_z1={'shape': (15,), 'norm': 10.233209609985352, 'head': [1.9051263332366943, -2.4437057971954346, -2.314689874649048, 2.1313788890838623, 1.4463783502578735, -1.6328802108764648]}
+2025-12-16 17:06:45.163 | DEBUG    | agents.clients.clientPTLAE:test_with_thresholds:474 - Classification Report:
               precision    recall  f1-score   support
 
            0       0.77      0.89      0.83       916
@@ -115,16 +115,16 @@ weighted avg       0.89      0.89      0.89      2577
    macro avg       0.85      0.87      0.86      2577
 weighted avg       0.88      0.87      0.87      2577
 
-2025-12-16 15:36:21.085 | DEBUG    | agents.clients.clientPTLAE:test_with_thresholds:475 - Confusion Matrix:
+2025-12-16 17:06:45.165 | DEBUG    | agents.clients.clientPTLAE:test_with_thresholds:475 - Confusion Matrix:
 [[ 816  100]
  [ 245 1416]]
-2025-12-16 15:36:21.085 | DEBUG    | agents.clients.clientPTLAE:test_with_thresholds:476 - ROC AUC Score: 0.9554156621596397
-2025-12-16 15:36:21.086 | INFO     | __main__:main:411 - [Client 5] Multiplier 1.0: ACC=0.8661, P=0.9340, R=0.8525, F1=0.8914, AUC=0.9554
-2025-12-16 15:36:21.087 | INFO     | __main__:main:288 - Client 5 test at epoch 100 with proto_z0: True, proto_z1: True
-2025-12-16 15:36:28.462 | INFO     | __main__:main:366 - Saved non-iid-dir latent viz for client 5 -> logs/re_distributions/PTLAE_mc20_epoch_100/client_5/epoch100_client5_tsne_non_iid.png
-2025-12-16 15:36:28.619 | INFO     | __main__:main:373 - Saved client 5 latent-dim0 histogram to logs/re_distributions/PTLAE_mc20_epoch_100/client_5/epoch100_client5_latent_dim0_hist.png
-2025-12-16 15:36:29.622 | INFO     | agents.clients.clientPTLAE:test_with_thresholds:434 - [Client 5] Using prototypes for proto decision: proto_z0={'shape': (15,), 'norm': 7.7473249435424805, 'head': [-2.1191351413726807, 2.2172470092773438, 1.9601325988769531, -2.3549513816833496, -1.1807376146316528, 1.4444249868392944]}, proto_z1={'shape': (15,), 'norm': 8.658946990966797, 'head': [1.1087878942489624, -1.6517153978347778, -1.3600913286209106, 1.4185810089111328, 0.3166523277759552, -0.5971876978874207]}
-2025-12-16 15:36:29.646 | DEBUG    | agents.clients.clientPTLAE:test_with_thresholds:474 - Classification Report:
+2025-12-16 17:06:45.165 | DEBUG    | agents.clients.clientPTLAE:test_with_thresholds:476 - ROC AUC Score: 0.9554156621596397
+2025-12-16 17:06:45.166 | INFO     | __main__:main:413 - [Client 5] Multiplier 1.0: ACC=0.8661, P=0.9340, R=0.8525, F1=0.8914, AUC=0.9554
+2025-12-16 17:06:46.282 | INFO     | __main__:main:290 - Client 5 test at epoch 100 with proto_z0: True, proto_z1: True
+2025-12-16 17:06:51.517 | INFO     | __main__:main:368 - Saved non-iid-dir latent viz for client 5 -> logs/re_distributions/PTLAE_mc20_epoch_100/client_5/epoch100_client5_tsne_non_iid.png
+2025-12-16 17:06:51.673 | INFO     | __main__:main:375 - Saved client 5 latent-dim0 histogram to logs/re_distributions/PTLAE_mc20_epoch_100/client_5/epoch100_client5_latent_dim0_hist.png
+2025-12-16 17:06:52.706 | INFO     | agents.clients.clientPTLAE:test_with_thresholds:434 - [Client 5] Using prototypes for proto decision: proto_z0={'shape': (15,), 'norm': 7.7473249435424805, 'head': [-2.1191351413726807, 2.2172470092773438, 1.9601325988769531, -2.3549513816833496, -1.1807376146316528, 1.4444249868392944]}, proto_z1={'shape': (15,), 'norm': 8.658946990966797, 'head': [1.1087878942489624, -1.6517153978347778, -1.3600913286209106, 1.4185810089111328, 0.3166523277759552, -0.5971876978874207]}
+2025-12-16 17:06:52.730 | DEBUG    | agents.clients.clientPTLAE:test_with_thresholds:474 - Classification Report:
               precision    recall  f1-score   support
 
            0       0.71      0.95      0.81       935
@@ -134,16 +134,16 @@ weighted avg       0.88      0.87      0.87      2577
    macro avg       0.84      0.86      0.84      2577
 weighted avg       0.87      0.84      0.84      2577
 
-2025-12-16 15:36:29.648 | DEBUG    | agents.clients.clientPTLAE:test_with_thresholds:475 - Confusion Matrix:
+2025-12-16 17:06:52.732 | DEBUG    | agents.clients.clientPTLAE:test_with_thresholds:475 - Confusion Matrix:
 [[ 888   47]
  [ 362 1280]]
-2025-12-16 15:36:29.648 | DEBUG    | agents.clients.clientPTLAE:test_with_thresholds:476 - ROC AUC Score: 0.9428582594592484
-2025-12-16 15:36:29.649 | INFO     | __main__:main:411 - [Client 6] Multiplier 1.0: ACC=0.8413, P=0.9646, R=0.7795, F1=0.8622, AUC=0.9429
-2025-12-16 15:36:29.650 | INFO     | __main__:main:288 - Client 6 test at epoch 100 with proto_z0: True, proto_z1: True
-2025-12-16 15:36:37.492 | INFO     | __main__:main:366 - Saved non-iid-dir latent viz for client 6 -> logs/re_distributions/PTLAE_mc20_epoch_100/client_6/epoch100_client6_tsne_non_iid.png
-2025-12-16 15:36:37.649 | INFO     | __main__:main:373 - Saved client 6 latent-dim0 histogram to logs/re_distributions/PTLAE_mc20_epoch_100/client_6/epoch100_client6_latent_dim0_hist.png
-2025-12-16 15:36:38.844 | INFO     | agents.clients.clientPTLAE:test_with_thresholds:434 - [Client 6] Using prototypes for proto decision: proto_z0={'shape': (15,), 'norm': 7.145430564880371, 'head': [-1.9103147983551025, 2.0517992973327637, 1.8945348262786865, -2.110696315765381, -1.2733396291732788, 1.48955237865448]}, proto_z1={'shape': (15,), 'norm': 11.023438453674316, 'head': [1.5863301753997803, -2.234776496887207, -1.793945074081421, 1.951621413230896, 0.4638848900794983, -0.8425908088684082]}
-2025-12-16 15:36:38.868 | DEBUG    | agents.clients.clientPTLAE:test_with_thresholds:474 - Classification Report:
+2025-12-16 17:06:52.732 | DEBUG    | agents.clients.clientPTLAE:test_with_thresholds:476 - ROC AUC Score: 0.9428582594592484
+2025-12-16 17:06:52.733 | INFO     | __main__:main:413 - [Client 6] Multiplier 1.0: ACC=0.8413, P=0.9646, R=0.7795, F1=0.8622, AUC=0.9429
+2025-12-16 17:06:53.850 | INFO     | __main__:main:290 - Client 6 test at epoch 100 with proto_z0: True, proto_z1: True
+2025-12-16 17:06:59.066 | INFO     | __main__:main:368 - Saved non-iid-dir latent viz for client 6 -> logs/re_distributions/PTLAE_mc20_epoch_100/client_6/epoch100_client6_tsne_non_iid.png
+2025-12-16 17:06:59.375 | INFO     | __main__:main:375 - Saved client 6 latent-dim0 histogram to logs/re_distributions/PTLAE_mc20_epoch_100/client_6/epoch100_client6_latent_dim0_hist.png
+2025-12-16 17:07:00.385 | INFO     | agents.clients.clientPTLAE:test_with_thresholds:434 - [Client 6] Using prototypes for proto decision: proto_z0={'shape': (15,), 'norm': 7.145430564880371, 'head': [-1.9103147983551025, 2.0517992973327637, 1.8945348262786865, -2.110696315765381, -1.2733396291732788, 1.48955237865448]}, proto_z1={'shape': (15,), 'norm': 11.023438453674316, 'head': [1.5863301753997803, -2.234776496887207, -1.793945074081421, 1.951621413230896, 0.4638848900794983, -0.8425908088684082]}
+2025-12-16 17:07:00.408 | DEBUG    | agents.clients.clientPTLAE:test_with_thresholds:474 - Classification Report:
               precision    recall  f1-score   support
 
            0       0.99      0.69      0.81       947
@@ -153,16 +153,16 @@ weighted avg       0.87      0.84      0.84      2577
    macro avg       0.92      0.84      0.86      2577
 weighted avg       0.90      0.88      0.88      2577
 
-2025-12-16 15:36:38.870 | DEBUG    | agents.clients.clientPTLAE:test_with_thresholds:475 - Confusion Matrix:
+2025-12-16 17:07:00.409 | DEBUG    | agents.clients.clientPTLAE:test_with_thresholds:475 - Confusion Matrix:
 [[ 649  298]
  [   7 1623]]
-2025-12-16 15:36:38.870 | DEBUG    | agents.clients.clientPTLAE:test_with_thresholds:476 - ROC AUC Score: 0.8967543615291425
-2025-12-16 15:36:38.871 | INFO     | __main__:main:411 - [Client 7] Multiplier 1.0: ACC=0.8816, P=0.8449, R=0.9957, F1=0.9141, AUC=0.8968
-2025-12-16 15:36:38.872 | INFO     | __main__:main:288 - Client 7 test at epoch 100 with proto_z0: True, proto_z1: True
-2025-12-16 15:36:47.308 | INFO     | __main__:main:366 - Saved non-iid-dir latent viz for client 7 -> logs/re_distributions/PTLAE_mc20_epoch_100/client_7/epoch100_client7_tsne_non_iid.png
-2025-12-16 15:36:47.450 | INFO     | __main__:main:373 - Saved client 7 latent-dim0 histogram to logs/re_distributions/PTLAE_mc20_epoch_100/client_7/epoch100_client7_latent_dim0_hist.png
-2025-12-16 15:36:48.441 | INFO     | agents.clients.clientPTLAE:test_with_thresholds:434 - [Client 7] Using prototypes for proto decision: proto_z0={'shape': (15,), 'norm': 6.703182697296143, 'head': [-1.7907277345657349, 1.9357659816741943, 1.8072631359100342, -1.9729137420654297, -1.2451847791671753, 1.442646861076355]}, proto_z1={'shape': (15,), 'norm': 13.562050819396973, 'head': [2.7222745418548584, -3.35125732421875, -2.7088115215301514, 3.1705315113067627, 0.9590160846710205, -1.4622126817703247]}
-2025-12-16 15:36:48.464 | DEBUG    | agents.clients.clientPTLAE:test_with_thresholds:474 - Classification Report:
+2025-12-16 17:07:00.410 | DEBUG    | agents.clients.clientPTLAE:test_with_thresholds:476 - ROC AUC Score: 0.8967543615291425
+2025-12-16 17:07:00.411 | INFO     | __main__:main:413 - [Client 7] Multiplier 1.0: ACC=0.8816, P=0.8449, R=0.9957, F1=0.9141, AUC=0.8968
+2025-12-16 17:07:01.539 | INFO     | __main__:main:290 - Client 7 test at epoch 100 with proto_z0: True, proto_z1: True
+2025-12-16 17:07:06.859 | INFO     | __main__:main:368 - Saved non-iid-dir latent viz for client 7 -> logs/re_distributions/PTLAE_mc20_epoch_100/client_7/epoch100_client7_tsne_non_iid.png
+2025-12-16 17:07:07.002 | INFO     | __main__:main:375 - Saved client 7 latent-dim0 histogram to logs/re_distributions/PTLAE_mc20_epoch_100/client_7/epoch100_client7_latent_dim0_hist.png
+2025-12-16 17:07:08.007 | INFO     | agents.clients.clientPTLAE:test_with_thresholds:434 - [Client 7] Using prototypes for proto decision: proto_z0={'shape': (15,), 'norm': 6.703182697296143, 'head': [-1.7907277345657349, 1.9357659816741943, 1.8072631359100342, -1.9729137420654297, -1.2451847791671753, 1.442646861076355]}, proto_z1={'shape': (15,), 'norm': 13.562050819396973, 'head': [2.7222745418548584, -3.35125732421875, -2.7088115215301514, 3.1705315113067627, 0.9590160846710205, -1.4622126817703247]}
+2025-12-16 17:07:08.030 | DEBUG    | agents.clients.clientPTLAE:test_with_thresholds:474 - Classification Report:
               precision    recall  f1-score   support
 
            0       0.99      0.72      0.83       905
@@ -172,16 +172,16 @@ weighted avg       0.90      0.88      0.88      2577
    macro avg       0.93      0.86      0.88      2577
 weighted avg       0.91      0.90      0.89      2577
 
-2025-12-16 15:36:48.466 | DEBUG    | agents.clients.clientPTLAE:test_with_thresholds:475 - Confusion Matrix:
+2025-12-16 17:07:08.031 | DEBUG    | agents.clients.clientPTLAE:test_with_thresholds:475 - Confusion Matrix:
 [[ 649  256]
  [   5 1667]]
-2025-12-16 15:36:48.466 | DEBUG    | agents.clients.clientPTLAE:test_with_thresholds:476 - ROC AUC Score: 0.9508227814639562
-2025-12-16 15:36:48.467 | INFO     | __main__:main:411 - [Client 8] Multiplier 1.0: ACC=0.8987, P=0.8669, R=0.9970, F1=0.9274, AUC=0.9508
-2025-12-16 15:36:48.469 | INFO     | __main__:main:288 - Client 8 test at epoch 100 with proto_z0: True, proto_z1: True
-2025-12-16 15:36:56.865 | INFO     | __main__:main:366 - Saved non-iid-dir latent viz for client 8 -> logs/re_distributions/PTLAE_mc20_epoch_100/client_8/epoch100_client8_tsne_non_iid.png
-2025-12-16 15:36:57.021 | INFO     | __main__:main:373 - Saved client 8 latent-dim0 histogram to logs/re_distributions/PTLAE_mc20_epoch_100/client_8/epoch100_client8_latent_dim0_hist.png
-2025-12-16 15:36:58.025 | INFO     | agents.clients.clientPTLAE:test_with_thresholds:434 - [Client 8] Using prototypes for proto decision: proto_z0={'shape': (15,), 'norm': 11.332254409790039, 'head': [-3.2698731422424316, 3.3064496517181396, 2.78190541267395, -3.6344029903411865, -1.47396719455719, 1.919028639793396]}, proto_z1={'shape': (15,), 'norm': 5.560981273651123, 'head': [1.0433083772659302, -1.3758697509765625, -1.3284703493118286, 1.212114691734314, 0.7522910833358765, -0.9225248098373413]}
-2025-12-16 15:36:58.047 | DEBUG    | agents.clients.clientPTLAE:test_with_thresholds:474 - Classification Report:
+2025-12-16 17:07:08.031 | DEBUG    | agents.clients.clientPTLAE:test_with_thresholds:476 - ROC AUC Score: 0.9508227814639562
+2025-12-16 17:07:08.032 | INFO     | __main__:main:413 - [Client 8] Multiplier 1.0: ACC=0.8987, P=0.8669, R=0.9970, F1=0.9274, AUC=0.9508
+2025-12-16 17:07:09.164 | INFO     | __main__:main:290 - Client 8 test at epoch 100 with proto_z0: True, proto_z1: True
+2025-12-16 17:07:14.434 | INFO     | __main__:main:368 - Saved non-iid-dir latent viz for client 8 -> logs/re_distributions/PTLAE_mc20_epoch_100/client_8/epoch100_client8_tsne_non_iid.png
+2025-12-16 17:07:14.590 | INFO     | __main__:main:375 - Saved client 8 latent-dim0 histogram to logs/re_distributions/PTLAE_mc20_epoch_100/client_8/epoch100_client8_latent_dim0_hist.png
+2025-12-16 17:07:15.604 | INFO     | agents.clients.clientPTLAE:test_with_thresholds:434 - [Client 8] Using prototypes for proto decision: proto_z0={'shape': (15,), 'norm': 11.332254409790039, 'head': [-3.2698731422424316, 3.3064496517181396, 2.78190541267395, -3.6344029903411865, -1.47396719455719, 1.919028639793396]}, proto_z1={'shape': (15,), 'norm': 5.560981273651123, 'head': [1.0433083772659302, -1.3758697509765625, -1.3284703493118286, 1.212114691734314, 0.7522910833358765, -0.9225248098373413]}
+2025-12-16 17:07:15.627 | DEBUG    | agents.clients.clientPTLAE:test_with_thresholds:474 - Classification Report:
               precision    recall  f1-score   support
 
            0       0.66      0.97      0.78       868
@@ -191,16 +191,16 @@ weighted avg       0.91      0.90      0.89      2577
    macro avg       0.82      0.86      0.81      2577
 weighted avg       0.87      0.82      0.82      2577
 
-2025-12-16 15:36:58.049 | DEBUG    | agents.clients.clientPTLAE:test_with_thresholds:475 - Confusion Matrix:
+2025-12-16 17:07:15.628 | DEBUG    | agents.clients.clientPTLAE:test_with_thresholds:475 - Confusion Matrix:
 [[ 838   30]
  [ 434 1275]]
-2025-12-16 15:36:58.049 | DEBUG    | agents.clients.clientPTLAE:test_with_thresholds:476 - ROC AUC Score: 0.9390085155034474
-2025-12-16 15:36:58.050 | INFO     | __main__:main:411 - [Client 9] Multiplier 1.0: ACC=0.8199, P=0.9770, R=0.7461, F1=0.8461, AUC=0.9390
-2025-12-16 15:36:58.051 | INFO     | __main__:main:288 - Client 9 test at epoch 100 with proto_z0: True, proto_z1: True
-2025-12-16 15:37:05.329 | INFO     | __main__:main:366 - Saved non-iid-dir latent viz for client 9 -> logs/re_distributions/PTLAE_mc20_epoch_100/client_9/epoch100_client9_tsne_non_iid.png
-2025-12-16 15:37:05.467 | INFO     | __main__:main:373 - Saved client 9 latent-dim0 histogram to logs/re_distributions/PTLAE_mc20_epoch_100/client_9/epoch100_client9_latent_dim0_hist.png
-2025-12-16 15:37:06.467 | INFO     | agents.clients.clientPTLAE:test_with_thresholds:434 - [Client 9] Using prototypes for proto decision: proto_z0={'shape': (15,), 'norm': 9.449150085449219, 'head': [-2.6261093616485596, 2.754682779312134, 2.3587541580200195, -2.940281391143799, -1.3056867122650146, 1.6550124883651733]}, proto_z1={'shape': (15,), 'norm': 5.591622829437256, 'head': [1.0885717868804932, -1.3243916034698486, -1.2024081945419312, 1.270104169845581, 0.5853264927864075, -0.7516204714775085]}
-2025-12-16 15:37:06.490 | DEBUG    | agents.clients.clientPTLAE:test_with_thresholds:474 - Classification Report:
+2025-12-16 17:07:15.628 | DEBUG    | agents.clients.clientPTLAE:test_with_thresholds:476 - ROC AUC Score: 0.9390085155034474
+2025-12-16 17:07:15.629 | INFO     | __main__:main:413 - [Client 9] Multiplier 1.0: ACC=0.8199, P=0.9770, R=0.7461, F1=0.8461, AUC=0.9390
+2025-12-16 17:07:16.764 | INFO     | __main__:main:290 - Client 9 test at epoch 100 with proto_z0: True, proto_z1: True
+2025-12-16 17:07:21.974 | INFO     | __main__:main:368 - Saved non-iid-dir latent viz for client 9 -> logs/re_distributions/PTLAE_mc20_epoch_100/client_9/epoch100_client9_tsne_non_iid.png
+2025-12-16 17:07:22.113 | INFO     | __main__:main:375 - Saved client 9 latent-dim0 histogram to logs/re_distributions/PTLAE_mc20_epoch_100/client_9/epoch100_client9_latent_dim0_hist.png
+2025-12-16 17:07:23.138 | INFO     | agents.clients.clientPTLAE:test_with_thresholds:434 - [Client 9] Using prototypes for proto decision: proto_z0={'shape': (15,), 'norm': 9.449150085449219, 'head': [-2.6261093616485596, 2.754682779312134, 2.3587541580200195, -2.940281391143799, -1.3056867122650146, 1.6550124883651733]}, proto_z1={'shape': (15,), 'norm': 5.591622829437256, 'head': [1.0885717868804932, -1.3243916034698486, -1.2024081945419312, 1.270104169845581, 0.5853264927864075, -0.7516204714775085]}
+2025-12-16 17:07:23.160 | DEBUG    | agents.clients.clientPTLAE:test_with_thresholds:474 - Classification Report:
               precision    recall  f1-score   support
 
            0       0.76      0.92      0.83       959
@@ -210,16 +210,16 @@ weighted avg       0.87      0.82      0.82      2577
    macro avg       0.85      0.87      0.86      2577
 weighted avg       0.88      0.86      0.86      2577
 
-2025-12-16 15:37:06.491 | DEBUG    | agents.clients.clientPTLAE:test_with_thresholds:475 - Confusion Matrix:
+2025-12-16 17:07:23.162 | DEBUG    | agents.clients.clientPTLAE:test_with_thresholds:475 - Confusion Matrix:
 [[ 884   75]
  [ 282 1336]]
-2025-12-16 15:37:06.491 | DEBUG    | agents.clients.clientPTLAE:test_with_thresholds:476 - ROC AUC Score: 0.9504750390226737
-2025-12-16 15:37:06.492 | INFO     | __main__:main:411 - [Client 10] Multiplier 1.0: ACC=0.8615, P=0.9468, R=0.8257, F1=0.8821, AUC=0.9505
-2025-12-16 15:37:06.494 | INFO     | __main__:main:288 - Client 10 test at epoch 100 with proto_z0: True, proto_z1: True
-2025-12-16 15:37:15.066 | INFO     | __main__:main:366 - Saved non-iid-dir latent viz for client 10 -> logs/re_distributions/PTLAE_mc20_epoch_100/client_10/epoch100_client10_tsne_non_iid.png
-2025-12-16 15:37:15.219 | INFO     | __main__:main:373 - Saved client 10 latent-dim0 histogram to logs/re_distributions/PTLAE_mc20_epoch_100/client_10/epoch100_client10_latent_dim0_hist.png
-2025-12-16 15:37:16.223 | INFO     | agents.clients.clientPTLAE:test_with_thresholds:434 - [Client 10] Using prototypes for proto decision: proto_z0={'shape': (15,), 'norm': 7.959613800048828, 'head': [-2.2193775177001953, 2.293747663497925, 2.017225503921509, -2.455050468444824, -1.2128262519836426, 1.4851486682891846]}, proto_z1={'shape': (15,), 'norm': 8.647562980651855, 'head': [1.3522424697875977, -2.131399154663086, -2.0303728580474854, 1.5429373979568481, 1.1831912994384766, -1.3954527378082275]}
-2025-12-16 15:37:16.246 | DEBUG    | agents.clients.clientPTLAE:test_with_thresholds:474 - Classification Report:
+2025-12-16 17:07:23.162 | DEBUG    | agents.clients.clientPTLAE:test_with_thresholds:476 - ROC AUC Score: 0.9504750390226737
+2025-12-16 17:07:23.163 | INFO     | __main__:main:413 - [Client 10] Multiplier 1.0: ACC=0.8615, P=0.9468, R=0.8257, F1=0.8821, AUC=0.9505
+2025-12-16 17:07:24.285 | INFO     | __main__:main:290 - Client 10 test at epoch 100 with proto_z0: True, proto_z1: True
+2025-12-16 17:07:29.500 | INFO     | __main__:main:368 - Saved non-iid-dir latent viz for client 10 -> logs/re_distributions/PTLAE_mc20_epoch_100/client_10/epoch100_client10_tsne_non_iid.png
+2025-12-16 17:07:29.653 | INFO     | __main__:main:375 - Saved client 10 latent-dim0 histogram to logs/re_distributions/PTLAE_mc20_epoch_100/client_10/epoch100_client10_latent_dim0_hist.png
+2025-12-16 17:07:30.667 | INFO     | agents.clients.clientPTLAE:test_with_thresholds:434 - [Client 10] Using prototypes for proto decision: proto_z0={'shape': (15,), 'norm': 7.959613800048828, 'head': [-2.2193775177001953, 2.293747663497925, 2.017225503921509, -2.455050468444824, -1.2128262519836426, 1.4851486682891846]}, proto_z1={'shape': (15,), 'norm': 8.647562980651855, 'head': [1.3522424697875977, -2.131399154663086, -2.0303728580474854, 1.5429373979568481, 1.1831912994384766, -1.3954527378082275]}
+2025-12-16 17:07:30.689 | DEBUG    | agents.clients.clientPTLAE:test_with_thresholds:474 - Classification Report:
               precision    recall  f1-score   support
 
            0       1.00      0.65      0.79       933
@@ -229,16 +229,16 @@ weighted avg       0.88      0.86      0.86      2577
    macro avg       0.92      0.83      0.85      2577
 weighted avg       0.89      0.87      0.87      2577
 
-2025-12-16 15:37:16.248 | DEBUG    | agents.clients.clientPTLAE:test_with_thresholds:475 - Confusion Matrix:
+2025-12-16 17:07:30.691 | DEBUG    | agents.clients.clientPTLAE:test_with_thresholds:475 - Confusion Matrix:
 [[ 611  322]
  [   2 1642]]
-2025-12-16 15:37:16.248 | DEBUG    | agents.clients.clientPTLAE:test_with_thresholds:476 - ROC AUC Score: 0.8404507084125457
-2025-12-16 15:37:16.249 | INFO     | __main__:main:411 - [Client 11] Multiplier 1.0: ACC=0.8743, P=0.8360, R=0.9988, F1=0.9102, AUC=0.8405
-2025-12-16 15:37:16.250 | INFO     | __main__:main:288 - Client 11 test at epoch 100 with proto_z0: True, proto_z1: True
-2025-12-16 15:37:24.532 | INFO     | __main__:main:366 - Saved non-iid-dir latent viz for client 11 -> logs/re_distributions/PTLAE_mc20_epoch_100/client_11/epoch100_client11_tsne_non_iid.png
-2025-12-16 15:37:24.682 | INFO     | __main__:main:373 - Saved client 11 latent-dim0 histogram to logs/re_distributions/PTLAE_mc20_epoch_100/client_11/epoch100_client11_latent_dim0_hist.png
-2025-12-16 15:37:25.684 | INFO     | agents.clients.clientPTLAE:test_with_thresholds:434 - [Client 11] Using prototypes for proto decision: proto_z0={'shape': (15,), 'norm': 10.526813507080078, 'head': [-3.0212786197662354, 3.087662696838379, 2.587797164916992, -3.3679580688476562, -1.3779581785202026, 1.777716875076294]}, proto_z1={'shape': (15,), 'norm': 4.317534923553467, 'head': [-0.049879737198352814, -0.5294743776321411, -0.709447979927063, 0.05505035072565079, 0.4614236056804657, -0.5151150822639465]}
-2025-12-16 15:37:25.707 | DEBUG    | agents.clients.clientPTLAE:test_with_thresholds:474 - Classification Report:
+2025-12-16 17:07:30.691 | DEBUG    | agents.clients.clientPTLAE:test_with_thresholds:476 - ROC AUC Score: 0.8404507084125457
+2025-12-16 17:07:30.692 | INFO     | __main__:main:413 - [Client 11] Multiplier 1.0: ACC=0.8743, P=0.8360, R=0.9988, F1=0.9102, AUC=0.8405
+2025-12-16 17:07:31.813 | INFO     | __main__:main:290 - Client 11 test at epoch 100 with proto_z0: True, proto_z1: True
+2025-12-16 17:07:37.071 | INFO     | __main__:main:368 - Saved non-iid-dir latent viz for client 11 -> logs/re_distributions/PTLAE_mc20_epoch_100/client_11/epoch100_client11_tsne_non_iid.png
+2025-12-16 17:07:37.219 | INFO     | __main__:main:375 - Saved client 11 latent-dim0 histogram to logs/re_distributions/PTLAE_mc20_epoch_100/client_11/epoch100_client11_latent_dim0_hist.png
+2025-12-16 17:07:38.245 | INFO     | agents.clients.clientPTLAE:test_with_thresholds:434 - [Client 11] Using prototypes for proto decision: proto_z0={'shape': (15,), 'norm': 10.526813507080078, 'head': [-3.0212786197662354, 3.087662696838379, 2.587797164916992, -3.3679580688476562, -1.3779581785202026, 1.777716875076294]}, proto_z1={'shape': (15,), 'norm': 4.317534923553467, 'head': [-0.049879737198352814, -0.5294743776321411, -0.709447979927063, 0.05505035072565079, 0.4614236056804657, -0.5151150822639465]}
+2025-12-16 17:07:38.269 | DEBUG    | agents.clients.clientPTLAE:test_with_thresholds:474 - Classification Report:
               precision    recall  f1-score   support
 
            0       0.62      1.00      0.77       946
@@ -248,16 +248,16 @@ weighted avg       0.89      0.87      0.87      2577
    macro avg       0.81      0.82      0.78      2577
 weighted avg       0.86      0.78      0.78      2577
 
-2025-12-16 15:37:25.709 | DEBUG    | agents.clients.clientPTLAE:test_with_thresholds:475 - Confusion Matrix:
+2025-12-16 17:07:38.271 | DEBUG    | agents.clients.clientPTLAE:test_with_thresholds:475 - Confusion Matrix:
 [[ 944    2]
  [ 576 1055]]
-2025-12-16 15:37:25.709 | DEBUG    | agents.clients.clientPTLAE:test_with_thresholds:476 - ROC AUC Score: 0.9566155473431648
-2025-12-16 15:37:25.710 | INFO     | __main__:main:411 - [Client 12] Multiplier 1.0: ACC=0.7757, P=0.9981, R=0.6468, F1=0.7850, AUC=0.9566
-2025-12-16 15:37:25.711 | INFO     | __main__:main:288 - Client 12 test at epoch 100 with proto_z0: True, proto_z1: True
-2025-12-16 15:37:34.259 | INFO     | __main__:main:366 - Saved non-iid-dir latent viz for client 12 -> logs/re_distributions/PTLAE_mc20_epoch_100/client_12/epoch100_client12_tsne_non_iid.png
-2025-12-16 15:37:34.419 | INFO     | __main__:main:373 - Saved client 12 latent-dim0 histogram to logs/re_distributions/PTLAE_mc20_epoch_100/client_12/epoch100_client12_latent_dim0_hist.png
-2025-12-16 15:37:35.419 | INFO     | agents.clients.clientPTLAE:test_with_thresholds:434 - [Client 12] Using prototypes for proto decision: proto_z0={'shape': (15,), 'norm': 7.825556755065918, 'head': [-2.1982460021972656, 2.2668817043304443, 1.9908976554870605, -2.416965961456299, -1.2115968465805054, 1.4726603031158447]}, proto_z1={'shape': (15,), 'norm': 6.064027786254883, 'head': [0.34443187713623047, -0.9610231518745422, -1.0218158960342407, 0.5067627429962158, 0.5219385027885437, -0.6575892567634583]}
-2025-12-16 15:37:35.442 | DEBUG    | agents.clients.clientPTLAE:test_with_thresholds:474 - Classification Report:
+2025-12-16 17:07:38.271 | DEBUG    | agents.clients.clientPTLAE:test_with_thresholds:476 - ROC AUC Score: 0.9566155473431648
+2025-12-16 17:07:38.272 | INFO     | __main__:main:413 - [Client 12] Multiplier 1.0: ACC=0.7757, P=0.9981, R=0.6468, F1=0.7850, AUC=0.9566
+2025-12-16 17:07:39.412 | INFO     | __main__:main:290 - Client 12 test at epoch 100 with proto_z0: True, proto_z1: True
+2025-12-16 17:07:44.683 | INFO     | __main__:main:368 - Saved non-iid-dir latent viz for client 12 -> logs/re_distributions/PTLAE_mc20_epoch_100/client_12/epoch100_client12_tsne_non_iid.png
+2025-12-16 17:07:44.845 | INFO     | __main__:main:375 - Saved client 12 latent-dim0 histogram to logs/re_distributions/PTLAE_mc20_epoch_100/client_12/epoch100_client12_latent_dim0_hist.png
+2025-12-16 17:07:45.855 | INFO     | agents.clients.clientPTLAE:test_with_thresholds:434 - [Client 12] Using prototypes for proto decision: proto_z0={'shape': (15,), 'norm': 7.825556755065918, 'head': [-2.1982460021972656, 2.2668817043304443, 1.9908976554870605, -2.416965961456299, -1.2115968465805054, 1.4726603031158447]}, proto_z1={'shape': (15,), 'norm': 6.064027786254883, 'head': [0.34443187713623047, -0.9610231518745422, -1.0218158960342407, 0.5067627429962158, 0.5219385027885437, -0.6575892567634583]}
+2025-12-16 17:07:45.878 | DEBUG    | agents.clients.clientPTLAE:test_with_thresholds:474 - Classification Report:
               precision    recall  f1-score   support
 
            0       0.74      0.90      0.81       906
@@ -267,16 +267,16 @@ weighted avg       0.86      0.78      0.78      2577
    macro avg       0.84      0.87      0.85      2577
 weighted avg       0.87      0.86      0.86      2577
 
-2025-12-16 15:37:35.444 | DEBUG    | agents.clients.clientPTLAE:test_with_thresholds:475 - Confusion Matrix:
+2025-12-16 17:07:45.880 | DEBUG    | agents.clients.clientPTLAE:test_with_thresholds:475 - Confusion Matrix:
 [[ 815   91]
  [ 282 1389]]
-2025-12-16 15:37:35.444 | DEBUG    | agents.clients.clientPTLAE:test_with_thresholds:476 - ROC AUC Score: 0.9608825002014629
-2025-12-16 15:37:35.445 | INFO     | __main__:main:411 - [Client 13] Multiplier 1.0: ACC=0.8553, P=0.9385, R=0.8312, F1=0.8816, AUC=0.9609
-2025-12-16 15:37:35.446 | INFO     | __main__:main:288 - Client 13 test at epoch 100 with proto_z0: True, proto_z1: True
-2025-12-16 15:37:43.686 | INFO     | __main__:main:366 - Saved non-iid-dir latent viz for client 13 -> logs/re_distributions/PTLAE_mc20_epoch_100/client_13/epoch100_client13_tsne_non_iid.png
-2025-12-16 15:37:43.827 | INFO     | __main__:main:373 - Saved client 13 latent-dim0 histogram to logs/re_distributions/PTLAE_mc20_epoch_100/client_13/epoch100_client13_latent_dim0_hist.png
-2025-12-16 15:37:45.024 | INFO     | agents.clients.clientPTLAE:test_with_thresholds:434 - [Client 13] Using prototypes for proto decision: proto_z0={'shape': (15,), 'norm': 8.178088188171387, 'head': [-2.2506039142608643, 2.345353603363037, 2.0496201515197754, -2.4986531734466553, -1.1971479654312134, 1.4825608730316162]}, proto_z1={'shape': (15,), 'norm': 8.269006729125977, 'head': [0.8947019577026367, -1.4590739011764526, -1.2206518650054932, 1.195842981338501, 0.2431541532278061, -0.5099999308586121]}
-2025-12-16 15:37:45.048 | DEBUG    | agents.clients.clientPTLAE:test_with_thresholds:474 - Classification Report:
+2025-12-16 17:07:45.880 | DEBUG    | agents.clients.clientPTLAE:test_with_thresholds:476 - ROC AUC Score: 0.9608825002014629
+2025-12-16 17:07:45.881 | INFO     | __main__:main:413 - [Client 13] Multiplier 1.0: ACC=0.8553, P=0.9385, R=0.8312, F1=0.8816, AUC=0.9609
+2025-12-16 17:07:47.004 | INFO     | __main__:main:290 - Client 13 test at epoch 100 with proto_z0: True, proto_z1: True
+2025-12-16 17:07:52.233 | INFO     | __main__:main:368 - Saved non-iid-dir latent viz for client 13 -> logs/re_distributions/PTLAE_mc20_epoch_100/client_13/epoch100_client13_tsne_non_iid.png
+2025-12-16 17:07:52.375 | INFO     | __main__:main:375 - Saved client 13 latent-dim0 histogram to logs/re_distributions/PTLAE_mc20_epoch_100/client_13/epoch100_client13_latent_dim0_hist.png
+2025-12-16 17:07:53.392 | INFO     | agents.clients.clientPTLAE:test_with_thresholds:434 - [Client 13] Using prototypes for proto decision: proto_z0={'shape': (15,), 'norm': 8.178088188171387, 'head': [-2.2506039142608643, 2.345353603363037, 2.0496201515197754, -2.4986531734466553, -1.1971479654312134, 1.4825608730316162]}, proto_z1={'shape': (15,), 'norm': 8.269006729125977, 'head': [0.8947019577026367, -1.4590739011764526, -1.2206518650054932, 1.195842981338501, 0.2431541532278061, -0.5099999308586121]}
+2025-12-16 17:07:53.414 | DEBUG    | agents.clients.clientPTLAE:test_with_thresholds:474 - Classification Report:
               precision    recall  f1-score   support
 
            0       0.72      0.96      0.82       973
@@ -286,16 +286,16 @@ weighted avg       0.87      0.86      0.86      2577
    macro avg       0.84      0.86      0.84      2577
 weighted avg       0.87      0.84      0.84      2577
 
-2025-12-16 15:37:45.049 | DEBUG    | agents.clients.clientPTLAE:test_with_thresholds:475 - Confusion Matrix:
+2025-12-16 17:07:53.416 | DEBUG    | agents.clients.clientPTLAE:test_with_thresholds:475 - Confusion Matrix:
 [[ 932   41]
  [ 367 1237]]
-2025-12-16 15:37:45.049 | DEBUG    | agents.clients.clientPTLAE:test_with_thresholds:476 - ROC AUC Score: 0.9499785992367489
-2025-12-16 15:37:45.051 | INFO     | __main__:main:411 - [Client 14] Multiplier 1.0: ACC=0.8417, P=0.9679, R=0.7712, F1=0.8584, AUC=0.9500
-2025-12-16 15:37:45.052 | INFO     | __main__:main:288 - Client 14 test at epoch 100 with proto_z0: True, proto_z1: True
-2025-12-16 15:37:52.567 | INFO     | __main__:main:366 - Saved non-iid-dir latent viz for client 14 -> logs/re_distributions/PTLAE_mc20_epoch_100/client_14/epoch100_client14_tsne_non_iid.png
-2025-12-16 15:37:52.724 | INFO     | __main__:main:373 - Saved client 14 latent-dim0 histogram to logs/re_distributions/PTLAE_mc20_epoch_100/client_14/epoch100_client14_latent_dim0_hist.png
-2025-12-16 15:37:53.770 | INFO     | agents.clients.clientPTLAE:test_with_thresholds:434 - [Client 14] Using prototypes for proto decision: proto_z0={'shape': (15,), 'norm': 8.432225227355957, 'head': [-2.2976748943328857, 2.44929575920105, 2.157336950302124, -2.5614144802093506, -1.260293960571289, 1.5669937133789062]}, proto_z1={'shape': (15,), 'norm': 8.082077980041504, 'head': [1.5878945589065552, -1.9749903678894043, -1.5902012586593628, 1.8706516027450562, 0.46221596002578735, -0.788555920124054]}
-2025-12-16 15:37:53.794 | DEBUG    | agents.clients.clientPTLAE:test_with_thresholds:474 - Classification Report:
+2025-12-16 17:07:53.416 | DEBUG    | agents.clients.clientPTLAE:test_with_thresholds:476 - ROC AUC Score: 0.9499785992367489
+2025-12-16 17:07:53.417 | INFO     | __main__:main:413 - [Client 14] Multiplier 1.0: ACC=0.8417, P=0.9679, R=0.7712, F1=0.8584, AUC=0.9500
+2025-12-16 17:07:54.537 | INFO     | __main__:main:290 - Client 14 test at epoch 100 with proto_z0: True, proto_z1: True
+2025-12-16 17:08:00.001 | INFO     | __main__:main:368 - Saved non-iid-dir latent viz for client 14 -> logs/re_distributions/PTLAE_mc20_epoch_100/client_14/epoch100_client14_tsne_non_iid.png
+2025-12-16 17:08:00.148 | INFO     | __main__:main:375 - Saved client 14 latent-dim0 histogram to logs/re_distributions/PTLAE_mc20_epoch_100/client_14/epoch100_client14_latent_dim0_hist.png
+2025-12-16 17:08:01.167 | INFO     | agents.clients.clientPTLAE:test_with_thresholds:434 - [Client 14] Using prototypes for proto decision: proto_z0={'shape': (15,), 'norm': 8.432225227355957, 'head': [-2.2976748943328857, 2.44929575920105, 2.157336950302124, -2.5614144802093506, -1.260293960571289, 1.5669937133789062]}, proto_z1={'shape': (15,), 'norm': 8.082077980041504, 'head': [1.5878945589065552, -1.9749903678894043, -1.5902012586593628, 1.8706516027450562, 0.46221596002578735, -0.788555920124054]}
+2025-12-16 17:08:01.191 | DEBUG    | agents.clients.clientPTLAE:test_with_thresholds:474 - Classification Report:
               precision    recall  f1-score   support
 
            0       0.93      0.76      0.84       922
@@ -305,16 +305,16 @@ weighted avg       0.87      0.84      0.84      2577
    macro avg       0.90      0.86      0.88      2577
 weighted avg       0.90      0.89      0.89      2577
 
-2025-12-16 15:37:53.796 | DEBUG    | agents.clients.clientPTLAE:test_with_thresholds:475 - Confusion Matrix:
+2025-12-16 17:08:01.193 | DEBUG    | agents.clients.clientPTLAE:test_with_thresholds:475 - Confusion Matrix:
 [[ 703  219]
  [  57 1598]]
-2025-12-16 15:37:53.796 | DEBUG    | agents.clients.clientPTLAE:test_with_thresholds:476 - ROC AUC Score: 0.8971806987305936
-2025-12-16 15:37:53.797 | INFO     | __main__:main:411 - [Client 15] Multiplier 1.0: ACC=0.8929, P=0.8795, R=0.9656, F1=0.9205, AUC=0.8972
-2025-12-16 15:37:53.798 | INFO     | __main__:main:288 - Client 15 test at epoch 100 with proto_z0: True, proto_z1: True
-2025-12-16 15:38:01.769 | INFO     | __main__:main:366 - Saved non-iid-dir latent viz for client 15 -> logs/re_distributions/PTLAE_mc20_epoch_100/client_15/epoch100_client15_tsne_non_iid.png
-2025-12-16 15:38:01.934 | INFO     | __main__:main:373 - Saved client 15 latent-dim0 histogram to logs/re_distributions/PTLAE_mc20_epoch_100/client_15/epoch100_client15_latent_dim0_hist.png
-2025-12-16 15:38:02.963 | INFO     | agents.clients.clientPTLAE:test_with_thresholds:434 - [Client 15] Using prototypes for proto decision: proto_z0={'shape': (15,), 'norm': 9.020967483520508, 'head': [-2.497501850128174, 2.614837646484375, 2.2539522647857666, -2.7765777111053467, -1.2680076360702515, 1.5941967964172363]}, proto_z1={'shape': (15,), 'norm': 7.03877067565918, 'head': [0.015569993294775486, -0.6172473430633545, -0.6070314049720764, 0.26813605427742004, 0.01678476482629776, -0.16809223592281342]}
-2025-12-16 15:38:02.986 | DEBUG    | agents.clients.clientPTLAE:test_with_thresholds:474 - Classification Report:
+2025-12-16 17:08:01.193 | DEBUG    | agents.clients.clientPTLAE:test_with_thresholds:476 - ROC AUC Score: 0.8971806987305936
+2025-12-16 17:08:01.194 | INFO     | __main__:main:413 - [Client 15] Multiplier 1.0: ACC=0.8929, P=0.8795, R=0.9656, F1=0.9205, AUC=0.8972
+2025-12-16 17:08:02.312 | INFO     | __main__:main:290 - Client 15 test at epoch 100 with proto_z0: True, proto_z1: True
+2025-12-16 17:08:07.783 | INFO     | __main__:main:368 - Saved non-iid-dir latent viz for client 15 -> logs/re_distributions/PTLAE_mc20_epoch_100/client_15/epoch100_client15_tsne_non_iid.png
+2025-12-16 17:08:07.942 | INFO     | __main__:main:375 - Saved client 15 latent-dim0 histogram to logs/re_distributions/PTLAE_mc20_epoch_100/client_15/epoch100_client15_latent_dim0_hist.png
+2025-12-16 17:08:08.966 | INFO     | agents.clients.clientPTLAE:test_with_thresholds:434 - [Client 15] Using prototypes for proto decision: proto_z0={'shape': (15,), 'norm': 9.020967483520508, 'head': [-2.497501850128174, 2.614837646484375, 2.2539522647857666, -2.7765777111053467, -1.2680076360702515, 1.5941967964172363]}, proto_z1={'shape': (15,), 'norm': 7.03877067565918, 'head': [0.015569993294775486, -0.6172473430633545, -0.6070314049720764, 0.26813605427742004, 0.01678476482629776, -0.16809223592281342]}
+2025-12-16 17:08:08.989 | DEBUG    | agents.clients.clientPTLAE:test_with_thresholds:474 - Classification Report:
               precision    recall  f1-score   support
 
            0       0.69      0.97      0.81       976
@@ -324,16 +324,16 @@ weighted avg       0.90      0.89      0.89      2577
    macro avg       0.83      0.85      0.82      2576
 weighted avg       0.87      0.83      0.83      2576
 
-2025-12-16 15:38:02.988 | DEBUG    | agents.clients.clientPTLAE:test_with_thresholds:475 - Confusion Matrix:
+2025-12-16 17:08:08.991 | DEBUG    | agents.clients.clientPTLAE:test_with_thresholds:475 - Confusion Matrix:
 [[ 949   27]
  [ 422 1178]]
-2025-12-16 15:38:02.988 | DEBUG    | agents.clients.clientPTLAE:test_with_thresholds:476 - ROC AUC Score: 0.9557978995901639
-2025-12-16 15:38:02.989 | INFO     | __main__:main:411 - [Client 16] Multiplier 1.0: ACC=0.8257, P=0.9776, R=0.7362, F1=0.8399, AUC=0.9558
-2025-12-16 15:38:02.990 | INFO     | __main__:main:288 - Client 16 test at epoch 100 with proto_z0: True, proto_z1: True
-2025-12-16 15:38:24.722 | INFO     | __main__:main:366 - Saved non-iid-dir latent viz for client 16 -> logs/re_distributions/PTLAE_mc20_epoch_100/client_16/epoch100_client16_tsne_non_iid.png
-2025-12-16 15:38:24.880 | INFO     | __main__:main:373 - Saved client 16 latent-dim0 histogram to logs/re_distributions/PTLAE_mc20_epoch_100/client_16/epoch100_client16_latent_dim0_hist.png
-2025-12-16 15:38:42.440 | INFO     | agents.clients.clientPTLAE:test_with_thresholds:434 - [Client 16] Using prototypes for proto decision: proto_z0={'shape': (15,), 'norm': 8.13206958770752, 'head': [-2.236745595932007, 2.3379015922546387, 2.0548014640808105, -2.4832115173339844, -1.2185357809066772, 1.5010534524917603]}, proto_z1={'shape': (15,), 'norm': 9.506738662719727, 'head': [1.5822864770889282, -2.384671926498413, -2.1541240215301514, 1.8479132652282715, 1.0598227977752686, -1.3508198261260986]}
-2025-12-16 15:38:42.464 | DEBUG    | agents.clients.clientPTLAE:test_with_thresholds:474 - Classification Report:
+2025-12-16 17:08:08.991 | DEBUG    | agents.clients.clientPTLAE:test_with_thresholds:476 - ROC AUC Score: 0.9557978995901639
+2025-12-16 17:08:08.992 | INFO     | __main__:main:413 - [Client 16] Multiplier 1.0: ACC=0.8257, P=0.9776, R=0.7362, F1=0.8399, AUC=0.9558
+2025-12-16 17:08:10.114 | INFO     | __main__:main:290 - Client 16 test at epoch 100 with proto_z0: True, proto_z1: True
+2025-12-16 17:08:15.538 | INFO     | __main__:main:368 - Saved non-iid-dir latent viz for client 16 -> logs/re_distributions/PTLAE_mc20_epoch_100/client_16/epoch100_client16_tsne_non_iid.png
+2025-12-16 17:08:15.692 | INFO     | __main__:main:375 - Saved client 16 latent-dim0 histogram to logs/re_distributions/PTLAE_mc20_epoch_100/client_16/epoch100_client16_latent_dim0_hist.png
+2025-12-16 17:08:16.702 | INFO     | agents.clients.clientPTLAE:test_with_thresholds:434 - [Client 16] Using prototypes for proto decision: proto_z0={'shape': (15,), 'norm': 8.13206958770752, 'head': [-2.236745595932007, 2.3379015922546387, 2.0548014640808105, -2.4832115173339844, -1.2185357809066772, 1.5010534524917603]}, proto_z1={'shape': (15,), 'norm': 9.506738662719727, 'head': [1.5822864770889282, -2.384671926498413, -2.1541240215301514, 1.8479132652282715, 1.0598227977752686, -1.3508198261260986]}
+2025-12-16 17:08:16.725 | DEBUG    | agents.clients.clientPTLAE:test_with_thresholds:474 - Classification Report:
               precision    recall  f1-score   support
 
            0       0.99      0.63      0.77       938
@@ -343,16 +343,16 @@ weighted avg       0.87      0.83      0.83      2576
    macro avg       0.91      0.81      0.84      2576
 weighted avg       0.89      0.86      0.86      2576
 
-2025-12-16 15:38:42.465 | DEBUG    | agents.clients.clientPTLAE:test_with_thresholds:475 - Confusion Matrix:
+2025-12-16 17:08:16.727 | DEBUG    | agents.clients.clientPTLAE:test_with_thresholds:475 - Confusion Matrix:
 [[ 592  346]
  [   3 1635]]
-2025-12-16 15:38:42.466 | DEBUG    | agents.clients.clientPTLAE:test_with_thresholds:476 - ROC AUC Score: 0.9261528568564816
-2025-12-16 15:38:42.467 | INFO     | __main__:main:411 - [Client 17] Multiplier 1.0: ACC=0.8645, P=0.8253, R=0.9982, F1=0.9036, AUC=0.9262
-2025-12-16 15:38:42.468 | INFO     | __main__:main:288 - Client 17 test at epoch 100 with proto_z0: True, proto_z1: True
-2025-12-16 15:39:40.443 | INFO     | __main__:main:366 - Saved non-iid-dir latent viz for client 17 -> logs/re_distributions/PTLAE_mc20_epoch_100/client_17/epoch100_client17_tsne_non_iid.png
-2025-12-16 15:39:40.588 | INFO     | __main__:main:373 - Saved client 17 latent-dim0 histogram to logs/re_distributions/PTLAE_mc20_epoch_100/client_17/epoch100_client17_latent_dim0_hist.png
-2025-12-16 15:39:58.317 | INFO     | agents.clients.clientPTLAE:test_with_thresholds:434 - [Client 17] Using prototypes for proto decision: proto_z0={'shape': (15,), 'norm': 8.4014310836792, 'head': [-2.302001714706421, 2.4212610721588135, 2.125714063644409, -2.552351951599121, -1.2656834125518799, 1.5535821914672852]}, proto_z1={'shape': (15,), 'norm': 9.055182456970215, 'head': [1.836925745010376, -2.319652795791626, -2.046359062194824, 2.091928482055664, 0.9969534873962402, -1.2946597337722778]}
-2025-12-16 15:39:58.341 | DEBUG    | agents.clients.clientPTLAE:test_with_thresholds:474 - Classification Report:
+2025-12-16 17:08:16.727 | DEBUG    | agents.clients.clientPTLAE:test_with_thresholds:476 - ROC AUC Score: 0.9261528568564816
+2025-12-16 17:08:16.728 | INFO     | __main__:main:413 - [Client 17] Multiplier 1.0: ACC=0.8645, P=0.8253, R=0.9982, F1=0.9036, AUC=0.9262
+2025-12-16 17:08:17.851 | INFO     | __main__:main:290 - Client 17 test at epoch 100 with proto_z0: True, proto_z1: True
+2025-12-16 17:08:23.065 | INFO     | __main__:main:368 - Saved non-iid-dir latent viz for client 17 -> logs/re_distributions/PTLAE_mc20_epoch_100/client_17/epoch100_client17_tsne_non_iid.png
+2025-12-16 17:08:23.203 | INFO     | __main__:main:375 - Saved client 17 latent-dim0 histogram to logs/re_distributions/PTLAE_mc20_epoch_100/client_17/epoch100_client17_latent_dim0_hist.png
+2025-12-16 17:08:24.212 | INFO     | agents.clients.clientPTLAE:test_with_thresholds:434 - [Client 17] Using prototypes for proto decision: proto_z0={'shape': (15,), 'norm': 8.4014310836792, 'head': [-2.302001714706421, 2.4212610721588135, 2.125714063644409, -2.552351951599121, -1.2656834125518799, 1.5535821914672852]}, proto_z1={'shape': (15,), 'norm': 9.055182456970215, 'head': [1.836925745010376, -2.319652795791626, -2.046359062194824, 2.091928482055664, 0.9969534873962402, -1.2946597337722778]}
+2025-12-16 17:08:24.236 | DEBUG    | agents.clients.clientPTLAE:test_with_thresholds:474 - Classification Report:
               precision    recall  f1-score   support
 
            0       0.71      0.97      0.82       913
@@ -362,16 +362,16 @@ weighted avg       0.89      0.86      0.86      2576
    macro avg       0.85      0.88      0.85      2576
 weighted avg       0.88      0.85      0.85      2576
 
-2025-12-16 15:39:58.343 | DEBUG    | agents.clients.clientPTLAE:test_with_thresholds:475 - Confusion Matrix:
+2025-12-16 17:08:24.237 | DEBUG    | agents.clients.clientPTLAE:test_with_thresholds:475 - Confusion Matrix:
 [[ 884   29]
  [ 356 1307]]
-2025-12-16 15:39:58.343 | DEBUG    | agents.clients.clientPTLAE:test_with_thresholds:476 - ROC AUC Score: 0.9667257012525037
-2025-12-16 15:39:58.344 | INFO     | __main__:main:411 - [Client 18] Multiplier 1.0: ACC=0.8505, P=0.9783, R=0.7859, F1=0.8716, AUC=0.9667
-2025-12-16 15:39:58.345 | INFO     | __main__:main:288 - Client 18 test at epoch 100 with proto_z0: True, proto_z1: True
-2025-12-16 15:40:56.646 | INFO     | __main__:main:366 - Saved non-iid-dir latent viz for client 18 -> logs/re_distributions/PTLAE_mc20_epoch_100/client_18/epoch100_client18_tsne_non_iid.png
-2025-12-16 15:40:56.809 | INFO     | __main__:main:373 - Saved client 18 latent-dim0 histogram to logs/re_distributions/PTLAE_mc20_epoch_100/client_18/epoch100_client18_latent_dim0_hist.png
-2025-12-16 15:41:14.485 | INFO     | agents.clients.clientPTLAE:test_with_thresholds:434 - [Client 18] Using prototypes for proto decision: proto_z0={'shape': (15,), 'norm': 10.145358085632324, 'head': [-2.816965103149414, 2.974060297012329, 2.551048517227173, -3.129314661026001, -1.4050438404083252, 1.786492943763733]}, proto_z1={'shape': (15,), 'norm': 9.871091842651367, 'head': [2.7386372089385986, -2.9013524055480957, -2.3639883995056152, 3.0281126499176025, 1.0024876594543457, -1.4348915815353394]}
-2025-12-16 15:41:14.509 | DEBUG    | agents.clients.clientPTLAE:test_with_thresholds:474 - Classification Report:
+2025-12-16 17:08:24.237 | DEBUG    | agents.clients.clientPTLAE:test_with_thresholds:476 - ROC AUC Score: 0.9667257012525037
+2025-12-16 17:08:24.239 | INFO     | __main__:main:413 - [Client 18] Multiplier 1.0: ACC=0.8505, P=0.9783, R=0.7859, F1=0.8716, AUC=0.9667
+2025-12-16 17:08:25.369 | INFO     | __main__:main:290 - Client 18 test at epoch 100 with proto_z0: True, proto_z1: True
+2025-12-16 17:08:30.718 | INFO     | __main__:main:368 - Saved non-iid-dir latent viz for client 18 -> logs/re_distributions/PTLAE_mc20_epoch_100/client_18/epoch100_client18_tsne_non_iid.png
+2025-12-16 17:08:30.872 | INFO     | __main__:main:375 - Saved client 18 latent-dim0 histogram to logs/re_distributions/PTLAE_mc20_epoch_100/client_18/epoch100_client18_latent_dim0_hist.png
+2025-12-16 17:08:31.894 | INFO     | agents.clients.clientPTLAE:test_with_thresholds:434 - [Client 18] Using prototypes for proto decision: proto_z0={'shape': (15,), 'norm': 10.145358085632324, 'head': [-2.816965103149414, 2.974060297012329, 2.551048517227173, -3.129314661026001, -1.4050438404083252, 1.786492943763733]}, proto_z1={'shape': (15,), 'norm': 9.871091842651367, 'head': [2.7386372089385986, -2.9013524055480957, -2.3639883995056152, 3.0281126499176025, 1.0024876594543457, -1.4348915815353394]}
+2025-12-16 17:08:31.916 | DEBUG    | agents.clients.clientPTLAE:test_with_thresholds:474 - Classification Report:
               precision    recall  f1-score   support
 
            0       0.70      0.94      0.80       974
@@ -381,16 +381,16 @@ weighted avg       0.88      0.85      0.85      2576
    macro avg       0.83      0.85      0.82      2576
 weighted avg       0.86      0.82      0.83      2576
 
-2025-12-16 15:41:14.511 | DEBUG    | agents.clients.clientPTLAE:test_with_thresholds:475 - Confusion Matrix:
+2025-12-16 17:08:31.918 | DEBUG    | agents.clients.clientPTLAE:test_with_thresholds:475 - Confusion Matrix:
 [[ 915   59]
  [ 396 1206]]
-2025-12-16 15:41:14.511 | DEBUG    | agents.clients.clientPTLAE:test_with_thresholds:476 - ROC AUC Score: 0.9574745505489801
-2025-12-16 15:41:14.512 | INFO     | __main__:main:411 - [Client 19] Multiplier 1.0: ACC=0.8234, P=0.9534, R=0.7528, F1=0.8413, AUC=0.9575
-2025-12-16 15:41:14.513 | INFO     | __main__:main:288 - Client 19 test at epoch 100 with proto_z0: True, proto_z1: True
-2025-12-16 15:42:11.747 | INFO     | __main__:main:366 - Saved non-iid-dir latent viz for client 19 -> logs/re_distributions/PTLAE_mc20_epoch_100/client_19/epoch100_client19_tsne_non_iid.png
-2025-12-16 15:42:11.921 | INFO     | __main__:main:373 - Saved client 19 latent-dim0 histogram to logs/re_distributions/PTLAE_mc20_epoch_100/client_19/epoch100_client19_latent_dim0_hist.png
-2025-12-16 15:42:29.657 | INFO     | agents.clients.clientPTLAE:test_with_thresholds:434 - [Client 19] Using prototypes for proto decision: proto_z0={'shape': (15,), 'norm': 7.162299156188965, 'head': [-1.8659569025039673, 2.0389840602874756, 1.8860886096954346, -2.0721940994262695, -1.2534582614898682, 1.4747295379638672]}, proto_z1={'shape': (15,), 'norm': 13.298757553100586, 'head': [2.5739264488220215, -3.2714221477508545, -2.771050453186035, 2.9605934619903564, 1.1604114770889282, -1.6154232025146484]}
-2025-12-16 15:42:29.680 | DEBUG    | agents.clients.clientPTLAE:test_with_thresholds:474 - Classification Report:
+2025-12-16 17:08:31.918 | DEBUG    | agents.clients.clientPTLAE:test_with_thresholds:476 - ROC AUC Score: 0.9574745505489801
+2025-12-16 17:08:31.919 | INFO     | __main__:main:413 - [Client 19] Multiplier 1.0: ACC=0.8234, P=0.9534, R=0.7528, F1=0.8413, AUC=0.9575
+2025-12-16 17:08:33.060 | INFO     | __main__:main:290 - Client 19 test at epoch 100 with proto_z0: True, proto_z1: True
+2025-12-16 17:08:38.298 | INFO     | __main__:main:368 - Saved non-iid-dir latent viz for client 19 -> logs/re_distributions/PTLAE_mc20_epoch_100/client_19/epoch100_client19_tsne_non_iid.png
+2025-12-16 17:08:38.467 | INFO     | __main__:main:375 - Saved client 19 latent-dim0 histogram to logs/re_distributions/PTLAE_mc20_epoch_100/client_19/epoch100_client19_latent_dim0_hist.png
+2025-12-16 17:08:39.480 | INFO     | agents.clients.clientPTLAE:test_with_thresholds:434 - [Client 19] Using prototypes for proto decision: proto_z0={'shape': (15,), 'norm': 7.162299156188965, 'head': [-1.8659569025039673, 2.0389840602874756, 1.8860886096954346, -2.0721940994262695, -1.2534582614898682, 1.4747295379638672]}, proto_z1={'shape': (15,), 'norm': 13.298757553100586, 'head': [2.5739264488220215, -3.2714221477508545, -2.771050453186035, 2.9605934619903564, 1.1604114770889282, -1.6154232025146484]}
+2025-12-16 17:08:39.503 | DEBUG    | agents.clients.clientPTLAE:test_with_thresholds:474 - Classification Report:
               precision    recall  f1-score   support
 
            0       0.98      0.62      0.76       914
@@ -400,20 +400,20 @@ weighted avg       0.86      0.82      0.83      2576
    macro avg       0.90      0.81      0.83      2576
 weighted avg       0.88      0.86      0.85      2576
 
-2025-12-16 15:42:29.681 | DEBUG    | agents.clients.clientPTLAE:test_with_thresholds:475 - Confusion Matrix:
+2025-12-16 17:08:39.504 | DEBUG    | agents.clients.clientPTLAE:test_with_thresholds:475 - Confusion Matrix:
 [[ 570  344]
  [  12 1650]]
-2025-12-16 15:42:29.682 | DEBUG    | agents.clients.clientPTLAE:test_with_thresholds:476 - ROC AUC Score: 0.9409730176660954
-2025-12-16 15:42:29.683 | INFO     | __main__:main:411 - [Client 20] Multiplier 1.0: ACC=0.8618, P=0.8275, R=0.9928, F1=0.9026, AUC=0.9410
-2025-12-16 15:42:29.851 | INFO     | __main__:main:440 - Saved global latent[0] histogram to logs/re_distributions/PTLAE_mc20_epoch_100/epoch100_latent_dim0_hist.png
-2025-12-16 15:42:29.903 | INFO     | __main__:main:459 - Saved per-attack AUC to logs/re_distributions/PTLAE_mc20_epoch_100/PTLAE_per_attack_auc.json
-2025-12-16 15:42:29.903 | INFO     | __main__:main:474 - 
+2025-12-16 17:08:39.505 | DEBUG    | agents.clients.clientPTLAE:test_with_thresholds:476 - ROC AUC Score: 0.9409730176660954
+2025-12-16 17:08:39.506 | INFO     | __main__:main:413 - [Client 20] Multiplier 1.0: ACC=0.8618, P=0.8275, R=0.9928, F1=0.9026, AUC=0.9410
+2025-12-16 17:08:40.790 | INFO     | __main__:main:509 - Saved global latent[0] histogram to logs/re_distributions/PTLAE_mc20_epoch_100/epoch100_latent_dim0_hist.png
+2025-12-16 17:08:40.840 | INFO     | __main__:main:528 - Saved per-attack AUC to logs/re_distributions/PTLAE_mc20_epoch_100/PTLAE_per_attack_auc.json
+2025-12-16 17:08:40.840 | INFO     | __main__:main:543 - 
 ====== AVERAGE AUC PER MULTIPLIER ======
 Multiplier   All Clients          
 ---------------------------------------------------------------------------
 1.0          0.930070             
 
-2025-12-16 15:42:29.904 | INFO     | __main__:main:490 - 
+2025-12-16 17:08:40.841 | INFO     | __main__:main:559 - 
 ====== GLOBAL TEST METRICS (All Clients) ======
 ROC-AUC:   93.0070
 Precision: 91.5387
@@ -421,3 +421,12 @@ Recall:    86.5125
 F1:        88.2050
 ACC:       89.0256
 
+2025-12-16 17:08:40.844 | INFO     | __main__:main:598 - 
+====== GLOBAL DETAILED METRICS (Seen/Unseen/Normal) ======
+Recall_seen:       92.3215
+Recall_unseen:     86.3597
+Recall_normal:     78.0297
+Precision_attack:  89.1066
+Precision_normal:  84.9618
+
+2025-12-16 17:08:40.845 | INFO     | __main__:main:624 - Saved detailed metrics CSV to logs/unseen/unsw_PTLAE_epoch_100_detailed_metrics.csv
