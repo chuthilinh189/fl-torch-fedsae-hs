@@ -262,15 +262,14 @@ def _to_numpy_vec(v):
     except Exception:
         return None
 
-def plot_latent_embedding(latents, labels, out_dir, epoch, client_id=None, proto_z0=None, proto_z1=None, method="tsne", max_points=1000, random_state=42):
+def plot_latent_embedding(latents, labels, out_dir, epoch, client_id=None, method="tsne", max_points=1000, random_state=42):
     """
-    Create a 2D scatter of latent vectors using t-SNE or UMAP, color by label and overlay prototypes when provided.
+    Create a 2D scatter of latent vectors using t-SNE or UMAP, color by label.
 
     - latents: numpy array shape (N, D)
     - labels: list/array shape (N,)
     - out_dir: directory to save images
     - epoch, client_id: used for filename
-    - proto_z0/proto_z1: numpy arrays of same latent dimension or None
     - method: 'tsne' or 'umap' (umap requires umap-learn installed)
     """
     os.makedirs(out_dir, exist_ok=True)
@@ -303,70 +302,17 @@ def plot_latent_embedding(latents, labels, out_dir, epoch, client_id=None, proto
     scaler = StandardScaler()
     latents_plot = scaler.fit_transform(latents_plot)
 
-    # include prototypes in the embedding transform if present so they are mapped consistently
-    proto_stack = []
-    proto_labels = []
-
-    p0 = _to_numpy_vec(proto_z0)
-    p1 = _to_numpy_vec(proto_z1)
-
-    if p0 is not None:
-        proto_stack.append(np.atleast_2d(p0))
-        proto_labels.append(-1)
-    if p1 is not None:
-        proto_stack.append(np.atleast_2d(p1))
-        proto_labels.append(-2)
-
+    # Apply dimensionality reduction
     if method == "umap" and _HAS_UMAP:
         reducer = umap.UMAP(n_components=2, random_state=random_state)
     else:
         reducer = TSNE(n_components=2, init='pca', random_state=random_state)
 
-    if len(proto_stack) > 0:
-        combined = np.vstack([latents_plot] + proto_stack)
-        emb = reducer.fit_transform(combined)
-        emb_points = emb[: latents_plot.shape[0]]
-        emb_protos = emb[latents_plot.shape[0]:]
-    else:
-        emb_points = reducer.fit_transform(latents_plot)
-        emb_protos = None
+    emb_points = reducer.fit_transform(latents_plot)
 
     fname_base = f"epoch{epoch}"
     if client_id is not None:
         fname_base += f"_client{client_id}"
-
-    # write a small proto debug file so it's easy to see which prototypes were used (and their shapes)
-    proto_info = {
-        "proto_z0_present": p0 is not None,
-        "proto_z1_present": p1 is not None,
-        "proto_z0_shape": tuple(p0.shape) if p0 is not None else None,
-        "proto_z1_shape": tuple(p1.shape) if p1 is not None else None,
-        "emb_protos_count": int(emb_protos.shape[0]) if emb_protos is not None else 0,
-    }
-    if p0 is not None:
-        proto_info["proto_z0_values"] = p0.reshape(-1).astype(float).tolist()
-    else:
-        proto_info["proto_z0_values"] = None
-    if p1 is not None:
-        proto_info["proto_z1_values"] = p1.reshape(-1).astype(float).tolist()
-    else:
-        proto_info["proto_z1_values"] = None
-    if p0 is not None and p1 is not None:
-        d = float(np.linalg.norm(p0 - p1))
-        proto_info["proto_z0z1_distance"] = d
-        proto_info["proto_z0z1_same_eps_1e-6"] = (d < 1e-6)
-    else:
-        proto_info["proto_z0z1_distance"] = None
-        proto_info["proto_z0z1_same_eps_1e-6"] = None
-    if emb_protos is not None:
-        proto_info["emb_protos_coords"] = emb_protos.tolist()
-    else:
-        proto_info["emb_protos_coords"] = None
-
-    import json as _json
-    info_path = os.path.join(out_dir, f"{fname_base}_proto_info.json")
-    with open(info_path, "w") as _jf:
-        _json.dump(proto_info, _jf, indent=2)
 
     plt.figure(figsize=(7, 6))
     unique_lbls = sorted(np.unique(labels_plot))
@@ -374,15 +320,6 @@ def plot_latent_embedding(latents, labels, out_dir, epoch, client_id=None, proto
     for i, lbl in enumerate(unique_lbls):
         mask = labels_plot == lbl
         plt.scatter(emb_points[mask, 0], emb_points[mask, 1], s=8, c=[colors[i]], label=str(lbl), alpha=0.7)
-
-    # overlay prototypes
-    if emb_protos is not None:
-        for pidx, plabel in enumerate(proto_labels):
-            px, py = emb_protos[pidx]
-            if plabel == -1:
-                plt.scatter(px, py, c='green', marker='X', s=120, edgecolor='k', label='proto_z0')
-            elif plabel == -2:
-                plt.scatter(px, py, c='red', marker='X', s=120, edgecolor='k', label='proto_z1')
 
     plt.legend(markerscale=2)
     plt.title(f"Latent embedding ({method}) - epoch {epoch}" + (f" client {client_id}" if client_id is not None else ""))
@@ -398,8 +335,7 @@ def plot_latent_embedding(latents, labels, out_dir, epoch, client_id=None, proto
 
 def plot_latent_embedding_non_iid_dir(latents, labels, seen_classes, attack_label=1,
                                       out_dir="visual", epoch=0, client_id=None,
-                                      proto_z0=None, proto_z1=None, method="tsne",
-                                      max_points=1000, random_state=42):
+                                      method="tsne", max_points=1000, random_state=42):
     """
         Variant of plot_latent_embedding for non-iid-dir experiments.
         Supports a single attack label (int) or multiple attack labels (list/tuple/set/ndarray).
@@ -461,43 +397,17 @@ def plot_latent_embedding_non_iid_dir(latents, labels, seen_classes, attack_labe
     scaler = StandardScaler()
     latents_plot = scaler.fit_transform(latents_plot)
 
-    p0 = _to_numpy_vec(proto_z0)
-    p1 = _to_numpy_vec(proto_z1)
-    proto_stack = []
-    proto_labels = []
-    if p0 is not None:
-        proto_stack.append(np.atleast_2d(p0)); proto_labels.append(-1)
-    if p1 is not None:
-        proto_stack.append(np.atleast_2d(p1)); proto_labels.append(-2)
-
+    # Apply dimensionality reduction
     if method == "umap" and _HAS_UMAP:
         reducer = umap.UMAP(n_components=2, random_state=random_state)
     else:
         reducer = TSNE(n_components=2, init='pca', random_state=random_state)
 
-    if len(proto_stack) > 0:
-        combined = np.vstack([latents_plot] + proto_stack)
-        emb = reducer.fit_transform(combined)
-        emb_points = emb[: latents_plot.shape[0]]
-        emb_protos = emb[latents_plot.shape[0]:]
-    else:
-        emb_points = reducer.fit_transform(latents_plot)
-        emb_protos = None
+    emb_points = reducer.fit_transform(latents_plot)
 
     fname_base = f"epoch{epoch}"
     if client_id is not None:
         fname_base += f"_client{client_id}"
-
-    # write proto info, include seen and unseen classes wrt attack set
-    unseen_classes = sorted([a for a in attack_labels_set if a not in seen_set])
-    proto_info = {"proto_z0_present": p0 is not None, "proto_z1_present": p1 is not None,
-                  "seen_classes": list(sorted(seen_set)),
-                  "attack_labels": list(sorted(attack_labels_set)),
-                  "unseen_classes": unseen_classes}
-    import json as _json
-    info_path = os.path.join(out_dir, f"{fname_base}_non_iid_proto_info.json")
-    with open(info_path, "w") as _jf:
-        _json.dump(proto_info, _jf, indent=2)
 
     # Plot: three categories only (benign, attack_seen, attack_unseen)
     plt.figure(figsize=(7, 6))
@@ -514,15 +424,6 @@ def plot_latent_embedding_non_iid_dir(latents, labels, seen_classes, attack_labe
         if c in set(np.unique(cat_plot)):
             mask = cat_plot == c
             plt.scatter(emb_points[mask, 0], emb_points[mask, 1], s=8, c=palette.get(c, 'black'), label=labels_for_legend.get(c, str(c)), alpha=0.8)
-
-    # overlay prototypes
-    if emb_protos is not None:
-        for pidx, plabel in enumerate(proto_labels):
-            px, py = emb_protos[pidx]
-            if plabel == -1:
-                plt.scatter(px, py, c='green', marker='X', s=120, edgecolor='k', label='proto_z0')
-            elif plabel == -2:
-                plt.scatter(px, py, c='red', marker='X', s=120, edgecolor='k', label='proto_z1')
 
     plt.legend(markerscale=2)
     plt.title(f"Latent embedding (non-iid-dir) ({method}) - epoch {epoch}" + (f" client {client_id}" if client_id is not None else ""))

@@ -13,7 +13,16 @@ from function.arguments import Arguments
 from agents.clients import get_client_class
 from core.data_processing import client_data_process
 from core.client_factory import create_clients
-from function.utils import load_test_data_loader
+from function.utils import load_test_data_loader, load_train_data_loader
+from function.utils.visualize_util import (
+    collect_re_and_labels_from_client,
+    collect_z_norms_and_labels_from_client,
+    collect_latents_and_labels_from_client,
+    plot_latent_embedding,
+    plot_latent_embedding_non_iid_dir,
+    plot_latent_first_component_hist_from_latents,
+)
+import json
 
 
 def build_config(args_ns):
@@ -36,7 +45,8 @@ def build_config(args_ns):
         "coef_shrink_ae": args_ns.coef_shrink_ae,
         "threshold_multiplier": args_ns.threshold_multiplier,
         "num_multi_class_clients": args_ns.num_multi_class_clients,
-        "by_attack_type": args_ns.by_attack_type,
+        "by_attack_type": True if args_ns.experiment_type == "by_attack_type" else False,
+        "experiment_type": args_ns.experiment_type,
     }
 
 
@@ -142,6 +152,14 @@ def main():
         help="By attack type (False/ True)",
     )
     parser.add_argument(
+        "-et",
+        "--experiment_type",
+        type=str,
+        default="normal",
+        choices=["normal", "by_attack_type", "non_iid_dir"],
+        help="Experiment type: normal | by_attack_type | non_iid_dir",
+    )
+    parser.add_argument(
         "--model_dir", required=True, help="Directory containing saved models"
     )
     parser.add_argument(
@@ -174,10 +192,55 @@ def main():
         "Testing {} model at epoch #{}", args.model_type, str(args_ns.epochs)
     )
 
-    multipliers = np.arange(0.0, 5.1, 0.2)
+    # Khi non_iid_dir: đọc meta phân chia từ train để biết seen_sets theo client
+    if getattr(args_ns, 'experiment_type', 'normal') == 'non_iid_dir':
+        try:
+            setattr(args, 'partition_strategy', 'hybrid')
+            if not hasattr(args, 'seen_per_client'):
+                setattr(args, 'seen_per_client', 5)
+            if not hasattr(args, 'dir_alpha'):
+                setattr(args, 'dir_alpha', 1)
+            if not hasattr(args, 'assign_seed'):
+                setattr(args, 'assign_seed', 0)
+            # num_workers cần khớp với số clients hiện tại
+            setattr(args, 'num_workers', len(clients))
+            train_data_loader_full = load_train_data_loader(logger, args)
+            _ = client_data_process(
+                args,
+                train_data_loader_full,
+                None,
+                None,
+                args.train_batch_size,
+                poison=False,
+                data_stage="train",
+            )
+            if hasattr(args, 'train_partition_meta'):
+                args.logger.info(f"Loaded train partition meta: seen_sets={args.train_partition_meta.get('seen_sets', [])}")
+            else:
+                args.logger.warning("non_iid_dir: train_partition_meta not available; seen/unseen viz may be incomplete")
+        except Exception as e:
+            args.logger.warning(f"Failed to load train partition meta for non_iid_dir: {e}")
+
+    multipliers = np.array([1.0])
     multiplier_auc_all = {m: [] for m in multipliers}
 
     summary_rows = []
+    
+    # Global containers for analysis
+    global_re = []
+    global_labels = []
+    global_client_idxs = []
+    global_latent_firstcomp = []
+    per_client_data = {}
+
+    # Define output folder for global artifacts
+    fallback_epoch_global = args_ns.epochs  # sẽ dùng epoch cuối cùng cho tên thư mục
+    output_folder = os.path.join(
+        "logs",
+        "re_distributions",
+        f"{args.model_type}_mc{args.num_multi_class_clients}_epoch_{fallback_epoch_global}",
+    )
+    os.makedirs(output_folder, exist_ok=True)
 
     for client_idx, client in enumerate(clients):
 
@@ -203,14 +266,42 @@ def main():
                 & (df_log["client_id"] == client_idx)
             ]
         row = row.iloc[0]
-        threshold_re = (
-            eval(row["threshold_re"]) if pd.notna(row["threshold_re"]) else (0, 0)
-        )
-        threshold_z = (
-            eval(row["threshold_z"]) if pd.notna(row["threshold_z"]) else (0, 0)
-        )
-        args.logger.info(f"Client {client_idx} test at epoch {fallback_epoch} with threshold re: {threshold_re}, and thredhold z: {threshold_z}")
-        client.set_best_ckpt(0, fallback_epoch, threshold_re, threshold_z, None)
+        
+        # PTLAE dùng prototypes thay vì thresholds
+        if args.model_type == "PTLAE":
+            # Lấy proto_z0 và proto_z1 từ CSV
+            proto_z0 = None
+            proto_z1 = None
+            
+            if pd.notna(row.get("proto_z0")):
+                try:
+                    proto_z0 = eval(row["proto_z0"])
+                except Exception:
+                    proto_z0 = None
+            
+            if pd.notna(row.get("proto_z1")):
+                try:
+                    proto_z1 = eval(row["proto_z1"])
+                except Exception:
+                    proto_z1 = None
+            
+            args.logger.info(
+                f"Client {client_idx} test at epoch {fallback_epoch} with proto_z0: {proto_z0 is not None}, proto_z1: {proto_z1 is not None}"
+            )
+            # Set prototypes cho client
+            client.set_prototypes(proto_z0, proto_z1)
+            # set_best_ckpt với threshold mặc định (không dùng cho PTLAE)
+            client.set_best_ckpt(0, fallback_epoch, (0, 0), (0, 0), None)
+        else:
+            # Các phương pháp khác dùng thresholds
+            threshold_re = (
+                eval(row["threshold_re"]) if pd.notna(row["threshold_re"]) else (0, 0)
+            )
+            threshold_z = (
+                eval(row["threshold_z"]) if pd.notna(row["threshold_z"]) else (0, 0)
+            )
+            args.logger.info(f"Client {client_idx} test at epoch {fallback_epoch} with threshold re: {threshold_re}, and threshold z: {threshold_z}")
+            client.set_best_ckpt(0, fallback_epoch, threshold_re, threshold_z, None)
 
         # đọc và load lại mô hình cho từng client
         model_path = os.path.join(
@@ -218,7 +309,94 @@ def main():
         )
         client.update_nn_parameters(torch.load(model_path, map_location=client.device))
 
-        # test
+        # ===== b) Collect Dữ Liệu Test =====
+        # Collect per-sample RE and raw labels
+        client_re_list, client_raw_labels = collect_re_and_labels_from_client(client)
+        
+        # Collect latent L2-norms
+        client_z_list, client_z_labels = collect_z_norms_and_labels_from_client(client)
+        
+        # Collect full latent vectors
+        latents, lat_labels = collect_latents_and_labels_from_client(client, max_samples_per_class=1000)
+
+        # ===== c) Lưu Per-Client Artifacts =====
+        out_dir = os.path.join(
+            "logs",
+            "re_distributions",
+            f"{args.model_type}_mc{args.num_multi_class_clients}_epoch_{fallback_epoch}",
+        )
+        client_out_dir = os.path.join(out_dir, f"client_{client_idx}")
+        os.makedirs(client_out_dir, exist_ok=True)
+
+        # Per-client latent embedding (no prototype overlay)
+        if latents is not None and latents.shape[0] > 0:
+            # Plot latent embedding without prototypes
+            plot_latent_embedding(latents, lat_labels, client_out_dir, fallback_epoch,
+                                  client_id=client_idx, method='tsne')
+            
+            # Non_iid_dir specialized embedding
+            if getattr(args, 'experiment_type', None) == 'non_iid_dir':
+                # Lấy seen_set từ partition metadata
+                pm_train = getattr(args, 'train_partition_meta', None) or {}
+                seen_list = pm_train.get('seen_sets', []) if isinstance(pm_train, dict) else []
+                seen_for_client = []
+                if isinstance(seen_list, list) and client_idx < len(seen_list):
+                    seen_for_client = list(map(int, seen_list[client_idx]))
+                
+                # Build attack labels
+                num_attacks = getattr(args, 'num_attack_labels', None)
+                if isinstance(num_attacks, int) and num_attacks > 0:
+                    attack_labels = list(range(1, num_attacks + 1))
+                else:
+                    uniq = sorted(set(int(x) for x in lat_labels if int(x) != 0))
+                    attack_labels = uniq
+                
+                # Vẽ 3-color plot (benign/attack_seen/attack_unseen)
+                out = plot_latent_embedding_non_iid_dir(
+                    latents, lat_labels, seen_for_client,
+                    attack_label=attack_labels,
+                    out_dir=client_out_dir,
+                    epoch=fallback_epoch,
+                    client_id=client_idx,
+                    method='tsne',
+                    max_points=1000,
+                    random_state=getattr(args, 'assign_seed', 0)
+                )
+                if out:
+                    args.logger.info(f"Saved non-iid-dir latent viz for client {client_idx} -> {out}")
+                
+                # Non_iid_dir histogram latent thành phần đầu
+                hist_p = plot_latent_first_component_hist_from_latents(
+                    latents, client_out_dir, fallback_epoch, client_id=client_idx
+                )
+                if hist_p:
+                    args.logger.info(f"Saved client {client_idx} latent-dim0 histogram to {hist_p}")
+                
+                # Accumulate cho global histogram
+                first_comp = np.asarray(latents)[:, 0].tolist()
+                global_latent_firstcomp.extend(first_comp)
+
+        # ===== d) Accumulate Global =====
+        global_re.extend(client_re_list)
+        global_labels.extend(client_raw_labels)
+        global_client_idxs.extend([client_idx] * len(client_raw_labels))
+        
+        # Lưu per-client data để dùng cho seen/unseen analysis
+        threshold_val = 0.0
+        if args.model_type == "PTLAE":
+            # PTLAE không dùng threshold_re, dùng 0 làm placeholder
+            threshold_val = 0.0
+        else:
+            threshold_re = eval(row["threshold_re"]) if pd.notna(row["threshold_re"]) else (0, 0)
+            threshold_val = float(threshold_re[0]) if isinstance(threshold_re, (list, tuple)) else float(threshold_re)
+        
+        per_client_data[client_idx] = {
+            "re": list(map(float, client_re_list)),
+            "labels": list(map(int, client_raw_labels)),
+            "threshold_re": threshold_val,
+        }
+
+        # ===== e) test (như hiện tại) =====
         acc_list, precision_list, recall_list, f1_list, auc_list = client.test()
         for i, m in enumerate(multipliers):
             acc, precision, recall, f1, auc = (
@@ -247,6 +425,42 @@ def main():
 
             multiplier_auc_all[m].append(auc)
 
+    # ====== GLOBAL ANALYSIS (sau khi hoàn thành tất cả clients) ======
+    # 1) Global histogram nếu non_iid_dir
+    if args_ns.experiment_type == "non_iid_dir" and global_latent_firstcomp:
+        # Reshape 1D array to 2D (N, 1) for the function
+        arr = np.array(global_latent_firstcomp).reshape(-1, 1)
+        global_hist_path = plot_latent_first_component_hist_from_latents(
+            arr, 
+            output_folder, 
+            fallback_epoch_global, 
+            client_id=None
+        )
+        if global_hist_path:
+            args.logger.info(f"Saved global latent[0] histogram to {global_hist_path}")
+
+    # 2) Per-attack AUC (nếu global_re có đủ data)
+    if global_re and global_labels:
+        from function.utils.visualize_util import compute_auc_per_attack_from_flat
+        per_attack_auc_dict = compute_auc_per_attack_from_flat(
+            global_labels,
+            global_re
+        )
+        # Convert keys to strings for JSON compatibility
+        per_attack_auc_json = {str(int(k)): (None if v is None else float(v)) for k, v in per_attack_auc_dict.items()}
+        
+        # Lưu per-attack AUC JSON
+        per_attack_json_path = os.path.join(
+            output_folder,
+            f"{args.model_type}_per_attack_auc.json"
+        )
+        with open(per_attack_json_path, "w", encoding="utf-8") as f:
+            json.dump(per_attack_auc_json, f, indent=4)
+        args.logger.info(f"Saved per-attack AUC to {per_attack_json_path}")
+
+        # Note: Per-client per-attack metrics and seen/unseen analysis require
+        # additional implementation similar to serverPTL.py test_on_clients()
+
     # Tổng họpw kết quả test
     header = "\n====== AVERAGE AUC PER MULTIPLIER ======\n"
     header += "{:<12} {:<20} \n".format("Multiplier", "All Clients")
@@ -264,12 +478,30 @@ def main():
         df_summary = pd.DataFrame(
             summary_rows, columns=["Client", "ROC-AUC", "Precision", "Recall", "F1"]
         )
+        # Tính global metrics
+        global_auc = np.nanmean(df_summary["ROC-AUC"].values)
+        global_precision = np.nanmean(df_summary["Precision"].values)
+        global_recall = np.nanmean(df_summary["Recall"].values)
+        global_f1 = np.nanmean(df_summary["F1"].values)
+        # Compute ACC from precision and recall (or use harmonic mean as proxy)
+        global_acc = (global_precision + global_recall) / 2.0  # Approximation
+        
+        # Log global metrics
+        args.logger.info(
+            "\n====== GLOBAL TEST METRICS (All Clients) ======\n"
+            f"ROC-AUC:   {global_auc:.4f}\n"
+            f"Precision: {global_precision:.4f}\n"
+            f"Recall:    {global_recall:.4f}\n"
+            f"F1:        {global_f1:.4f}\n"
+            f"ACC:       {global_acc:.4f}\n"
+        )
+        
         avg_row = {
             "Client": "Average",
-            "ROC-AUC": np.nanmean(df_summary["ROC-AUC"].values),
-            "Precision": np.nanmean(df_summary["Precision"].values),
-            "Recall": np.nanmean(df_summary["Recall"].values),
-            "F1": np.nanmean(df_summary["F1"].values),
+            "ROC-AUC": global_auc,
+            "Precision": global_precision,
+            "Recall": global_recall,
+            "F1": global_f1,
         }
         df_summary = pd.concat([df_summary, pd.DataFrame([avg_row])], ignore_index=True)
 

@@ -176,7 +176,9 @@ class ClientDualLossAE:
         for input, label in self.train_data_loader:
             input, label = input.to(self.device), label.to(self.device)
             self.optimizer.zero_grad()
-            loss = self.calculate_loss(input, label)
+            # Binarize labels: benign=0, attack(any non-zero)=1 for consistent supervised loss
+            label_bin = (label != 0).int()
+            loss = self.calculate_loss(input, label_bin)
             loss.backward()
             self.optimizer.step()
         return loss
@@ -188,8 +190,9 @@ class ClientDualLossAE:
             list_loss = []
             for input, label in self.val_data_loader:
                 input, label = input.to(self.device), label.to(self.device)
-
-                loss = self.calculate_loss(input, label)
+                # Use binarized labels for validation supervised component
+                label_bin = (label != 0).int()
+                loss = self.calculate_loss(input, label_bin)
                 _, decode = self.net(input)
                 re_loss = self.loss_function(decode, input).mean().item()
 
@@ -210,7 +213,7 @@ class ClientDualLossAE:
 
     def test(self, is_check=False):
         """
-        Test với nhiều giá trị threshold_multiplier (0.0 → 2.0, bước 0.2).
+        Test với một giá trị threshold_multiplier cố định = 3.
         """
         acc_list = []
         precision_list = []
@@ -219,23 +222,18 @@ class ClientDualLossAE:
         roc_list = []
 
         mean_re, std_re = self.threshold_re
+        multiplier = 3.0
+        threshold_re = mean_re + multiplier * std_re
+        is_verbose = not is_check
 
-        for multiplier in np.arange(0.0, 5.1, 0.2):
-            threshold_re = mean_re + multiplier * std_re
-
-            # print(f"[Client {self.client_idx}] Testing with multiplier {multiplier:.1f} - threshold_re: {threshold_re:.4f}")
-            is_verbose = (
-                not is_check and abs(multiplier - self.args.threshold_multiplier) < 1e-4
-            )
-
-            acc, precision, recall, f1, roc = self.test_with_thresholds(
-                threshold_re, is_verbose, is_verbose, 50
-            )
-            acc_list.append(acc)
-            precision_list.append(precision)
-            recall_list.append(recall)
-            f1_list.append(f1)
-            roc_list.append(roc)
+        acc, precision, recall, f1, roc = self.test_with_thresholds(
+            threshold_re, is_verbose, is_verbose, 50
+        )
+        acc_list.append(acc)
+        precision_list.append(precision)
+        recall_list.append(recall)
+        f1_list.append(f1)
+        roc_list.append(roc)
 
         return acc_list, precision_list, recall_list, f1_list, roc_list
 
@@ -272,32 +270,25 @@ class ClientDualLossAE:
                             break
                         sample_list.append((int(lab_val), float(re_val)))
 
-            # nếu đang chạy thí nghiệm theo loại attack type thì ép hết label tấn công về 1
-            if self.args.by_attack_type:
-                labels = [int(l != 0) for l in labels]
+            # Binarize labels: benign=0, attack (any non-zero)=1
+            labels_bin = [int(l != 0) for l in labels]
 
-            predictions = [1 - int(r <= threshold_re) for r in zip(list_re)]
+            predictions = [1 if r > threshold_re else 0 for r in list_re]
 
-            acc = accuracy_score(labels, predictions)
-            precision = precision_score(labels, predictions)
-            recall = recall_score(labels, predictions)
-            f1 = f1_score(labels, predictions)
-            roc = roc_auc_score(labels, predictions)
-
-            # Tính confusion matrix và FPR
-            confusion_mat = confusion_matrix(labels, predictions)
-            tn, fp, fn, tp = confusion_mat.ravel()
-            fpr = fp / (fp + tn) if (fp + tn) > 0 else 0.0
+            acc = accuracy_score(labels_bin, predictions)
+            precision = precision_score(labels_bin, predictions, zero_division=0)
+            recall = recall_score(labels_bin, predictions, zero_division=0)
+            f1 = f1_score(labels_bin, predictions, zero_division=0)
+            roc = roc_auc_score(labels_bin, list_re) if len(set(labels_bin)) > 1 else 0.0
 
             if verbose:
-                confusion_mat = confusion_matrix(labels, predictions)
+                confusion_mat = confusion_matrix(labels_bin, predictions, labels=[0, 1])
                 self.args.logger.debug(
                     "Classification Report:\n"
-                    + classification_report(labels, predictions)
+                    + classification_report(labels_bin, predictions, zero_division=0)
                 )
                 self.args.logger.debug("Confusion Matrix:\n" + str(confusion_mat))
                 self.args.logger.debug("ROC AUC Score: {}".format(roc))
-                self.args.logger.debug("False Positive Rate (FPR): {:.4f}".format(fpr))
 
             if show_samples and len(sample_list) > 0:
                 # compute prediction for each sampled pair and log (label, re, pred)
@@ -449,9 +440,9 @@ class ClientDualLossAE:
         plt.grid()
 
         # Save to PDF
-    out_dir = os.path.join("visual", self.model_type)
-    os.makedirs(out_dir, exist_ok=True)
-    plt.savefig(os.path.join(out_dir, f"epoch_{epoch}_{self.model_type}_client{self.client_idx}_tsne.png"))
+        out_dir = os.path.join("visual", self.model_type)
+        os.makedirs(out_dir, exist_ok=True)
+        plt.savefig(os.path.join(out_dir, f"epoch_{epoch}_{self.model_type}_client{self.client_idx}_tsne.png"))
         plt.close()
 
     def visualize_validate(

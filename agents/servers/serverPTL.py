@@ -120,36 +120,6 @@ class ServerPTL:
         for client_idx in list_client_training:
             clients[client_idx].update_nn_parameters(new_params)
 
-        # Train-time latent[0] histograms every 100 epochs for non_iid_dir, using TEST latents
-        if getattr(self.args, 'experiment_type', None) == 'non_iid_dir' and (epoch < 10 or (epoch % 10 == 0 and epoch<100) or epoch % 100 == 0):
-            out_dir = os.path.join(
-                "logs",
-                "re_distributions",
-                f"{self.args.model_type}_mc{self.args.num_multi_class_clients}",
-                "train_hist",
-            )
-            os.makedirs(out_dir, exist_ok=True)
-            global_latent_firstcomp_train = []
-            for client_idx, client in enumerate(clients):
-                # collect full TEST latents for consistent distribution view
-                latents, _ = collect_latents_and_labels_from_client(client, max_samples_per_class=None)
-                if latents is not None and latents.shape[0] > 0:
-                    client_out_dir = os.path.join(out_dir, f"client_{client_idx}")
-                    os.makedirs(client_out_dir, exist_ok=True)
-                    hist_p = plot_latent_first_component_hist_from_latents(latents, client_out_dir, epoch, client_id=client_idx)
-                    if hist_p:
-                        self.args.logger.info(f"[Train] Saved client {client_idx} latent-dim0 histogram to {hist_p}")
-                    # accumulate for global train histogram
-                    first_comp = np.asarray(latents)[:, 0].tolist()
-                    global_latent_firstcomp_train.extend(first_comp)
-
-            # Global train histogram
-            if len(global_latent_firstcomp_train) > 0:
-                arr = np.array(global_latent_firstcomp_train).reshape(-1, 1)
-                global_hist_path = plot_latent_first_component_hist_from_latents(arr, out_dir, epoch, client_id=None)
-                if global_hist_path:
-                    self.args.logger.info(f"[Train] Saved global latent-dim0 histogram to {global_hist_path}")
-
         return False
 
     def receive_proto_stats_and_update(self, proto_stats_list):
@@ -221,7 +191,11 @@ class ServerPTL:
             client.set_prototypes(bp0, bp1)
 
             # Collect per-sample RE and raw labels from client's test set
-            client_re_list, client_raw_labels = collect_re_and_labels_from_client(client)
+            try:
+                client_re_list, client_raw_labels = collect_re_and_labels_from_client(client)
+            except Exception as e:
+                self.args.logger.warning(f"Failed to collect RE from client {client_idx}: {e}")
+                client_re_list, client_raw_labels = [], []
 
             # Build out_dir name using model and multi-class setting
             out_dir = os.path.join(
@@ -232,56 +206,69 @@ class ServerPTL:
             client_out_dir = os.path.join(out_dir, f"client_{client_idx}")
 
             # Save per-client RE distributions (CSV + plots)
-            log_re_distributions_from_lists(client_re_list, client_raw_labels, client_out_dir, epoch, client_id=client_idx)
+            try:
+                log_re_distributions_from_lists(client_re_list, client_raw_labels, client_out_dir, epoch, client_id=client_idx)
+            except Exception as e:
+                self.args.logger.warning(f"Failed to log RE distributions for client {client_idx}: {e}")
 
             # Also collect & log latent (z) boxplots (L2 norms) per-client
-            client_z_list, client_z_labels = collect_z_norms_and_labels_from_client(client)
-            log_z_boxplots_from_lists(client_z_list, client_z_labels, client_out_dir, epoch, client_id=client_idx)
+            try:
+                client_z_list, client_z_labels = collect_z_norms_and_labels_from_client(client)
+                log_z_boxplots_from_lists(client_z_list, client_z_labels, client_out_dir, epoch, client_id=client_idx)
+            except Exception as e:
+                self.args.logger.warning(f"Failed to collect/log latent z for client {client_idx}: {e}")
 
             # Collect full latent vectors and produce t-SNE/UMAP plots with prototype overlay
-            latents, lat_labels = collect_latents_and_labels_from_client(client, max_samples_per_class=1000)
-            if latents is not None and latents.shape[0] > 0:
-                plot_latent_embedding(latents, lat_labels, client_out_dir, epoch, client_id=client_idx, proto_z0=bp0, proto_z1=bp1, method='tsne')
-                # For non-iid-dir experiments, also produce the specialized 3-color embedding
-                if getattr(self.args, 'experiment_type', None) == 'non_iid_dir':
-                    # obtain seen_set for this client from partition metadata if available
-                    # Always use TRAIN partition metadata for seen/unseen determination
-                    pm_train = getattr(self.args, 'train_partition_meta', None) or {}
-                    seen_list = pm_train.get('seen_sets', []) if isinstance(pm_train, dict) else []
-                    seen_for_client = []
-                    if isinstance(seen_list, list) and client_idx < len(seen_list):
-                        seen_for_client = list(map(int, seen_list[client_idx]))
+            try:
+                latents, lat_labels = collect_latents_and_labels_from_client(client, max_samples_per_class=1000)
+                if latents is not None and latents.shape[0] > 0:
+                    plot_latent_embedding(latents, lat_labels, client_out_dir, epoch, client_id=client_idx, method='tsne')
+                    # For non-iid-dir experiments, also produce the specialized 3-color embedding
+                    try:
+                        if getattr(self.args, 'experiment_type', None) == 'non_iid_dir':
+                            # obtain seen_set for this client from partition metadata if available
+                            seen_sets = getattr(self.args, 'last_partition_meta', {}) or {}
+                            seen_list = seen_sets.get('seen_sets', []) if isinstance(seen_sets, dict) else []
+                            seen_for_client = []
+                            try:
+                                if isinstance(seen_list, list) and client_idx < len(seen_list):
+                                    seen_for_client = list(map(int, seen_list[client_idx]))
+                            except Exception:
+                                seen_for_client = []
 
-                    # build full set of attack labels from args if available; fallback to unique labels
-                    num_attacks = getattr(self.args, 'num_attack_labels', None)
-                    if isinstance(num_attacks, int) and num_attacks > 0:
-                        attack_labels = list(range(1, num_attacks + 1))
-                    else:
-                        # fallback: infer from labels present
-                        uniq = sorted(set(int(x) for x in lat_labels if int(x) != 0))
-                        attack_labels = uniq
+                            out = plot_latent_embedding_non_iid_dir(latents, lat_labels, seen_for_client,
+                                                                    attack_label=getattr(self.args, 'attack_label', 1),
+                                                                    out_dir=client_out_dir,
+                                                                    epoch=epoch,
+                                                                    client_id=client_idx,
+                                                                    method='tsne',
+                                                                    max_points=2000,
+                                                                    random_state=getattr(self.args, 'assign_seed', 0))
+                            if out:
+                                self.args.logger.info(f"Saved non-iid-dir latent viz for client {client_idx} -> {out}")
+                    except Exception:
+                        pass
+                    # if non-iid-dir experiments, save histogram of first latent component per-client
+                    try:
+                        if getattr(self.args, 'experiment_type', None) == 'non_iid_dir':
+                            # per-client histogram
+                            try:
+                                hist_p = plot_latent_first_component_hist_from_latents(latents, client_out_dir, epoch, client_id=client_idx)
+                                if hist_p:
+                                    self.args.logger.info(f"Saved client {client_idx} latent-dim0 histogram to {hist_p}")
+                            except Exception:
+                                pass
+                            # accumulate for global histogram
+                            try:
+                                first_comp = np.asarray(latents)[:, 0].tolist()
+                                global_latent_firstcomp.extend(first_comp)
+                            except Exception:
+                                pass
+                    except Exception:
+                        pass
 
-                    out = plot_latent_embedding_non_iid_dir(latents, lat_labels, seen_for_client,
-                                                            attack_label=attack_labels,
-                                                            out_dir=client_out_dir,
-                                                            epoch=epoch,
-                                                            client_id=client_idx,
-                                                            proto_z0=bp0,
-                                                            proto_z1=bp1,
-                                                            method='tsne',
-                                                            max_points=1000,
-                                                            random_state=getattr(self.args, 'assign_seed', 0))
-                    if out:
-                        self.args.logger.info(f"Saved non-iid-dir latent viz for client {client_idx} -> {out}")
-                # if non-iid-dir experiments, save histogram of first latent component per-client
-                if getattr(self.args, 'experiment_type', None) == 'non_iid_dir':
-                    # per-client histogram
-                    hist_p = plot_latent_first_component_hist_from_latents(latents, client_out_dir, epoch, client_id=client_idx)
-                    if hist_p:
-                        self.args.logger.info(f"Saved client {client_idx} latent-dim0 histogram to {hist_p}")
-                    # accumulate for global histogram
-                    first_comp = np.asarray(latents)[:, 0].tolist()
-                    global_latent_firstcomp.extend(first_comp)
+            except Exception as e:
+                self.args.logger.warning(f"Failed to collect/plot latent embedding for client {client_idx}: {e}")
 
             # accumulate for global aggregation and keep per-client data
             global_re.extend(client_re_list)
@@ -344,82 +331,100 @@ class ServerPTL:
                 "re_distributions",
                 f"{self.args.model_type}_mc{self.args.num_multi_class_clients}_epoch_{epoch}",
             )
-            summary, grouped = log_re_distributions_from_lists(global_re, global_labels, out_dir, epoch, client_id=None)
+            try:
+                summary, grouped = log_re_distributions_from_lists(global_re, global_labels, out_dir, epoch, client_id=None)
+            except Exception as e:
+                self.args.logger.warning(f"Failed to write global RE distributions: {e}")
 
             # global latent z norms + boxplots
-            global_z_list = []
-            # collect latent z norms across clients
-            for client in clients:
-                z_list, z_labels = collect_z_norms_and_labels_from_client(client)
-                global_z_list.extend(z_list)
-            if len(global_z_list) > 0:
-                log_z_boxplots_from_lists(global_z_list, global_labels, out_dir, epoch, client_id=None)
+            try:
+                global_z_list = []
+                # collect latent z norms across clients
+                for client in clients:
+                    try:
+                        z_list, z_labels = collect_z_norms_and_labels_from_client(client)
+                        global_z_list.extend(z_list)
+                    except Exception:
+                        continue
+                if len(global_z_list) > 0:
+                    log_z_boxplots_from_lists(global_z_list, global_labels, out_dir, epoch, client_id=None)
+            except Exception as e:
+                self.args.logger.warning(f"Failed to compute/save global latent z distributions: {e}")
 
             # global histogram of latent first component (for non_iid_dir experiments)
-            if getattr(self.args, 'experiment_type', None) == 'non_iid_dir' and len(global_latent_firstcomp) > 0:
-                arr = np.array(global_latent_firstcomp).reshape(-1, 1)
-                global_hist_path = plot_latent_first_component_hist_from_latents(arr, out_dir, epoch, client_id=None)
-                if global_hist_path:
-                    self.args.logger.info(f"Saved global latent-dim0 histogram to {global_hist_path}")
+            try:
+                if getattr(self.args, 'experiment_type', None) == 'non_iid_dir' and len(global_latent_firstcomp) > 0:
+                    try:
+                        arr = np.array(global_latent_firstcomp).reshape(-1, 1)
+                        global_hist_path = plot_latent_first_component_hist_from_latents(arr, out_dir, epoch, client_id=None)
+                        if global_hist_path:
+                            self.args.logger.info(f"Saved global latent-dim0 histogram to {global_hist_path}")
+                    except Exception as e:
+                        self.args.logger.warning(f"Failed to compute/save global latent-dim0 histogram: {e}")
+            except Exception:
+                pass
 
-            aucs = compute_auc_per_attack_from_flat(global_labels, global_re)
-            auc_path = os.path.join(out_dir, f"epoch{epoch}_aucs_per_attack.json")
-            # convert keys to strings for JSON stability
-            aucs_json = {str(int(k)): (None if v is None else float(v)) for k, v in aucs.items()}
-            with open(auc_path, "w") as jf:
-                json.dump(aucs_json, jf, indent=2)
-            self.args.logger.info(f"Saved per-attack AUCs to {auc_path}")
+            try:
+                aucs = compute_auc_per_attack_from_flat(global_labels, global_re)
+                auc_path = os.path.join(out_dir, f"epoch{epoch}_aucs_per_attack.json")
+                # convert keys to strings for JSON stability
+                aucs_json = {str(int(k)): (None if v is None else float(v)) for k, v in aucs.items()}
+                with open(auc_path, "w") as jf:
+                    json.dump(aucs_json, jf, indent=2)
+                self.args.logger.info(f"Saved per-attack AUCs to {auc_path}")
+            except Exception as e:
+                self.args.logger.warning(f"Failed to compute/save per-attack AUCs: {e}")
 
             # If running non_iid_dir experiments, compute per-client and global seen/unseen metrics
-            if getattr(self.args, 'experiment_type', None) == 'non_iid_dir':
+            try:
+                if getattr(self.args, 'experiment_type', None) == 'non_iid_dir':
                     # load seen_sets from partition metadata if available
-                    pm_train = getattr(self.args, 'train_partition_meta', None) or {}
-                    seen_sets = pm_train.get('seen_sets', [])
+                    pm = getattr(self.args, 'last_partition_meta', None) or {}
+                    seen_sets = pm.get('seen_sets', [])
 
                     # per-client: compute per-attack AUCs and classification metrics (using client threshold)
                     for cidx, pdata in per_client_data.items():
-                        client_dir = os.path.join(out_dir, f"client_{cidx}")
-                        os.makedirs(client_dir, exist_ok=True)
-                        # per-attack AUCs for this client
-                        client_aucs = compute_auc_per_attack_from_flat(pdata['labels'], pdata['re'])
-                        client_aucs_json = {str(int(k)): (None if v is None else float(v)) for k, v in client_aucs.items()}
+                        try:
+                            client_dir = os.path.join(out_dir, f"client_{cidx}")
+                            os.makedirs(client_dir, exist_ok=True)
+                            # per-attack AUCs for this client
+                            client_aucs = compute_auc_per_attack_from_flat(pdata['labels'], pdata['re'])
+                            client_aucs_json = {str(int(k)): (None if v is None else float(v)) for k, v in client_aucs.items()}
 
-                        # classification metrics per attack using client's threshold
-                        client_obj = clients[cidx]
-                        classif = client_obj.test_by_attack_type_full(pdata['threshold_re'], None, verbose=False)
+                            # classification metrics per attack using client's threshold
+                            client_obj = clients[cidx]
+                            try:
+                                classif = client_obj.test_by_attack_type_full(pdata['threshold_re'], None, verbose=False)
+                            except Exception:
+                                classif = {}
 
-                        # attach seen set if exists (map by multi-class client index)
-                        seen_set = []
-                        if isinstance(seen_sets, list) and cidx < len(seen_sets):
-                            seen_set = list(map(int, seen_sets[cidx]))
+                            # attach seen set if exists (map by multi-class client index)
+                            seen_set = []
+                            try:
+                                if isinstance(seen_sets, list) and cidx < len(seen_sets):
+                                    seen_set = list(map(int, seen_sets[cidx]))
+                            except Exception:
+                                seen_set = []
 
-                        # Write per-attack metrics to CSV for easier comparison
-                        import pandas as pd
-                        rows = []
-                        # merge AUC and classification metrics per attack
-                        for atk_str, auc_val in client_aucs_json.items():
-                            atk_id = int(atk_str)
-                            cls_metrics = classif.get(atk_id, {})
-                            rows.append({
-                                'epoch': int(epoch),
+                            out_payload = {
                                 'client_id': int(cidx),
-                                'attack_type': atk_id,
-                                'auc': auc_val if auc_val is not None else 0.0,
-                                'accuracy': float(cls_metrics.get('acc', 0.0)),
-                                'precision': float(cls_metrics.get('precision', 0.0)),
-                                'recall': float(cls_metrics.get('recall', 0.0)),
-                                'f1': float(cls_metrics.get('f1-score', 0.0)),
-                                'support': int(cls_metrics.get('support', 0)),
-                            })
-
-                        client_metrics_csv = os.path.join(client_dir, f"epoch{epoch}_client{cidx}_per_attack_metrics.csv")
-                        pd.DataFrame(rows).to_csv(client_metrics_csv, index=False)
-                        self.args.logger.info(f"Saved per-attack CSV metrics for client {cidx} -> {client_metrics_csv}")
+                                'seen_set': seen_set,
+                                'per_attack_auc': client_aucs_json,
+                                'per_attack_classification': classif,
+                            }
+                            client_metrics_path = os.path.join(client_dir, f"epoch{epoch}_client{cidx}_per_attack_metrics.json")
+                            with open(client_metrics_path, 'w') as _jf:
+                                json.dump(out_payload, _jf, indent=2)
+                        except Exception as e:
+                            self.args.logger.warning(f"Failed to compute/save per-client metrics for client {cidx}: {e}")
 
                     # global seen/unseen grouping for a chosen attack label (default 1)
                     attack_label = int(getattr(self.args, 'attack_label', 1))
                     # compute a global threshold (mean of client thresholds) for classification f1/precision/recall
-                    global_threshold = float(np.mean([pdata.get('threshold_re', 0.0) for pdata in per_client_data.values()]))
+                    try:
+                        global_threshold = float(np.mean([pdata.get('threshold_re', 0.0) for pdata in per_client_data.values()]))
+                    except Exception:
+                        global_threshold = 0.0
 
                     # build per-sample seen flag
                     seen_flag = []
@@ -446,13 +451,19 @@ class ServerPTL:
                         scores2 = scores[keep_mask]
                         y_bin = (y2 == attack_label).astype(int)
                         # AUC
-                        auc_v = float(roc_auc_score(y_bin, scores2)) if len(np.unique(y_bin)) > 1 else None
+                        try:
+                            auc_v = float(roc_auc_score(y_bin, scores2)) if len(np.unique(y_bin)) > 1 else None
+                        except Exception:
+                            auc_v = None
                         # classification at global_threshold
                         preds = (scores2 > global_threshold).astype(int)
-                        acc_v = float(accuracy_score(y_bin, preds))
-                        prec_v = float(precision_score(y_bin, preds, zero_division=0))
-                        rec_v = float(recall_score(y_bin, preds, zero_division=0))
-                        f1_v = float(f1_score(y_bin, preds, zero_division=0))
+                        try:
+                            acc_v = float(accuracy_score(y_bin, preds))
+                            prec_v = float(precision_score(y_bin, preds, zero_division=0))
+                            rec_v = float(recall_score(y_bin, preds, zero_division=0))
+                            f1_v = float(f1_score(y_bin, preds, zero_division=0))
+                        except Exception:
+                            acc_v = prec_v = rec_v = f1_v = None
                         return {'auc': auc_v, 'accuracy': acc_v, 'precision': prec_v, 'recall': rec_v, 'f1': f1_v, 'support_attack': int((y2 == attack_label).sum()), 'support_benign': int((y2 == 0).sum())}
 
                     # masks for attack_seen and attack_unseen plus benign (we'll construct masks where sample belongs to either benign or the relevant attack subset)
@@ -479,6 +490,8 @@ class ServerPTL:
                     with open(seen_path, 'w') as _jf:
                         json.dump(global_seen_payload, _jf, indent=2)
                     self.args.logger.info(f"Saved global seen/unseen metrics to {seen_path}")
+            except Exception as e:
+                self.args.logger.warning(f"Failed to compute/save non_iid_dir specific metrics: {e}")
 
         self._log_avg_auc(multiplier_auc_all, multiplier_auc_benign, multiplier_auc_poisoned)
 
