@@ -1,6 +1,7 @@
 # 1. WSN_DS:
 nohup python -u initialize_env.py -data wsn_ds  > logger/wsn_ds_init.out 2>&1 &
 
+# Thí nghiệm limited attack
 nohup python main.py -d wsn_ds -m AE -tbs 128 -vbs 128 -di 17 -lr 0.01 -ep 2000 -agg average -nt label_flipping -pw 0 -pr 1 -ns 0.001 -ans 3 -cs 1 -tm 0 -mc 0 > logger/wsn_ds_log.out 2>&1 &
 nohup python main.py -d wsn_ds -m DAE -tbs 128 -vbs 128 -di 17 -lr 0.01 -ep 2000 -agg average -nt label_flipping -pw 0 -pr 1 -ns 0.001 -ans 3 -cs 1 -tm 0 -mc 0 > logger/wsn_ds_log.out 2>&1 &
 nohup python main.py -d wsn_ds -m SAE -tbs 128 -vbs 128 -di 17 -lr 0.01 -ep 2000 -agg average -nt label_flipping -pw 0 -pr 1 -ns 0.001 -ans 3 -cs 1 -tm 0 -mc 0 > logger/wsn_ds_log.out 2>&1 &
@@ -16,20 +17,13 @@ nohup python evaluate.py -d wsn_ds -m DAE -tbs 128 -vbs 128 -di 17 -ep 2000 -tm 
 nohup python evaluate.py -d wsn_ds -m SAE -tbs 128 -vbs 128 -di 17 -ep 2000 -tm 3 --model_dir saved_models/SAE/average/wsn_ds --log_csv logs/SAE/wsn_ds_SAE_ > logger/wsn_ds_SAE_2000_3.log 2>&1
 nohup python evaluate.py -d wsn_ds -m FedMSE -tbs 128 -vbs 128 -di 17 -ep 2000 -tm 3 --model_dir saved_models/FedMSE/FedMSE/wsn_ds --log_csv logs/FedMSE/wsn_ds_FedMSE_ > logger/wsn_ds_FedMSE_2000_3.log 2>&1
 nohup python evaluate.py -d wsn_ds -m DualLossAE -tbs 128 -vbs 1 -di 17 -ep 2000 -tm 0.4 --model_dir saved_models/DualLossAE2old/average/wsn_ds --log_csv logs/DualLossAE2old/wsn_ds_DualLossAE > logger/wsn_ds_DualLossAE2old_2000_0.4.log 2>&1
-nohup python evaluate.py -d wsn_ds -m DualLossAE -tbs 128 -vbs 1 -di 17 -ep 2000 -tm 0.7 --model_dir saved_models/DualLossAE5old/average/wsn_ds --log_csv logs/DualLossAE5old/wsn_ds_DualLossAE > logger/wsn_ds_DualLossAE5old_2000_0.7.log 2>&1
-nohup python evaluate.py -d wsn_ds -m DualLossAE -tbs 128 -vbs 1 -di 17 -ep 2000 -tm 0.5 --model_dir saved_models/DualLossAE10old/average/wsn_ds --log_csv logs/DualLossAE10old/wsn_ds_DualLossAE > logger/wsn_ds_DualLossAE10old_2000_0.5.log 2>&1
-nohup python evaluate.py -d wsn_ds -m DualLossAE -tbs 128 -vbs 1 -di 17 -ep 2000 -tm 0.8 --model_dir saved_models/DualLossAE20old/average/wsn_ds --log_csv logs/DualLossAE20old/wsn_ds_DualLossAE > logger/wsn_ds_DualLossAE20old_2000_0.8.log 2>&1
-nohup python evaluate.py -d wsn_ds -m DualLossAE -tbs 128 -vbs 1 -di 17 -ep 2000 -tm 0.2 --model_dir saved_models/DualLossAE2/average/wsn_ds --log_csv logs/DualLossAE2/wsn_ds_DualLossAE > logger/wsn_ds_DualLossAE2_2000_0.2.log 2>&1
-nohup python evaluate.py -d wsn_ds -m DualLossAE -tbs 128 -vbs 1 -di 17 -ep 2000 -tm 0.4 --model_dir saved_models/DualLossAE5/average/wsn_ds --log_csv logs/DualLossAE5/wsn_ds_DualLossAE > logger/wsn_ds_DualLossAE5_2000_0.4.log 2>&1
-nohup python evaluate.py -d wsn_ds -m DualLossAE -tbs 128 -vbs 1 -di 17 -ep 2000 -tm 0.6 --model_dir saved_models/DualLossAE10/average/wsn_ds --log_csv logs/DualLossAE10/wsn_ds_DualLossAE > logger/wsn_ds_DualLossAE10_2000_0.6.log 2>&1
-nohup python evaluate.py -d wsn_ds -m DualLossAE -tbs 128 -vbs 1 -di 17 -ep 2000 -tm 2.2 --model_dir saved_models/DualLossAE20/average/wsn_ds --log_csv logs/DualLossAE20/wsn_ds_DualLossAE > logger/wsn_ds_DualLossAE20_2000_2.2.log 2>&1
 
+# Thí nghiệm của bài hội thảo FedSAE-HS
 nohup python main.py -d wsn_ds -m AE -tbs 128 -vbs 128 -di 17 -lr 0.01 -ep 500 -agg average -nt label_flipping -pw 0 -pr 1 -ns 0.001 -ans 3 -cs 1 -tm 0 -mc 0 > logger/wsn_ds_log1.out 2>&1 &
 nohup python main.py -d wsn_ds -m DAE -tbs 128 -vbs 128 -di 17 -lr 0.01 -ep 500 -agg average -nt label_flipping -pw 0 -pr 1 -ns 0.001 -ans 3 -cs 1 -tm 0 -mc 0 > logger/wsn_ds_log2.out 2>&1 &
 nohup python main.py -d wsn_ds -m SAE -tbs 128 -vbs 128 -di 17 -lr 0.01 -ep 500 -agg average -nt label_flipping -pw 0 -pr 1 -ns 0.001 -ans 3 -cs 1 -tm 0 -mc 0 > logger/wsn_ds_log3.out 2>&1 &
 nohup python main.py -d wsn_ds -m SAE1 -tbs 128 -vbs 128 -di 17 -lr 0.01 -ep 500 -agg average -nt label_flipping -pw 0 -pr 1 -ns 0.001 -ans 3 -cs 1 -tm 0 -mc 0 > logger/wsn_ds_log4.out 2>&1 &
 nohup python main.py -d wsn_ds -m FedMSE -tbs 128 -vbs 128 -di 17 -lr 0.01 -ep 500 -agg FedMSE -nt label_flipping -pw 0 -pr 1 -ns 0.001 -ans 3 -cs 1 -tm 0 -mc 0 > logger/wsn_ds_log5.out 2>&1 &
-
 
 nohup python evaluate.py -d wsn_ds -m AE -tbs 128 -vbs 128 -di 17 -ep 500 -tm 2 --model_dir saved_models/conf_5/AE/average/wsn_ds --log_csv logs/conf_5/wsn_ds_AE_ > logger/conf_5/wsn_ds_AE_2.log 2>&1 &
 nohup python evaluate.py -d wsn_ds -m DAE -tbs 128 -vbs 128 -di 17 -ep 500 -tm 5 --model_dir saved_models/conf_5/DAE/average/wsn_ds --log_csv logs/conf_5/wsn_ds_DAE_ > logger/conf_5/wsn_ds_DAE_5.log 2>&1 &
@@ -37,26 +31,21 @@ nohup python evaluate.py -d wsn_ds -m SAE -tbs 128 -vbs 128 -di 17 -ep 500 -tm 5
 nohup python evaluate.py -d wsn_ds -m FedMSE -tbs 128 -vbs 128 -di 17 -ep 500 -tm 5 --model_dir saved_models/conf_5/FedMSE/FedMSE/wsn_ds --log_csv logs/conf_5/wsn_ds_FedMSE_ > logger/conf_5/wsn_ds_FedMSE_5.log 2>&1 &
 nohup python evaluate.py -d wsn_ds -m SAE1 -tbs 128 -vbs 128 -di 17 -ep 500 -tm 5 --model_dir saved_models/conf_5/SAE1/average/wsn_ds --log_csv logs/conf_5/wsn_ds_SAE1_ > logger/conf_5/wsn_ds_SAE1_5.log 2>&1 &
 
-
+# Thí nghiệm với tấn công label flipping và gaussian noise
 nohup python main.py -d wsn_ds -m SDAE -tbs 128 -vbs 128 -di 17 -lr 0.01 -ep 500 -agg average -nt label_flipping -pw 0 -pr 1 -ns 0.001 -ans 3 -cs 1 -tm 0 -mc 0 > logger/wsn_ds_log.out 2>&1 &
 nohup python main.py -d wsn_ds -m SDAE1 -tbs 128 -vbs 128 -di 17 -lr 0.01 -ep 500 -agg average -nt label_flipping -pw 0 -pr 1 -ns 0.001 -ans 3 -cs 1 -tm 0 -mc 0 > logger/wsn_ds_log.out 2>&1 &
 nohup python main.py -d wsn_ds -m AE -tbs 128 -vbs 128 -di 17 -lr 0.01 -ep 500 -agg average -nt label_flipping -pw 5 -pr 0.5 -ns 0.001 -ans 3 -cs 1 -tm 0 -mc 0 > logger/wsn_ds_log.out 2>&1 &
 nohup python main.py -d wsn_ds -m DAE -tbs 128 -vbs 128 -di 17 -lr 0.01 -ep 500 -agg average -nt label_flipping -pw 5 -pr 0.5 -ns 0.001 -ans 3 -cs 1 -tm 0 -mc 0 > logger/wsn_ds_log.out 2>&1 &
 nohup python main.py -d wsn_ds -m SAE -tbs 128 -vbs 128 -di 17 -lr 0.01 -ep 500 -agg average -nt label_flipping -pw 5 -pr 0.5 -ns 0.001 -ans 3 -cs 1 -tm 0 -mc 0 > logger/wsn_ds_log.out 2>&1 &
-nohup python main.py -d wsn_ds -m SAE1 -tbs 128 -vbs 128 -di 17 -lr 0.01 -ep 500` -agg average -nt label_flipping -pw 5 -pr 0.5 -ns 0.001 -ans 3 -cs 1 -tm 0 -mc 0 > logger/wsn_ds_log.out 2>&1 &
+nohup python main.py -d wsn_ds -m SAE1 -tbs 128 -vbs 128 -di 17 -lr 0.01 -ep 500`-agg average -nt label_flipping -pw 5 -pr 0.5 -ns 0.001 -ans 3 -cs 1 -tm 0 -mc 0 > logger/wsn_ds_log.out 2>&1 &
 nohup python main.py -d wsn_ds -m SDAE -tbs 128 -vbs 128 -di 17 -lr 0.01 -ep 500 -agg average -nt label_flipping -pw 5 -pr 0.5 -ns 0.001 -ans 3 -cs 1 -tm 0 -mc 0 > logger/wsn_ds_log.out 2>&1 &
 nohup python main.py -d wsn_ds -m SDAE1 -tbs 128 -vbs 128 -di 17 -lr 0.01 -ep 500 -agg average -nt label_flipping -pw 5 -pr 0.5 -ns 0.001 -ans 3 -cs 1 -tm 0 -mc 0 > logger/wsn_ds_log.out 2>&1 &
-nohup python main.py -d wsn_ds -m AE -tbs 128 -vbs 128 -di 17 -lr 0.01 -ep 500 -agg average -nt gaussian_noise -pw 5 -pr 0.5 -ns 0.001 -ans 3 -cs 1 -tm 0 -mc 0 > logger/wsn_ds_log.out 2>&1 &
-nohup python main.py -d wsn_ds -m DAE -tbs 128 -vbs 128 -di 17 -lr 0.01 -ep 500 -agg average -nt gaussian_noise -pw 5 -pr 0.5 -ns 0.001 -ans 3 -cs 1 -tm 0 -mc 0 > logger/wsn_ds_log.out 2>&1 &
-nohup python main.py -d wsn_ds -m SAE -tbs 128 -vbs 128 -di 17 -lr 0.01 -ep 500 -agg average -nt gaussian_noise -pw 5 -pr 0.5 -ns 0.001 -ans 3 -cs 1 -tm 0 -mc 0 > logger/wsn_ds_log.out 2>&1 &
-nohup python main.py -d wsn_ds -m SAE1 -tbs 128 -vbs 128 -di 17 -lr 0.01 -ep 500 -agg average -nt gaussian_noise -pw 5 -pr 0.5 -ns 0.001 -ans 3 -cs 1 -tm 0 -mc 0 > logger/wsn_ds_log.out 2>&1 &
-nohup python main.py -d wsn_ds -m SDAE -tbs 128 -vbs 128 -di 17 -lr 0.01 -ep 500 -agg average -nt gaussian_noise -pw 5 -pr 0.5 -ns 0.001 -ans 3 -cs 1 -tm 0 -mc 0 > logger/wsn_ds_log.out 2>&1 &
-nohup python main.py -d wsn_ds -m SDAE1 -tbs 128 -vbs 128 -di 17 -lr 0.01 -ep 500 -agg average -nt gaussian_noise -pw 5 -pr 0.5 -ns 0.001 -ans 3 -cs 1 -tm 0 -mc 0 > logger/wsn_ds_log.out 2>&1 &
 
 
 # 2. UNSW:
 nohup python -u initialize_env.py -data unsw  > logger/unsw_init.out 2>&1 &
 
+# Thí nghiệm limited attack
 nohup python main.py -d unsw -m AE -tbs 128 -vbs 1 -di 196 -lr 0.001 -ep 2000 -agg average -nt label_flipping -pw 0 -pr 1 -ns 0.001 -ans 1 -cs 1 -tm 0 -mc 0 > logger/unsw_log.out 2>&1 &
 nohup python main.py -d unsw -m DAE -tbs 128 -vbs 1 -di 196 -lr 0.001 -ep 2000 -agg average -nt label_flipping -pw 0 -pr 1 -ns 0.001 -ans 1 -cs 1 -tm 0 -mc 0 > logger/unsw_log.out 2>&1 &
 nohup python main.py -d unsw -m SAE -tbs 128 -vbs 1 -di 196 -lr 0.001 -ep 2000 -agg average -nt label_flipping -pw 0 -pr 1 -ns 0.001 -ans 1 -cs 1 -tm 0 -mc 0 > logger/unsw_log.out 2>&1 &
@@ -71,10 +60,6 @@ nohup python main.py -d unsw -m PTLAE -tbs 128 -vbs 1 -di 196 -lr 0.001 -ep 2000
 nohup python main.py -d unsw -m PTLAE -tbs 128 -vbs 1 -di 196 -lr 0.001 -ep 2000 -agg average -nt label_flipping -pw 0 -pr 1 -ns 0.001 -ans 1 -cs 1 -tm 1 -mc 20 > logger/unsw_log3.out 2>&1 & wait
 nohup python main.py -d unsw -m PTLAE -tbs 128 -vbs 1 -di 196 -lr 0.001 -ep 2000 -agg average -nt label_flipping -pw 0 -pr 1 -ns 0.001 -ans 1 -cs 1 -tm 1 -mc 2 > logger/unsw_log4.out 2>&1 &
 
-nohup python main.py -d unsw -m PTLAE -tbs 128 -vbs 1 -di 196 -lr 0.001 -ep 2000 -agg average -nt label_flipping -pw 0 -pr 1 -ns 0.001 -ans 1 -cs 1 -tm 1 -mc 20 -et non_iid_dir> logger/unsw_log5.out 2>&1 &
-nohup python main.py -d unsw -m SupAE -tbs 128 -vbs 1 -di 196 -lr 0.001 -ep 2000 -agg average -nt label_flipping -pw 0 -pr 1 -ns 0.001 -ans 1 -cs 1 -tm 1 -mc 20 -et non_iid_dir> logger/unsw_log6.out 2>&1 &
-nohup python main.py -d unsw -m DualLossAE -tbs 128 -vbs 1 -di 196 -lr 0.001 -ep 2000 -agg average -nt label_flipping -pw 0 -pr 1 -ns 0.001 -ans 1 -cs 1 -tm 1 -mc 20 -et non_iid_dir> logger/unsw_log7.out 2>&1 &
-
 nohup python evaluate.py -d unsw -m AE -tbs 128 -vbs 128 -di 196 -ep 1000 -tm 1.2 --model_dir saved_models/AE/average/unsw --log_csv logs/AE/unsw_AE_ > logger/unsw_AE_1000_1.2.log 2>&1 &
 nohup python evaluate.py -d unsw -m DAE -tbs 128 -vbs 128 -di 196 -ep 1000 -tm 1.5 --model_dir saved_models/DAE/average/unsw --log_csv logs/DAE/unsw_DAE_ > logger/unsw_DAE_1000_1.5.log 2>&1 &
 nohup python evaluate.py -d unsw -m SAE -tbs 128 -vbs 128 -di 196 -ep 1000 -tm 2.1 --model_dir saved_models/SAE/average/unsw --log_csv logs/SAE/unsw_SAE_ > logger/unsw_SAE_1000_2.1.log 2>&1 &
@@ -87,8 +72,20 @@ nohup python evaluate.py -d unsw -m DualLossAE -tbs 128 -vbs 1 -di 196 -ep 1000 
 nohup python evaluate.py -d unsw -m DualLossAE -tbs 128 -vbs 1 -di 196 -ep 1000 -tm 1.1 --model_dir saved_models/DualLossAE5/average/unsw --log_csv logs/DualLossAE5/unsw_DualLossAE > logger/unsw_DualLossAE5_1000_1.1.log 2>&1 &
 nohup python evaluate.py -d unsw -m DualLossAE -tbs 128 -vbs 1 -di 196 -ep 400 -tm 1 --model_dir saved_models/DualLossAE5/average/unsw --log_csv logs/unsw_DualLossAE > logger/unsw_DualLossAE5_400_1.log 2>&1 &
 nohup python evaluate.py -d unsw -m DualLossAE -tbs 128 -vbs 1 -di 196 -ep 1000 -tm 1.4 --model_dir saved_models/DualLossAE20/average/unsw --log_csv logs/DualLossAE20/unsw_DualLossAE > logger/unsw_DualLossAE20_1000_1.4.log 2>&1 &
-nohup python evaluate.py -d unsw -m PTLAE -tbs 128 -vbs 1 -di 196 -ep 100 -tm 1 -mc 20 -et non_iid_dir --model_dir saved_models/PTLAE/20/average/unsw --log_csv logs/unseen/unsw_PTLAE_ > logger/unsw_PTLAE_200.log 2>&1 &
 
+# Thí nghiệm unseen attack
+nohup python main.py -d unsw -m PTLAE -tbs 128 -vbs 1 -di 196 -lr 0.0001 -ep 1000 -agg average -nt label_flipping -pw 0 -pr 1 -ns 0.001 -ans 1 -cs 1 -tm 1 -mc 20 -et non_iid_dir> logger/unsw_log5.out 2>&1 & wait
+nohup python main.py -d unsw -m SupAE -tbs 128 -vbs 1 -di 196 -lr 0.0001 -ep 1000 -agg average -nt label_flipping -pw 0 -pr 1 -ns 0.001 -ans 1 -cs 1 -tm 1 -mc 20 -et non_iid_dir> logger/unsw_log6.out 2>&1 & wait
+nohup python main.py -d unsw -m DualLossAE -tbs 128 -vbs 1 -di 196 -lr 0.0001 -ep 1000 -agg average -nt label_flipping -pw 0 -pr 1 -ns 0.001 -ans 1 -cs 1 -tm 1 -mc 20 -et non_iid_dir> logger/unsw_log7.out 2>&1 &
+
+nohup python evaluate.py -d unsw -m PTLAE -tbs 128 -vbs 1 -di 196 -ep 1000 -tm 1 -mc 20 -et non_iid_dir --model_dir saved_models/PTLAE/20/average/unsw --log_csv logs/unseen/unsw_PTLAE_ > logger/unsw_PTLAE_1000.log 2>&1 &
+nohup python evaluate.py -d unsw -m PTLAE -tbs 128 -vbs 1 -di 196 -ep 300 -tm 1 -mc 20 -et non_iid_dir --model_dir saved_models/PTLAE/20/average/unsw --log_csv logs/unseen/unsw_PTLAE_ > logger/unsw_PTLAE_300.log 2>&1 &
+nohup python evaluate.py -d unsw -m PTLAE -tbs 128 -vbs 1 -di 196 -ep 150 -tm 1 -mc 20 -et non_iid_dir --model_dir saved_models/PTLAE/20/average/unsw --log_csv logs/unseen/unsw_PTLAE_ > logger/unsw_PTLAE_150.log 2>&1 &
+nohup python evaluate.py -d unsw -m PTLAE -tbs 128 -vbs 1 -di 196 -ep 250 -tm 1 -mc 20 -et non_iid_dir --model_dir saved_models/PTLAE/20/average/unsw --log_csv logs/unseen/unsw_PTLAE_ > logger/unsw_PTLAE_250.log 2>&1 &
+nohup python evaluate.py -d unsw -m SupAE -tbs 128 -vbs 1 -di 196 -ep 100 -tm 1 -mc 20 -et non_iid_dir --model_dir saved_models/SupAE/20/average/unsw --log_csv logs/unseen/unsw_SupAE_ > logger/unsw_SupAE_200.log 2>&1 &
+nohup python evaluate.py -d unsw -m DualLossAE -tbs 128 -vbs 1 -di 196 -ep 100 -tm 1 -mc 20 -et non_iid_dir --model_dir saved_models/DualLossAE/20/average/unsw --log_csv logs/unseen/unsw_DualLossAE_ > logger/unsw_DualLossAE_200.log 2>&1 &
+
+# Thí nghiệm unseen attack cũ
 nohup python main.py -d unsw -m PTLAE -tbs 128 -vbs 1 -di 196 -lr 0.001 -ep 200 -agg average -nt label_flipping -pw 0 -pr 1 -ns 0.001 -ans 1 -cs 1 -tm 0 -mc 10 -at 1 > logger/unsw_log.out 2>&1 &
 nohup python main.py -d unsw -m DualLossAE -tbs 128 -vbs 1 -di 196 -lr 0.001 -ep 1000 -agg average -nt label_flipping -pw 0 -pr 1 -ns 0.001 -ans 1 -cs 1 -tm 0 -mc 2 -at 1 > logger/unsw_log.out 2>&1 &
 nohup python evaluate_attack_type.py -d unsw -m AE -tbs 128 -vbs 128 -di 196 -ep 1000 -tm 1.2 --model_dir saved_models/AE/average/unsw --log_csv logs/AE/unsw_AE_ > evaluate_results/attacktype_unsw_AE_1000_1.2.log 2>&1 &
@@ -96,6 +93,7 @@ nohup python evaluate_attack_type.py -d unsw -m DAE -tbs 128 -vbs 128 -di 196 -e
 nohup python evaluate_attack_type.py -d unsw -m SAE -tbs 128 -vbs 128 -di 196 -ep 1000 -tm 2.1 --model_dir saved_models/SAE/average/unsw --log_csv logs/SAE/unsw_SAE_ > evaluate_results/attacktype_unsw_SAE_1000_2.1.log 2>&1 &
 nohup python evaluate_attack_type.py -d unsw -m DualLossAE -tbs 128 -vbs 1 -di 196 -ep 1000 -tm 0.6 --model_dir saved_models/DualLossAEbytype/average/unsw --log_csv logs/DualLossAEbytype/unsw_DualLossAE > evaluate_results/attacktype_unsw_DualLossAE2_1000_0.6.log 2>&1 &
 
+# Thí nghiệm với tấn công label flipping và gaussian noise
 nohup python main.py -d unsw -m AE -tbs 128 -vbs 128 -di 196 -lr 0.001 -ep 500 -agg average -nt label_flipping -pw 0 -pr 1 -ns 0.001 -ans 1 -cs 1 -tm 0 -mc 0 > logger/unsw_log.out 2>&1 &
 nohup python main.py -d unsw -m DAE -tbs 128 -vbs 128 -di 196 -lr 0.001 -ep 500 -agg average -nt label_flipping -pw 0 -pr 1 -ns 0.001 -ans 1 -cs 1 -tm 0 -mc 0 > logger/unsw_log.out 2>&1 &
 nohup python main.py -d unsw -m SAE -tbs 128 -vbs 128 -di 196 -lr 0.001 -ep 500 -agg average -nt label_flipping -pw 0 -pr 1 -ns 0.001 -ans 1 -cs 1 -tm 0 -mc 0 > logger/unsw_log.out 2>&1 &
@@ -179,7 +177,10 @@ nohup python main.py -d nb_iot -m DualLossAE -tbs 128 -vbs 1 -di 115 -lr 0.0001 
 nohup python main.py -d nb_iot -m DualLossAE -tbs 128 -vbs 1 -di 115 -lr 0.0001 -ep 2000 -agg average -nt label_flipping -pw 0 -pr 1 -ns 0.001 -ans 3 -cs 1 -tm 0 -mc 10 > logger/nb_iot_log.out 2>&1 &
 nohup python main.py -d nb_iot -m DualLossAE -tbs 128 -vbs 1 -di 115 -lr 0.0001 -ep 2000 -agg average -nt label_flipping -pw 0 -pr 1 -ns 0.001 -ans 3 -cs 1 -tm 0 -mc 20 > logger/nb_iot_log.out 2>&1 &
 nohup python main.py -d nb_iot -m DualLossAE -tbs 128 -vbs 1 -di 115 -lr 0.0001 -ep 2000 -agg average -nt label_flipping -pw 0 -pr 1 -ns 0.001 -ans 3 -cs 1 -tm 0 -mc 2 > logger/nb_iot_log.out 2>&1 &
-
+nohup python main.py -d nb_iot -m PTLAE -tbs 128 -vbs 1 -di 115 -lr 0.0001 -ep 2000 -agg average -nt label_flipping -pw 0 -pr 1 -ns 0.001 -ans 3 -cs 1 -tm 0 -mc 2 > logger/nb_iot_log1.out 2>&1 &
+nohup python main.py -d nb_iot -m PTLAE -tbs 128 -vbs 1 -di 115 -lr 0.0001 -ep 2000 -agg average -nt label_flipping -pw 0 -pr 1 -ns 0.001 -ans 3 -cs 1 -tm 0 -mc 5 > logger/nb_iot_log2.out 2>&1 &
+nohup python main.py -d nb_iot -m PTLAE -tbs 128 -vbs 1 -di 115 -lr 0.0001 -ep 2000 -agg average -nt label_flipping -pw 0 -pr 1 -ns 0.001 -ans 3 -cs 1 -tm 0 -mc 10 > logger/nb_iot_log3.out 2>&1 &
+nohup python main.py -d nb_iot -m PTLAE -tbs 128 -vbs 1 -di 115 -lr 0.0001 -ep 2000 -agg average -nt label_flipping -pw 0 -pr 1 -ns 0.001 -ans 3 -cs 1 -tm 0 -mc 20 > logger/nb_iot_log4.out 2>&1 &
 
 nohup python evaluate.py -d nb_iot -m AE -tbs 128 -vbs 128 -di 115 -ep 2000 -tm 2 --model_dir saved_models/AE/average/nb_iot --log_csv logs/AE/nb_iot_AE_ > logger/nb_iot_AE_2000_2.log 2>&1
 nohup python evaluate.py -d nb_iot -m DAE -tbs 128 -vbs 128 -di 115 -ep 2000 -tm 1.5 --model_dir saved_models/DAE/average/nb_iot --log_csv logs/DAE/nb_iot_DAE_ > logger/nb_iot_DAE_2000_1.5.log 2>&1
@@ -193,6 +194,12 @@ nohup python evaluate.py -d nb_iot -m DualLossAE -tbs 128 -vbs 1 -di 115 -ep 200
 nohup python evaluate.py -d nb_iot -m DualLossAE -tbs 128 -vbs 1 -di 115 -ep 2000 -tm 2 --model_dir saved_models/DualLossAE5/average/nb_iot --log_csv logs/DualLossAE5/nb_iot_DualLossAE > logger/nb_iot_DualLossAE5_2000_2.log 2>&1
 nohup python evaluate.py -d nb_iot -m DualLossAE -tbs 128 -vbs 1 -di 115 -ep 2000 -tm 2 --model_dir saved_models/DualLossAE10/average/nb_iot --log_csv logs/DualLossAE10/nb_iot_DualLossAE > logger/nb_iot_DualLossAE10_2000_2.log 2>&1
 nohup python evaluate.py -d nb_iot -m DualLossAE -tbs 128 -vbs 1 -di 115 -ep 2000 -tm 3 --model_dir saved_models/DualLossAE20/average/nb_iot --log_csv logs/DualLossAE20/nb_iot_DualLossAE > logger/nb_iot_DualLossAE20_2000_3.log 2>&1
+
+# Thí nghiệm unseen attack
+nohup python main.py -d nb_iot -m PTLAE -tbs 128 -vbs 1 -di 115 -lr 0.001 -ep 500 -agg average -nt label_flipping -pw 0 -pr 1 -ns 0.001 -ans 3 -cs 1 -tm 0 -mc 20 -et non_iid_dir > logger/nb_iot_log1.out 2>&1 & wait
+nohup python main.py -d nb_iot -m SupAE -tbs 128 -vbs 1 -di 115 -lr 0.001 -ep 500 -agg average -nt label_flipping -pw 0 -pr 1 -ns 0.001 -ans 3 -cs 1 -tm 0 -mc 20 -et non_iid_dir > logger/nb_iot_log2.out 2>&1 & wait
+nohup python main.py -d nb_iot -m DuallossAE -tbs 128 -vbs 1 -di 115 -lr 0.001 -ep 500 -agg average -nt label_flipping -pw 0 -pr 1 -ns 0.001 -ans 3 -cs 1 -tm 0 -mc 20 -et non_iid_dir > logger/nb_iot_log3.out 2>&1 & 
+
 
 nohup python main.py -d nb_iot -m AE -tbs 128 -vbs 128 -di 115 -lr 0.001 -ep 500 -agg average -nt label_flipping -pw 0 -pr 1 -ns 0.001 -ans 3 -cs 1 -tm 0 -mc 0 > logger/nb_iot_log.out 2>&1 &
 nohup python main.py -d nb_iot -m DAE -tbs 128 -vbs 128 -di 115 -lr 0.001 -ep 500 -agg average -nt label_flipping -pw 0 -pr 1 -ns 0.001 -ans 3 -cs 1 -tm 0 -mc 0 > logger/nb_iot_log1.out 2>&1 &

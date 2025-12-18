@@ -333,7 +333,7 @@ def main():
         # Per-client latent embedding (no prototype overlay)
         if latents is not None and latents.shape[0] > 0:
             # Plot latent embedding without prototypes
-            plot_latent_embedding(latents, lat_labels, client_out_dir, fallback_epoch,
+            plot_latent_embedding(latents, lat_labels, client_out_dir, epochs,
                                   client_id=client_idx, method='tsne')
             
             # Non_iid_dir specialized embedding
@@ -358,7 +358,7 @@ def main():
                     latents, lat_labels, seen_for_client,
                     attack_label=attack_labels,
                     out_dir=client_out_dir,
-                    epoch=fallback_epoch,
+                    epoch=epochs,
                     client_id=client_idx,
                     method='tsne',
                     max_points=1000,

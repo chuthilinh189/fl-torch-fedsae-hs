@@ -135,13 +135,6 @@ class ServerSupAE:
                         self.args.logger.info(f"[Train] Saved client {client_idx} latent-dim0 histogram to {hist_p}")
                     global_latent_firstcomp_train.extend(z_list)
 
-            # Global train histogram
-            if len(global_latent_firstcomp_train) > 0:
-                arr = np.array(global_latent_firstcomp_train, dtype=float).reshape(-1, 1)
-                global_hist_path = plot_latent_first_component_hist_from_latents(arr, out_dir, epoch, client_id=None)
-                if global_hist_path:
-                    self.args.logger.info(f"[Train] Saved global latent-dim0 histogram to {global_hist_path}")
-
         return len(list_client_training) == 0
 
     def aggregate_parameters(self, parameters, list_loss):
