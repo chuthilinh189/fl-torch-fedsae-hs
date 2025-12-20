@@ -3,9 +3,10 @@ import torch.nn as nn
 from math import sqrt
 
 class DualLossAE(nn.Module):
-    def __init__(self, n_features, epsilon=1e-5):
+    def __init__(self, n_features, epsilon=1e-5, alpha=1):
         super(DualLossAE, self).__init__()
         self.epsilon = epsilon
+        self.alpha = alpha
         
         self.enc = nn.Sequential(
             nn.Linear(n_features, round(n_features * 0.75)),
@@ -31,5 +32,5 @@ class DualLossAE(nn.Module):
     def calculate_loss(self, x, y):
         _, decode = self.forward(x)
         re_loss = self.loss_function(decode, x)
-        dual_loss = (1 - y) * re_loss + y * 0.001 / (re_loss + self.epsilon)
+        dual_loss = (1 - y) * re_loss + y * self.alpha / (re_loss + self.epsilon)
         return dual_loss.mean()

@@ -58,6 +58,8 @@ class Arguments:
         # Decision mode for PTL at test time: 're' | 'proto' | 'combined'
         # default to 'proto' to use prototype-based thresholding
         self.ptl_decision_mode = config.get("ptl_decision_mode", "proto")
+        # DualLossAE scaling factor for anomaly term
+        self.dual_loss_alpha = config.get("dual_loss_alpha", 0.001)
 
         # ⚙️ Các tham số nội bộ tự động gán
         self.num_workers = 20  # Tổng số client mặc định
@@ -160,6 +162,7 @@ class Arguments:
             + "\nLearning Rate: {}".format(self.learning_rate)
             + "\nCoefficient Shrink AE: {}".format(self.coef_shrink_ae)
             + "\nThreshold Multiplier: {}".format(self.threshold_multiplier)
+            + "\nDual Loss Alpha: {}".format(self.dual_loss_alpha)
             + "\nNoise STD: {}".format(self.std_noise)
             + "\nAttack Noise STD: {}".format(self.attack_std_noise)
             + "\nNumber of Poisoned Clients: {}".format(self.num_poisoned_workers)

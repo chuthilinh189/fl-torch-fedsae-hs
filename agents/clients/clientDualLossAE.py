@@ -130,7 +130,7 @@ class ClientDualLossAE:
         Load a model from a file.
         """
         model_class = self.args.get_net(self.model_type)
-        model = model_class(self.args.dimension)
+        model = model_class(self.args.dimension, alpha=self.args.dual_loss_alpha)
 
         if os.path.exists(model_file_path):
             try:
