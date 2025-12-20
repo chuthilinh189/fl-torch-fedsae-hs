@@ -14,6 +14,7 @@ develop-eggs/
 data_loaders/
 data_loaders_by_attack_type/
 data_loaders_full_attack_type/
+data_loaders_full_attack_type_old/
 default_models/
 dist/
 saved_models/
