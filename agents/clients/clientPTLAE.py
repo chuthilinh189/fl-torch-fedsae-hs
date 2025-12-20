@@ -450,8 +450,8 @@ class ClientPTLAE:
 
                     # prediction: closer to malicious prototype -> predict malicious (1)
                     # optionally apply margin
-                    margin = getattr(self.args, 'ptl_margin', 0.0)
-                    predictions = [1 if (dp + margin) < dn else 0 for dp, dn in zip(d_pos, d_neg)]
+                    # margin = getattr(self.args, 'ptl_margin', 0.0)
+                    predictions = [1 if dp < dn else 0 for dp, dn in zip(d_pos, d_neg)]
                     # for ROC scoring use proto_score = d_neg - d_pos (higher -> more likely malicious)
                     proto_scores = [dn - dp for dp, dn in zip(d_pos, d_neg)]
             else:

@@ -1,0 +1,461 @@
+nohup: ignoring input
+2025-12-19 08:00:43.827 | INFO     | function.utils.data_loader_util:load_data_loader_from_file:202 - Loading data loader from file: data_loaders_full_attack_type/unsw/test_data_loader.pickle
+2025-12-19 08:00:48.137 | INFO     | __main__:main:192 - Testing SupAE model at epoch #2000
+2025-12-19 08:00:48.137 | INFO     | function.utils.data_loader_util:load_data_loader_from_file:202 - Loading data loader from file: data_loaders_full_attack_type/unsw/train_data_loader.pickle
+2025-12-19 08:00:48.272 | INFO     | core.data_processing:client_data_process:100 - Using hybrid partition (train stage): seen_per_client=5, dir_alpha=0.7, seed=0
+2025-12-19 08:00:51.619 | INFO     | core.data_processing:client_data_process:117 - Client 0: total_samples=2295, class_counts={0: 942, 2: 89, 3: 770, 5: 295, 8: 199}
+2025-12-19 08:00:51.619 | INFO     | core.data_processing:client_data_process:117 - Client 1: total_samples=5754, class_counts={0: 3301, 2: 131, 4: 99, 7: 2136, 8: 87}
+2025-12-19 08:00:51.619 | INFO     | core.data_processing:client_data_process:117 - Client 2: total_samples=23244, class_counts={0: 8371, 3: 8, 4: 1667, 5: 53, 6: 13145}
+2025-12-19 08:00:51.620 | INFO     | core.data_processing:client_data_process:117 - Client 3: total_samples=11296, class_counts={0: 8319, 3: 15, 6: 1677, 7: 1282, 8: 3}
+2025-12-19 08:00:51.620 | INFO     | core.data_processing:client_data_process:117 - Client 4: total_samples=5300, class_counts={0: 1444, 5: 2983, 6: 646, 7: 65, 8: 162}
+2025-12-19 08:00:51.620 | INFO     | core.data_processing:client_data_process:117 - Client 5: total_samples=4705, class_counts={0: 1650, 3: 115, 5: 2871, 8: 53, 9: 16}
+2025-12-19 08:00:51.620 | INFO     | core.data_processing:client_data_process:117 - Client 6: total_samples=16501, class_counts={0: 6539, 1: 8947, 2: 35, 6: 965, 9: 15}
+2025-12-19 08:00:51.620 | INFO     | core.data_processing:client_data_process:117 - Client 7: total_samples=9741, class_counts={0: 1755, 2: 426, 3: 404, 4: 6154, 7: 1002}
+2025-12-19 08:00:51.620 | INFO     | core.data_processing:client_data_process:117 - Client 8: total_samples=12941, class_counts={0: 3428, 4: 1146, 6: 8203, 8: 156, 9: 8}
+2025-12-19 08:00:51.621 | INFO     | core.data_processing:client_data_process:117 - Client 9: total_samples=17340, class_counts={0: 3632, 1: 338, 2: 152, 5: 4093, 6: 9125}
+2025-12-19 08:00:51.621 | INFO     | core.data_processing:client_data_process:117 - Client 10: total_samples=5961, class_counts={0: 3894, 1: 290, 4: 1431, 7: 342, 9: 4}
+2025-12-19 08:00:51.621 | INFO     | core.data_processing:client_data_process:117 - Client 11: total_samples=10246, class_counts={0: 6710, 1: 2550, 2: 323, 3: 188, 6: 475}
+2025-12-19 08:00:51.621 | INFO     | core.data_processing:client_data_process:117 - Client 12: total_samples=2179, class_counts={0: 37, 2: 219, 7: 1871, 8: 10, 9: 42}
+2025-12-19 08:00:51.621 | INFO     | core.data_processing:client_data_process:117 - Client 13: total_samples=6739, class_counts={0: 854, 3: 42, 5: 4586, 7: 1256, 9: 1}
+2025-12-19 08:00:51.621 | INFO     | core.data_processing:client_data_process:117 - Client 14: total_samples=3414, class_counts={0: 1369, 2: 145, 5: 812, 7: 1088}
+2025-12-19 08:00:51.621 | INFO     | core.data_processing:client_data_process:117 - Client 15: total_samples=15788, class_counts={0: 298, 4: 997, 5: 14287, 7: 194, 8: 12}
+2025-12-19 08:00:51.621 | INFO     | core.data_processing:client_data_process:117 - Client 16: total_samples=2082, class_counts={0: 126, 1: 1113, 5: 279, 6: 545, 9: 19}
+2025-12-19 08:00:51.622 | INFO     | core.data_processing:client_data_process:117 - Client 17: total_samples=5040, class_counts={0: 348, 1: 3805, 2: 176, 6: 509, 8: 202}
+2025-12-19 08:00:51.622 | INFO     | core.data_processing:client_data_process:117 - Client 18: total_samples=11879, class_counts={0: 10861, 6: 339, 7: 517, 8: 148, 9: 14}
+2025-12-19 08:00:51.622 | INFO     | core.data_processing:client_data_process:117 - Client 19: total_samples=7925, class_counts={0: 1312, 2: 129, 3: 79, 5: 828, 6: 5577}
+2025-12-19 08:00:51.622 | INFO     | core.data_processing:client_data_process:118 - Seen classes per client: [[0, 2, 3, 5, 8], [0, 2, 4, 7, 8], [0, 3, 4, 5, 6], [0, 3, 6, 7, 8], [0, 5, 6, 7, 8], [0, 3, 5, 8, 9], [0, 1, 2, 6, 9], [0, 2, 3, 4, 7], [0, 4, 6, 8, 9], [0, 1, 2, 5, 6], [0, 1, 4, 7, 9], [0, 1, 2, 3, 6], [0, 2, 7, 8, 9], [0, 3, 5, 7, 9], [0, 2, 5, 7, 9], [0, 4, 5, 7, 8], [0, 1, 5, 6, 9], [0, 1, 2, 6, 8], [0, 6, 7, 8, 9], [0, 2, 3, 5, 6]]
+2025-12-19 08:00:51.623 | INFO     | __main__:main:219 - Loaded train partition meta: seen_sets=[[0, 2, 3, 5, 8], [0, 2, 4, 7, 8], [0, 3, 4, 5, 6], [0, 3, 6, 7, 8], [0, 5, 6, 7, 8], [0, 3, 5, 8, 9], [0, 1, 2, 6, 9], [0, 2, 3, 4, 7], [0, 4, 6, 8, 9], [0, 1, 2, 5, 6], [0, 1, 4, 7, 9], [0, 1, 2, 3, 6], [0, 2, 7, 8, 9], [0, 3, 5, 7, 9], [0, 2, 5, 7, 9], [0, 4, 5, 7, 8], [0, 1, 5, 6, 9], [0, 1, 2, 6, 8], [0, 6, 7, 8, 9], [0, 2, 3, 5, 6]]
+2025-12-19 08:00:51.625 | INFO     | __main__:main:305 - Client 0 test at epoch 2000 with threshold re: (0, 0), and threshold z: (0.5, 0)
+2025-12-19 08:00:57.117 | INFO     | __main__:main:369 - Saved non-iid-dir latent viz for client 0 -> logs/re_distributions/SupAE_mc20_epoch_2000/client_0/epoch2000_client0_tsne_non_iid.png
+2025-12-19 08:00:57.266 | INFO     | __main__:main:376 - Saved client 0 latent-dim0 histogram to logs/re_distributions/SupAE_mc20_epoch_2000/client_0/epoch2000_client0_latent_dim0_hist.png
+2025-12-19 08:00:58.409 | INFO     | agents.clients.clientSupAE:test_with_thresholds:244 - [tensor(5.0113, device='cuda:0'), tensor(4.9028, device='cuda:0'), tensor(1.1756, device='cuda:0'), tensor(0.1361, device='cuda:0'), tensor(3.4507, device='cuda:0'), tensor(0.1377, device='cuda:0'), tensor(6.0788, device='cuda:0'), tensor(0.0216, device='cuda:0'), tensor(0.1407, device='cuda:0'), tensor(0.1383, device='cuda:0'), tensor(5.0353, device='cuda:0'), tensor(3.7492, device='cuda:0'), tensor(6.0747, device='cuda:0'), tensor(5.0069, device='cuda:0'), tensor(0.0429, device='cuda:0'), tensor(4.9854, device='cuda:0'), tensor(4.9840, device='cuda:0'), tensor(4.9924, device='cuda:0'), tensor(0.1378, device='cuda:0'), tensor(5.0030, device='cuda:0')]
+2025-12-19 08:00:58.511 | INFO     | agents.clients.clientSupAE:test_with_thresholds:245 - [5, 5, 0, 0, 2, 1, 6, 0, 0, 0, 1, 0, 6, 5, 0, 7, 4, 5, 0, 4]
+2025-12-19 08:00:58.553 | DEBUG    | agents.clients.clientSupAE:test_with_thresholds:261 - Classification Report:
+              precision    recall  f1-score   support
+
+           0       0.89      0.76      0.82       955
+           1       0.87      0.94      0.91      1622
+
+    accuracy                           0.88      2577
+   macro avg       0.88      0.85      0.86      2577
+weighted avg       0.88      0.88      0.87      2577
+
+2025-12-19 08:00:58.553 | DEBUG    | agents.clients.clientSupAE:test_with_thresholds:265 - Confusion Matrix:
+[[ 728  227]
+ [  92 1530]]
+2025-12-19 08:00:58.553 | DEBUG    | agents.clients.clientSupAE:test_with_thresholds:266 - ROC AUC Score: 0.852791783138908
+2025-12-19 08:00:58.555 | INFO     | __main__:main:414 - [Client 1] Multiplier 1.0: ACC=0.8762, P=0.8708, R=0.9433, F1=0.9056, AUC=0.8528
+2025-12-19 08:00:59.585 | WARNING  | __main__:main:263 - ↩️ Falling back to epoch 570 for client 2
+2025-12-19 08:00:59.586 | INFO     | __main__:main:305 - Client 1 test at epoch 570 with threshold re: (0, 0), and threshold z: (0.5, 0)
+2025-12-19 08:01:04.918 | INFO     | __main__:main:369 - Saved non-iid-dir latent viz for client 1 -> logs/re_distributions/SupAE_mc20_epoch_570/client_1/epoch570_client1_tsne_non_iid.png
+2025-12-19 08:01:05.071 | INFO     | __main__:main:376 - Saved client 1 latent-dim0 histogram to logs/re_distributions/SupAE_mc20_epoch_570/client_1/epoch570_client1_latent_dim0_hist.png
+2025-12-19 08:01:06.198 | INFO     | agents.clients.clientSupAE:test_with_thresholds:244 - [tensor(0.4066, device='cuda:0'), tensor(4.0133, device='cuda:0'), tensor(4.2491, device='cuda:0'), tensor(4.7047, device='cuda:0'), tensor(0.4050, device='cuda:0'), tensor(5.5388, device='cuda:0'), tensor(5.6427, device='cuda:0'), tensor(3.9946, device='cuda:0'), tensor(2.5420, device='cuda:0'), tensor(6.6117, device='cuda:0'), tensor(3.9989, device='cuda:0'), tensor(0.4785, device='cuda:0'), tensor(0.4694, device='cuda:0'), tensor(4.2627, device='cuda:0'), tensor(5.6464, device='cuda:0'), tensor(4.4768, device='cuda:0'), tensor(0.2366, device='cuda:0'), tensor(4.1548, device='cuda:0'), tensor(1.4187, device='cuda:0'), tensor(5.1181, device='cuda:0')]
+2025-12-19 08:01:06.206 | INFO     | agents.clients.clientSupAE:test_with_thresholds:245 - [0, 1, 3, 5, 0, 6, 6, 5, 0, 7, 5, 0, 0, 0, 6, 1, 1, 5, 1, 0]
+2025-12-19 08:01:06.246 | DEBUG    | agents.clients.clientSupAE:test_with_thresholds:261 - Classification Report:
+              precision    recall  f1-score   support
+
+           0       0.88      0.69      0.77       934
+           1       0.84      0.95      0.89      1643
+
+    accuracy                           0.85      2577
+   macro avg       0.86      0.82      0.83      2577
+weighted avg       0.86      0.85      0.85      2577
+
+2025-12-19 08:01:06.247 | DEBUG    | agents.clients.clientSupAE:test_with_thresholds:265 - Confusion Matrix:
+[[ 640  294]
+ [  85 1558]]
+2025-12-19 08:01:06.247 | DEBUG    | agents.clients.clientSupAE:test_with_thresholds:266 - ROC AUC Score: 0.816745103814639
+2025-12-19 08:01:06.248 | INFO     | __main__:main:414 - [Client 2] Multiplier 1.0: ACC=0.8529, P=0.8413, R=0.9483, F1=0.8916, AUC=0.8167
+2025-12-19 08:01:07.273 | INFO     | __main__:main:305 - Client 2 test at epoch 2000 with threshold re: (0, 0), and threshold z: (0.5, 0)
+2025-12-19 08:01:12.450 | INFO     | __main__:main:369 - Saved non-iid-dir latent viz for client 2 -> logs/re_distributions/SupAE_mc20_epoch_2000/client_2/epoch2000_client2_tsne_non_iid.png
+2025-12-19 08:01:12.603 | INFO     | __main__:main:376 - Saved client 2 latent-dim0 histogram to logs/re_distributions/SupAE_mc20_epoch_2000/client_2/epoch2000_client2_latent_dim0_hist.png
+2025-12-19 08:01:13.718 | INFO     | agents.clients.clientSupAE:test_with_thresholds:244 - [tensor(6.0005, device='cuda:0'), tensor(5.0405, device='cuda:0'), tensor(5.9985, device='cuda:0'), tensor(5.9977, device='cuda:0'), tensor(5.0524, device='cuda:0'), tensor(5.9991, device='cuda:0'), tensor(5.9990, device='cuda:0'), tensor(5.9968, device='cuda:0'), tensor(5.0400, device='cuda:0'), tensor(0.0508, device='cuda:0'), tensor(5.0219, device='cuda:0'), tensor(5.9992, device='cuda:0'), tensor(0.1064, device='cuda:0'), tensor(5.0459, device='cuda:0'), tensor(5.9924, device='cuda:0'), tensor(5.9971, device='cuda:0'), tensor(5.9994, device='cuda:0'), tensor(0.1433, device='cuda:0'), tensor(5.0571, device='cuda:0'), tensor(5.0399, device='cuda:0')]
+2025-12-19 08:01:13.726 | INFO     | agents.clients.clientSupAE:test_with_thresholds:245 - [6, 6, 6, 6, 5, 6, 6, 6, 7, 0, 5, 6, 0, 5, 6, 6, 6, 0, 5, 5]
+2025-12-19 08:01:13.767 | DEBUG    | agents.clients.clientSupAE:test_with_thresholds:261 - Classification Report:
+              precision    recall  f1-score   support
+
+           0       0.84      0.80      0.82       903
+           1       0.90      0.92      0.91      1674
+
+    accuracy                           0.88      2577
+   macro avg       0.87      0.86      0.86      2577
+weighted avg       0.88      0.88      0.88      2577
+
+2025-12-19 08:01:13.767 | DEBUG    | agents.clients.clientSupAE:test_with_thresholds:265 - Confusion Matrix:
+[[ 723  180]
+ [ 133 1541]]
+2025-12-19 08:01:13.767 | DEBUG    | agents.clients.clientSupAE:test_with_thresholds:266 - ROC AUC Score: 0.8606070168335735
+2025-12-19 08:01:13.769 | INFO     | __main__:main:414 - [Client 3] Multiplier 1.0: ACC=0.8785, P=0.8954, R=0.9205, F1=0.9078, AUC=0.8606
+2025-12-19 08:01:14.798 | INFO     | __main__:main:305 - Client 3 test at epoch 2000 with threshold re: (0, 0), and threshold z: (0.5, 0)
+2025-12-19 08:01:19.963 | INFO     | __main__:main:369 - Saved non-iid-dir latent viz for client 3 -> logs/re_distributions/SupAE_mc20_epoch_2000/client_3/epoch2000_client3_tsne_non_iid.png
+2025-12-19 08:01:20.118 | INFO     | __main__:main:376 - Saved client 3 latent-dim0 histogram to logs/re_distributions/SupAE_mc20_epoch_2000/client_3/epoch2000_client3_latent_dim0_hist.png
+2025-12-19 08:01:21.232 | INFO     | agents.clients.clientSupAE:test_with_thresholds:244 - [tensor(0.1478, device='cuda:0'), tensor(0.0541, device='cuda:0'), tensor(4.9974, device='cuda:0'), tensor(6.0849, device='cuda:0'), tensor(0.0317, device='cuda:0'), tensor(6.1052, device='cuda:0'), tensor(0.1097, device='cuda:0'), tensor(6.0953, device='cuda:0'), tensor(4.9787, device='cuda:0'), tensor(0.0263, device='cuda:0'), tensor(6.0889, device='cuda:0'), tensor(6.0949, device='cuda:0'), tensor(6.1375, device='cuda:0'), tensor(6.0980, device='cuda:0'), tensor(0.0418, device='cuda:0'), tensor(5.1201, device='cuda:0'), tensor(0.1191, device='cuda:0'), tensor(5.1068, device='cuda:0'), tensor(5.7428, device='cuda:0'), tensor(5.2338, device='cuda:0')]
+2025-12-19 08:01:21.240 | INFO     | agents.clients.clientSupAE:test_with_thresholds:245 - [0, 0, 5, 6, 0, 6, 0, 6, 4, 0, 6, 6, 0, 6, 0, 4, 1, 1, 5, 1]
+2025-12-19 08:01:21.281 | DEBUG    | agents.clients.clientSupAE:test_with_thresholds:261 - Classification Report:
+              precision    recall  f1-score   support
+
+           0       0.85      0.88      0.86       929
+           1       0.93      0.91      0.92      1648
+
+    accuracy                           0.90      2577
+   macro avg       0.89      0.90      0.89      2577
+weighted avg       0.90      0.90      0.90      2577
+
+2025-12-19 08:01:21.281 | DEBUG    | agents.clients.clientSupAE:test_with_thresholds:265 - Confusion Matrix:
+[[ 822  107]
+ [ 150 1498]]
+2025-12-19 08:01:21.281 | DEBUG    | agents.clients.clientSupAE:test_with_thresholds:266 - ROC AUC Score: 0.8969014860952899
+2025-12-19 08:01:21.283 | INFO     | __main__:main:414 - [Client 4] Multiplier 1.0: ACC=0.9003, P=0.9333, R=0.9090, F1=0.9210, AUC=0.8969
+2025-12-19 08:01:22.295 | INFO     | __main__:main:305 - Client 4 test at epoch 2000 with threshold re: (0, 0), and threshold z: (0.5, 0)
+2025-12-19 08:01:27.518 | INFO     | __main__:main:369 - Saved non-iid-dir latent viz for client 4 -> logs/re_distributions/SupAE_mc20_epoch_2000/client_4/epoch2000_client4_tsne_non_iid.png
+2025-12-19 08:01:27.669 | INFO     | __main__:main:376 - Saved client 4 latent-dim0 histogram to logs/re_distributions/SupAE_mc20_epoch_2000/client_4/epoch2000_client4_latent_dim0_hist.png
+2025-12-19 08:01:28.786 | INFO     | agents.clients.clientSupAE:test_with_thresholds:244 - [tensor(5.9985, device='cuda:0'), tensor(0.0604, device='cuda:0'), tensor(5.4624, device='cuda:0'), tensor(5.4682, device='cuda:0'), tensor(0.0628, device='cuda:0'), tensor(5.9934, device='cuda:0'), tensor(0.2103, device='cuda:0'), tensor(0.2169, device='cuda:0'), tensor(5.9970, device='cuda:0'), tensor(5.9809, device='cuda:0'), tensor(0.0827, device='cuda:0'), tensor(4.9527, device='cuda:0'), tensor(5.9941, device='cuda:0'), tensor(1.0246, device='cuda:0'), tensor(5.9935, device='cuda:0'), tensor(5.1313, device='cuda:0'), tensor(0.2214, device='cuda:0'), tensor(5.9922, device='cuda:0'), tensor(5.9939, device='cuda:0'), tensor(4.7871, device='cuda:0')]
+2025-12-19 08:01:28.793 | INFO     | agents.clients.clientSupAE:test_with_thresholds:245 - [6, 0, 5, 2, 0, 6, 1, 0, 6, 2, 0, 5, 6, 2, 6, 5, 5, 6, 6, 5]
+2025-12-19 08:01:28.834 | DEBUG    | agents.clients.clientSupAE:test_with_thresholds:261 - Classification Report:
+              precision    recall  f1-score   support
+
+           0       0.80      0.96      0.87       916
+           1       0.98      0.87      0.92      1661
+
+    accuracy                           0.90      2577
+   macro avg       0.89      0.91      0.90      2577
+weighted avg       0.91      0.90      0.90      2577
+
+2025-12-19 08:01:28.834 | DEBUG    | agents.clients.clientSupAE:test_with_thresholds:265 - Confusion Matrix:
+[[ 879   37]
+ [ 217 1444]]
+2025-12-19 08:01:28.834 | DEBUG    | agents.clients.clientSupAE:test_with_thresholds:266 - ROC AUC Score: 0.914481398326362
+2025-12-19 08:01:28.836 | INFO     | __main__:main:414 - [Client 5] Multiplier 1.0: ACC=0.9014, P=0.9750, R=0.8694, F1=0.9192, AUC=0.9145
+2025-12-19 08:01:29.851 | WARNING  | __main__:main:263 - ↩️ Falling back to epoch 800 for client 6
+2025-12-19 08:01:29.851 | INFO     | __main__:main:305 - Client 5 test at epoch 800 with threshold re: (0, 0), and threshold z: (0.5, 0)
+2025-12-19 08:01:35.012 | INFO     | __main__:main:369 - Saved non-iid-dir latent viz for client 5 -> logs/re_distributions/SupAE_mc20_epoch_800/client_5/epoch800_client5_tsne_non_iid.png
+2025-12-19 08:01:35.163 | INFO     | __main__:main:376 - Saved client 5 latent-dim0 histogram to logs/re_distributions/SupAE_mc20_epoch_800/client_5/epoch800_client5_latent_dim0_hist.png
+2025-12-19 08:01:36.279 | INFO     | agents.clients.clientSupAE:test_with_thresholds:244 - [tensor(6.1288, device='cuda:0'), tensor(0.0478, device='cuda:0'), tensor(5.0398, device='cuda:0'), tensor(4.9313, device='cuda:0'), tensor(4.9185, device='cuda:0'), tensor(5.0436, device='cuda:0'), tensor(0.9634, device='cuda:0'), tensor(0.3756, device='cuda:0'), tensor(5.0398, device='cuda:0'), tensor(0.0386, device='cuda:0'), tensor(5.0390, device='cuda:0'), tensor(5.0393, device='cuda:0'), tensor(0.0581, device='cuda:0'), tensor(0.2882, device='cuda:0'), tensor(5.0322, device='cuda:0'), tensor(6.1312, device='cuda:0'), tensor(0.4180, device='cuda:0'), tensor(0.2828, device='cuda:0'), tensor(5.4921, device='cuda:0'), tensor(0.1281, device='cuda:0')]
+2025-12-19 08:01:36.287 | INFO     | agents.clients.clientSupAE:test_with_thresholds:245 - [6, 0, 5, 5, 4, 2, 1, 0, 2, 0, 5, 4, 0, 0, 5, 6, 1, 0, 5, 0]
+2025-12-19 08:01:36.327 | DEBUG    | agents.clients.clientSupAE:test_with_thresholds:261 - Classification Report:
+              precision    recall  f1-score   support
+
+           0       0.90      0.77      0.83       935
+           1       0.88      0.95      0.91      1642
+
+    accuracy                           0.89      2577
+   macro avg       0.89      0.86      0.87      2577
+weighted avg       0.89      0.89      0.88      2577
+
+2025-12-19 08:01:36.327 | DEBUG    | agents.clients.clientSupAE:test_with_thresholds:265 - Confusion Matrix:
+[[ 723  212]
+ [  84 1558]]
+2025-12-19 08:01:36.327 | DEBUG    | agents.clients.clientSupAE:test_with_thresholds:266 - ROC AUC Score: 0.8610524533144007
+2025-12-19 08:01:36.329 | INFO     | __main__:main:414 - [Client 6] Multiplier 1.0: ACC=0.8851, P=0.8802, R=0.9488, F1=0.9132, AUC=0.8611
+2025-12-19 08:01:37.347 | WARNING  | __main__:main:263 - ↩️ Falling back to epoch 1560 for client 7
+2025-12-19 08:01:37.348 | INFO     | __main__:main:305 - Client 6 test at epoch 1560 with threshold re: (0, 0), and threshold z: (0.5, 0)
+2025-12-19 08:01:42.507 | INFO     | __main__:main:369 - Saved non-iid-dir latent viz for client 6 -> logs/re_distributions/SupAE_mc20_epoch_1560/client_6/epoch1560_client6_tsne_non_iid.png
+2025-12-19 08:01:42.657 | INFO     | __main__:main:376 - Saved client 6 latent-dim0 histogram to logs/re_distributions/SupAE_mc20_epoch_1560/client_6/epoch1560_client6_latent_dim0_hist.png
+2025-12-19 08:01:43.784 | INFO     | agents.clients.clientSupAE:test_with_thresholds:244 - [tensor(1.2182, device='cuda:0'), tensor(1.3404, device='cuda:0'), tensor(6.0125, device='cuda:0'), tensor(6.0038, device='cuda:0'), tensor(1.1526, device='cuda:0'), tensor(6.0072, device='cuda:0'), tensor(6.0116, device='cuda:0'), tensor(1.1423, device='cuda:0'), tensor(0.4843, device='cuda:0'), tensor(1.0338, device='cuda:0'), tensor(0.1929, device='cuda:0'), tensor(4.9213, device='cuda:0'), tensor(1.1413, device='cuda:0'), tensor(0.0232, device='cuda:0'), tensor(4.4385, device='cuda:0'), tensor(0.8344, device='cuda:0'), tensor(4.9234, device='cuda:0'), tensor(4.2244, device='cuda:0'), tensor(1.9811, device='cuda:0'), tensor(1.0906, device='cuda:0')]
+2025-12-19 08:01:43.791 | INFO     | agents.clients.clientSupAE:test_with_thresholds:245 - [1, 4, 6, 6, 0, 6, 6, 5, 0, 1, 0, 5, 7, 0, 5, 0, 5, 5, 4, 4]
+2025-12-19 08:01:43.831 | DEBUG    | agents.clients.clientSupAE:test_with_thresholds:261 - Classification Report:
+              precision    recall  f1-score   support
+
+           0       0.99      0.52      0.68       947
+           1       0.78      1.00      0.88      1630
+
+    accuracy                           0.82      2577
+   macro avg       0.89      0.76      0.78      2577
+weighted avg       0.86      0.82      0.80      2577
+
+2025-12-19 08:01:43.831 | DEBUG    | agents.clients.clientSupAE:test_with_thresholds:265 - Confusion Matrix:
+[[ 490  457]
+ [   5 1625]]
+2025-12-19 08:01:43.831 | DEBUG    | agents.clients.clientSupAE:test_with_thresholds:266 - ROC AUC Score: 0.7571779788936325
+2025-12-19 08:01:43.833 | INFO     | __main__:main:414 - [Client 7] Multiplier 1.0: ACC=0.8207, P=0.7805, R=0.9969, F1=0.8755, AUC=0.7572
+2025-12-19 08:01:44.868 | INFO     | __main__:main:305 - Client 7 test at epoch 2000 with threshold re: (0, 0), and threshold z: (0.5, 0)
+2025-12-19 08:01:50.264 | INFO     | __main__:main:369 - Saved non-iid-dir latent viz for client 7 -> logs/re_distributions/SupAE_mc20_epoch_2000/client_7/epoch2000_client7_tsne_non_iid.png
+2025-12-19 08:01:50.409 | INFO     | __main__:main:376 - Saved client 7 latent-dim0 histogram to logs/re_distributions/SupAE_mc20_epoch_2000/client_7/epoch2000_client7_latent_dim0_hist.png
+2025-12-19 08:01:51.515 | INFO     | agents.clients.clientSupAE:test_with_thresholds:244 - [tensor(0.3342, device='cuda:0'), tensor(7.0328, device='cuda:0'), tensor(6.9463, device='cuda:0'), tensor(1.2001, device='cuda:0'), tensor(0.3181, device='cuda:0'), tensor(5.8398, device='cuda:0'), tensor(4.7833, device='cuda:0'), tensor(5.6913, device='cuda:0'), tensor(1.1110, device='cuda:0'), tensor(0.4073, device='cuda:0'), tensor(6.8321, device='cuda:0'), tensor(0.1039, device='cuda:0'), tensor(1.3629, device='cuda:0'), tensor(5.8469, device='cuda:0'), tensor(0.1427, device='cuda:0'), tensor(0.4030, device='cuda:0'), tensor(5.4894, device='cuda:0'), tensor(0.9520, device='cuda:0'), tensor(0.1442, device='cuda:0'), tensor(0.2758, device='cuda:0')]
+2025-12-19 08:01:51.523 | INFO     | agents.clients.clientSupAE:test_with_thresholds:245 - [1, 7, 5, 0, 0, 5, 5, 6, 0, 0, 0, 0, 0, 5, 0, 0, 5, 0, 0, 0]
+2025-12-19 08:01:51.562 | DEBUG    | agents.clients.clientSupAE:test_with_thresholds:261 - Classification Report:
+              precision    recall  f1-score   support
+
+           0       0.92      0.47      0.62       905
+           1       0.77      0.98      0.86      1672
+
+    accuracy                           0.80      2577
+   macro avg       0.85      0.72      0.74      2577
+weighted avg       0.82      0.80      0.78      2577
+
+2025-12-19 08:01:51.563 | DEBUG    | agents.clients.clientSupAE:test_with_thresholds:265 - Confusion Matrix:
+[[ 428  477]
+ [  39 1633]]
+2025-12-19 08:01:51.563 | DEBUG    | agents.clients.clientSupAE:test_with_thresholds:266 - ROC AUC Score: 0.7248014089719528
+2025-12-19 08:01:51.564 | INFO     | __main__:main:414 - [Client 8] Multiplier 1.0: ACC=0.7998, P=0.7739, R=0.9767, F1=0.8636, AUC=0.7248
+2025-12-19 08:01:52.568 | WARNING  | __main__:main:263 - ↩️ Falling back to epoch 1880 for client 9
+2025-12-19 08:01:52.568 | INFO     | __main__:main:305 - Client 8 test at epoch 1880 with threshold re: (0, 0), and threshold z: (0.5, 0)
+2025-12-19 08:01:57.703 | INFO     | __main__:main:369 - Saved non-iid-dir latent viz for client 8 -> logs/re_distributions/SupAE_mc20_epoch_1880/client_8/epoch1880_client8_tsne_non_iid.png
+2025-12-19 08:01:57.868 | INFO     | __main__:main:376 - Saved client 8 latent-dim0 histogram to logs/re_distributions/SupAE_mc20_epoch_1880/client_8/epoch1880_client8_latent_dim0_hist.png
+2025-12-19 08:01:58.978 | INFO     | agents.clients.clientSupAE:test_with_thresholds:244 - [tensor(0.1244, device='cuda:0'), tensor(3.9657, device='cuda:0'), tensor(4.9201, device='cuda:0'), tensor(0.0427, device='cuda:0'), tensor(0.0619, device='cuda:0'), tensor(0.1345, device='cuda:0'), tensor(5.9806, device='cuda:0'), tensor(5.9899, device='cuda:0'), tensor(6.8131, device='cuda:0'), tensor(4.4702, device='cuda:0'), tensor(5.9739, device='cuda:0'), tensor(4.7702, device='cuda:0'), tensor(0.0741, device='cuda:0'), tensor(0.0640, device='cuda:0'), tensor(4.2583, device='cuda:0'), tensor(0.1219, device='cuda:0'), tensor(4.9481, device='cuda:0'), tensor(6.0395, device='cuda:0'), tensor(4.4520, device='cuda:0'), tensor(4.8277, device='cuda:0')]
+2025-12-19 08:01:58.985 | INFO     | agents.clients.clientSupAE:test_with_thresholds:245 - [0, 1, 5, 1, 0, 0, 6, 6, 7, 5, 6, 5, 0, 1, 5, 1, 5, 6, 4, 5]
+2025-12-19 08:01:59.026 | DEBUG    | agents.clients.clientSupAE:test_with_thresholds:261 - Classification Report:
+              precision    recall  f1-score   support
+
+           0       0.77      0.96      0.85       868
+           1       0.97      0.85      0.91      1709
+
+    accuracy                           0.89      2577
+   macro avg       0.87      0.90      0.88      2577
+weighted avg       0.90      0.89      0.89      2577
+
+2025-12-19 08:01:59.026 | DEBUG    | agents.clients.clientSupAE:test_with_thresholds:265 - Confusion Matrix:
+[[ 830   38]
+ [ 253 1456]]
+2025-12-19 08:01:59.026 | DEBUG    | agents.clients.clientSupAE:test_with_thresholds:266 - ROC AUC Score: 0.9040907044030925
+2025-12-19 08:01:59.028 | INFO     | __main__:main:414 - [Client 9] Multiplier 1.0: ACC=0.8871, P=0.9746, R=0.8520, F1=0.9091, AUC=0.9041
+2025-12-19 08:02:00.043 | WARNING  | __main__:main:263 - ↩️ Falling back to epoch 660 for client 10
+2025-12-19 08:02:00.043 | INFO     | __main__:main:305 - Client 9 test at epoch 660 with threshold re: (0, 0), and threshold z: (0.5, 0)
+2025-12-19 08:02:05.187 | INFO     | __main__:main:369 - Saved non-iid-dir latent viz for client 9 -> logs/re_distributions/SupAE_mc20_epoch_660/client_9/epoch660_client9_tsne_non_iid.png
+2025-12-19 08:02:05.335 | INFO     | __main__:main:376 - Saved client 9 latent-dim0 histogram to logs/re_distributions/SupAE_mc20_epoch_660/client_9/epoch660_client9_latent_dim0_hist.png
+2025-12-19 08:02:06.460 | INFO     | agents.clients.clientSupAE:test_with_thresholds:244 - [tensor(0.2805, device='cuda:0'), tensor(0.6624, device='cuda:0'), tensor(1.3401, device='cuda:0'), tensor(5.6945, device='cuda:0'), tensor(0.9919, device='cuda:0'), tensor(0.8457, device='cuda:0'), tensor(1.2087, device='cuda:0'), tensor(0.6049, device='cuda:0'), tensor(0.8699, device='cuda:0'), tensor(5.9976, device='cuda:0'), tensor(6.0041, device='cuda:0'), tensor(0.8397, device='cuda:0'), tensor(4.9648, device='cuda:0'), tensor(5.7565, device='cuda:0'), tensor(0.9529, device='cuda:0'), tensor(1.5792, device='cuda:0'), tensor(1.0418, device='cuda:0'), tensor(0.8611, device='cuda:0'), tensor(0.9221, device='cuda:0'), tensor(1.3099, device='cuda:0')]
+2025-12-19 08:02:06.468 | INFO     | agents.clients.clientSupAE:test_with_thresholds:245 - [0, 0, 7, 5, 1, 0, 1, 0, 0, 6, 6, 0, 1, 4, 1, 0, 7, 0, 0, 0]
+2025-12-19 08:02:06.508 | DEBUG    | agents.clients.clientSupAE:test_with_thresholds:261 - Classification Report:
+              precision    recall  f1-score   support
+
+           0       1.00      0.13      0.24       959
+           1       0.66      1.00      0.80      1618
+
+    accuracy                           0.68      2577
+   macro avg       0.83      0.57      0.52      2577
+weighted avg       0.79      0.68      0.59      2577
+
+2025-12-19 08:02:06.508 | DEBUG    | agents.clients.clientSupAE:test_with_thresholds:265 - Confusion Matrix:
+[[ 128  831]
+ [   0 1618]]
+2025-12-19 08:02:06.509 | DEBUG    | agents.clients.clientSupAE:test_with_thresholds:266 - ROC AUC Score: 0.5667361835245046
+2025-12-19 08:02:06.510 | INFO     | __main__:main:414 - [Client 10] Multiplier 1.0: ACC=0.6775, P=0.6607, R=1.0000, F1=0.7957, AUC=0.5667
+2025-12-19 08:02:07.526 | WARNING  | __main__:main:263 - ↩️ Falling back to epoch 950 for client 11
+2025-12-19 08:02:07.527 | INFO     | __main__:main:305 - Client 10 test at epoch 950 with threshold re: (0, 0), and threshold z: (0.5, 0)
+2025-12-19 08:02:12.719 | INFO     | __main__:main:369 - Saved non-iid-dir latent viz for client 10 -> logs/re_distributions/SupAE_mc20_epoch_950/client_10/epoch950_client10_tsne_non_iid.png
+2025-12-19 08:02:12.863 | INFO     | __main__:main:376 - Saved client 10 latent-dim0 histogram to logs/re_distributions/SupAE_mc20_epoch_950/client_10/epoch950_client10_latent_dim0_hist.png
+2025-12-19 08:02:13.980 | INFO     | agents.clients.clientSupAE:test_with_thresholds:244 - [tensor(5.5929, device='cuda:0'), tensor(8.1234, device='cuda:0'), tensor(5.5935, device='cuda:0'), tensor(5.7598, device='cuda:0'), tensor(1.0051, device='cuda:0'), tensor(0.4573, device='cuda:0'), tensor(1.5167, device='cuda:0'), tensor(4.0360, device='cuda:0'), tensor(4.9572, device='cuda:0'), tensor(1.9331, device='cuda:0'), tensor(5.7480, device='cuda:0'), tensor(5.7629, device='cuda:0'), tensor(5.5612, device='cuda:0'), tensor(0.7864, device='cuda:0'), tensor(0.4640, device='cuda:0'), tensor(8.3781, device='cuda:0'), tensor(1.9078, device='cuda:0'), tensor(0.0939, device='cuda:0'), tensor(1.0574, device='cuda:0'), tensor(5.7130, device='cuda:0')]
+2025-12-19 08:02:13.987 | INFO     | agents.clients.clientSupAE:test_with_thresholds:245 - [6, 5, 6, 6, 0, 0, 1, 5, 5, 0, 5, 6, 6, 0, 0, 7, 1, 0, 0, 6]
+2025-12-19 08:02:14.029 | DEBUG    | agents.clients.clientSupAE:test_with_thresholds:261 - Classification Report:
+              precision    recall  f1-score   support
+
+           0       1.00      0.29      0.44       933
+           1       0.71      1.00      0.83      1644
+
+    accuracy                           0.74      2577
+   macro avg       0.86      0.64      0.64      2577
+weighted avg       0.82      0.74      0.69      2577
+
+2025-12-19 08:02:14.029 | DEBUG    | agents.clients.clientSupAE:test_with_thresholds:265 - Confusion Matrix:
+[[ 266  667]
+ [   0 1644]]
+2025-12-19 08:02:14.029 | DEBUG    | agents.clients.clientSupAE:test_with_thresholds:266 - ROC AUC Score: 0.642550911039657
+2025-12-19 08:02:14.031 | INFO     | __main__:main:414 - [Client 11] Multiplier 1.0: ACC=0.7412, P=0.7114, R=1.0000, F1=0.8314, AUC=0.6426
+2025-12-19 08:02:15.055 | WARNING  | __main__:main:263 - ↩️ Falling back to epoch 1020 for client 12
+2025-12-19 08:02:15.056 | INFO     | __main__:main:305 - Client 11 test at epoch 1020 with threshold re: (0, 0), and threshold z: (0.5, 0)
+2025-12-19 08:02:20.200 | INFO     | __main__:main:369 - Saved non-iid-dir latent viz for client 11 -> logs/re_distributions/SupAE_mc20_epoch_1020/client_11/epoch1020_client11_tsne_non_iid.png
+2025-12-19 08:02:20.351 | INFO     | __main__:main:376 - Saved client 11 latent-dim0 histogram to logs/re_distributions/SupAE_mc20_epoch_1020/client_11/epoch1020_client11_latent_dim0_hist.png
+2025-12-19 08:02:21.474 | INFO     | agents.clients.clientSupAE:test_with_thresholds:244 - [tensor(6.0325, device='cuda:0'), tensor(5.8736, device='cuda:0'), tensor(6.0298, device='cuda:0'), tensor(2.1736, device='cuda:0'), tensor(6.0267, device='cuda:0'), tensor(0.3318, device='cuda:0'), tensor(6.0225, device='cuda:0'), tensor(0.2577, device='cuda:0'), tensor(6.0307, device='cuda:0'), tensor(0.4472, device='cuda:0'), tensor(6.0386, device='cuda:0'), tensor(6.0329, device='cuda:0'), tensor(6.0339, device='cuda:0'), tensor(0.3769, device='cuda:0'), tensor(6.0305, device='cuda:0'), tensor(0.6722, device='cuda:0'), tensor(4.6530, device='cuda:0'), tensor(3.9388, device='cuda:0'), tensor(0.6290, device='cuda:0'), tensor(3.9699, device='cuda:0')]
+2025-12-19 08:02:21.481 | INFO     | agents.clients.clientSupAE:test_with_thresholds:245 - [6, 5, 6, 0, 6, 0, 6, 0, 6, 0, 6, 6, 6, 0, 6, 0, 7, 5, 0, 4]
+2025-12-19 08:02:21.521 | DEBUG    | agents.clients.clientSupAE:test_with_thresholds:261 - Classification Report:
+              precision    recall  f1-score   support
+
+           0       0.95      0.47      0.63       946
+           1       0.76      0.99      0.86      1631
+
+    accuracy                           0.80      2577
+   macro avg       0.86      0.73      0.74      2577
+weighted avg       0.83      0.80      0.78      2577
+
+2025-12-19 08:02:21.521 | DEBUG    | agents.clients.clientSupAE:test_with_thresholds:265 - Confusion Matrix:
+[[ 445  501]
+ [  23 1608]]
+2025-12-19 08:02:21.521 | DEBUG    | agents.clients.clientSupAE:test_with_thresholds:266 - ROC AUC Score: 0.728149956640824
+2025-12-19 08:02:21.523 | INFO     | __main__:main:414 - [Client 12] Multiplier 1.0: ACC=0.7967, P=0.7624, R=0.9859, F1=0.8599, AUC=0.7281
+2025-12-19 08:02:22.549 | INFO     | __main__:main:305 - Client 12 test at epoch 2000 with threshold re: (0, 0), and threshold z: (0.5, 0)
+2025-12-19 08:02:27.693 | INFO     | __main__:main:369 - Saved non-iid-dir latent viz for client 12 -> logs/re_distributions/SupAE_mc20_epoch_2000/client_12/epoch2000_client12_tsne_non_iid.png
+2025-12-19 08:02:27.843 | INFO     | __main__:main:376 - Saved client 12 latent-dim0 histogram to logs/re_distributions/SupAE_mc20_epoch_2000/client_12/epoch2000_client12_latent_dim0_hist.png
+2025-12-19 08:02:28.960 | INFO     | agents.clients.clientSupAE:test_with_thresholds:244 - [tensor(6.0819, device='cuda:0'), tensor(0.9989, device='cuda:0'), tensor(6.0740, device='cuda:0'), tensor(6.0906, device='cuda:0'), tensor(6.6896, device='cuda:0'), tensor(0.1646, device='cuda:0'), tensor(7.2504, device='cuda:0'), tensor(0.1048, device='cuda:0'), tensor(6.1102, device='cuda:0'), tensor(7.0887, device='cuda:0'), tensor(5.1753, device='cuda:0'), tensor(0.1035, device='cuda:0'), tensor(0.1044, device='cuda:0'), tensor(6.8312, device='cuda:0'), tensor(0.3832, device='cuda:0'), tensor(0.4444, device='cuda:0'), tensor(5.6361, device='cuda:0'), tensor(1.6357, device='cuda:0'), tensor(7.1103, device='cuda:0'), tensor(6.0865, device='cuda:0')]
+2025-12-19 08:02:28.967 | INFO     | agents.clients.clientSupAE:test_with_thresholds:245 - [6, 0, 6, 6, 5, 1, 0, 0, 6, 7, 5, 0, 0, 4, 0, 0, 4, 0, 1, 6]
+2025-12-19 08:02:29.008 | DEBUG    | agents.clients.clientSupAE:test_with_thresholds:261 - Classification Report:
+              precision    recall  f1-score   support
+
+           0       0.86      0.66      0.75       906
+           1       0.84      0.94      0.89      1671
+
+    accuracy                           0.84      2577
+   macro avg       0.85      0.80      0.82      2577
+weighted avg       0.84      0.84      0.84      2577
+
+2025-12-19 08:02:29.008 | DEBUG    | agents.clients.clientSupAE:test_with_thresholds:265 - Confusion Matrix:
+[[ 597  309]
+ [  97 1574]]
+2025-12-19 08:02:29.008 | DEBUG    | agents.clients.clientSupAE:test_with_thresholds:266 - ROC AUC Score: 0.8004456624696319
+2025-12-19 08:02:29.010 | INFO     | __main__:main:414 - [Client 13] Multiplier 1.0: ACC=0.8425, P=0.8359, R=0.9420, F1=0.8858, AUC=0.8004
+2025-12-19 08:02:30.027 | INFO     | __main__:main:305 - Client 13 test at epoch 2000 with threshold re: (0, 0), and threshold z: (0.5, 0)
+2025-12-19 08:02:35.213 | INFO     | __main__:main:369 - Saved non-iid-dir latent viz for client 13 -> logs/re_distributions/SupAE_mc20_epoch_2000/client_13/epoch2000_client13_tsne_non_iid.png
+2025-12-19 08:02:35.365 | INFO     | __main__:main:376 - Saved client 13 latent-dim0 histogram to logs/re_distributions/SupAE_mc20_epoch_2000/client_13/epoch2000_client13_latent_dim0_hist.png
+2025-12-19 08:02:36.489 | INFO     | agents.clients.clientSupAE:test_with_thresholds:244 - [tensor(0.1168, device='cuda:0'), tensor(0.1131, device='cuda:0'), tensor(5.0235, device='cuda:0'), tensor(0.1026, device='cuda:0'), tensor(5.0180, device='cuda:0'), tensor(0.0979, device='cuda:0'), tensor(0.1535, device='cuda:0'), tensor(6.0309, device='cuda:0'), tensor(7.0157, device='cuda:0'), tensor(5.0202, device='cuda:0'), tensor(0.0200, device='cuda:0'), tensor(5.0008, device='cuda:0'), tensor(6.0325, device='cuda:0'), tensor(5.0226, device='cuda:0'), tensor(6.0357, device='cuda:0'), tensor(5.0336, device='cuda:0'), tensor(5.0271, device='cuda:0'), tensor(0.0214, device='cuda:0'), tensor(5.0166, device='cuda:0'), tensor(5.0631, device='cuda:0')]
+2025-12-19 08:02:36.496 | INFO     | agents.clients.clientSupAE:test_with_thresholds:245 - [0, 0, 5, 1, 2, 0, 0, 6, 7, 4, 1, 5, 6, 5, 6, 5, 5, 7, 4, 5]
+2025-12-19 08:02:36.537 | DEBUG    | agents.clients.clientSupAE:test_with_thresholds:261 - Classification Report:
+              precision    recall  f1-score   support
+
+           0       0.84      0.95      0.89       973
+           1       0.97      0.89      0.93      1604
+
+    accuracy                           0.91      2577
+   macro avg       0.90      0.92      0.91      2577
+weighted avg       0.92      0.91      0.91      2577
+
+2025-12-19 08:02:36.537 | DEBUG    | agents.clients.clientSupAE:test_with_thresholds:265 - Confusion Matrix:
+[[ 925   48]
+ [ 178 1426]]
+2025-12-19 08:02:36.537 | DEBUG    | agents.clients.clientSupAE:test_with_thresholds:266 - ROC AUC Score: 0.9198477342102094
+2025-12-19 08:02:36.539 | INFO     | __main__:main:414 - [Client 14] Multiplier 1.0: ACC=0.9123, P=0.9674, R=0.8890, F1=0.9266, AUC=0.9198
+2025-12-19 08:02:37.554 | INFO     | __main__:main:305 - Client 14 test at epoch 2000 with threshold re: (0, 0), and threshold z: (0.5, 0)
+2025-12-19 08:02:42.736 | INFO     | __main__:main:369 - Saved non-iid-dir latent viz for client 14 -> logs/re_distributions/SupAE_mc20_epoch_2000/client_14/epoch2000_client14_tsne_non_iid.png
+2025-12-19 08:02:42.881 | INFO     | __main__:main:376 - Saved client 14 latent-dim0 histogram to logs/re_distributions/SupAE_mc20_epoch_2000/client_14/epoch2000_client14_latent_dim0_hist.png
+2025-12-19 08:02:44.000 | INFO     | agents.clients.clientSupAE:test_with_thresholds:244 - [tensor(0.2392, device='cuda:0'), tensor(0.2773, device='cuda:0'), tensor(0.2820, device='cuda:0'), tensor(5.7451, device='cuda:0'), tensor(1.8256, device='cuda:0'), tensor(5.7405, device='cuda:0'), tensor(6.0955, device='cuda:0'), tensor(6.0896, device='cuda:0'), tensor(5.1573, device='cuda:0'), tensor(0.2295, device='cuda:0'), tensor(0.2936, device='cuda:0'), tensor(0.0516, device='cuda:0'), tensor(5.2223, device='cuda:0'), tensor(0.0438, device='cuda:0'), tensor(5.7743, device='cuda:0'), tensor(6.0786, device='cuda:0'), tensor(0.3464, device='cuda:0'), tensor(5.2559, device='cuda:0'), tensor(5.1237, device='cuda:0'), tensor(0.3066, device='cuda:0')]
+2025-12-19 08:02:44.008 | INFO     | agents.clients.clientSupAE:test_with_thresholds:245 - [0, 0, 0, 5, 0, 1, 6, 6, 6, 0, 0, 0, 5, 0, 1, 6, 0, 3, 5, 0]
+2025-12-19 08:02:44.049 | DEBUG    | agents.clients.clientSupAE:test_with_thresholds:261 - Classification Report:
+              precision    recall  f1-score   support
+
+           0       0.87      0.86      0.86       922
+           1       0.92      0.93      0.92      1655
+
+    accuracy                           0.90      2577
+   macro avg       0.90      0.89      0.89      2577
+weighted avg       0.90      0.90      0.90      2577
+
+2025-12-19 08:02:44.049 | DEBUG    | agents.clients.clientSupAE:test_with_thresholds:265 - Confusion Matrix:
+[[ 796  126]
+ [ 123 1532]]
+2025-12-19 08:02:44.050 | DEBUG    | agents.clients.clientSupAE:test_with_thresholds:266 - ROC AUC Score: 0.8945101611497401
+2025-12-19 08:02:44.051 | INFO     | __main__:main:414 - [Client 15] Multiplier 1.0: ACC=0.9034, P=0.9240, R=0.9257, F1=0.9248, AUC=0.8945
+2025-12-19 08:02:45.075 | INFO     | __main__:main:305 - Client 15 test at epoch 2000 with threshold re: (0, 0), and threshold z: (0.5, 0)
+2025-12-19 08:02:50.610 | INFO     | __main__:main:369 - Saved non-iid-dir latent viz for client 15 -> logs/re_distributions/SupAE_mc20_epoch_2000/client_15/epoch2000_client15_tsne_non_iid.png
+2025-12-19 08:02:50.757 | INFO     | __main__:main:376 - Saved client 15 latent-dim0 histogram to logs/re_distributions/SupAE_mc20_epoch_2000/client_15/epoch2000_client15_latent_dim0_hist.png
+2025-12-19 08:02:51.874 | INFO     | agents.clients.clientSupAE:test_with_thresholds:244 - [tensor(5.9641, device='cuda:0'), tensor(4.9646, device='cuda:0'), tensor(4.7334, device='cuda:0'), tensor(0.0258, device='cuda:0'), tensor(5.9627, device='cuda:0'), tensor(0.1461, device='cuda:0'), tensor(5.9586, device='cuda:0'), tensor(5.9630, device='cuda:0'), tensor(0.0168, device='cuda:0'), tensor(1.2492, device='cuda:0'), tensor(0.0284, device='cuda:0'), tensor(4.8510, device='cuda:0'), tensor(0.0238, device='cuda:0'), tensor(4.9189, device='cuda:0'), tensor(0.0156, device='cuda:0'), tensor(0.4721, device='cuda:0'), tensor(0.0248, device='cuda:0'), tensor(4.8514, device='cuda:0'), tensor(0.0286, device='cuda:0'), tensor(0.3881, device='cuda:0')]
+2025-12-19 08:02:51.882 | INFO     | agents.clients.clientSupAE:test_with_thresholds:245 - [6, 5, 5, 0, 6, 5, 6, 6, 0, 6, 0, 7, 0, 7, 0, 0, 0, 5, 0, 0]
+2025-12-19 08:02:51.924 | DEBUG    | agents.clients.clientSupAE:test_with_thresholds:261 - Classification Report:
+              precision    recall  f1-score   support
+
+           0       0.77      0.98      0.86       976
+           1       0.98      0.83      0.90      1600
+
+    accuracy                           0.88      2576
+   macro avg       0.88      0.90      0.88      2576
+weighted avg       0.90      0.88      0.88      2576
+
+2025-12-19 08:02:51.924 | DEBUG    | agents.clients.clientSupAE:test_with_thresholds:265 - Confusion Matrix:
+[[ 953   23]
+ [ 278 1322]]
+2025-12-19 08:02:51.924 | DEBUG    | agents.clients.clientSupAE:test_with_thresholds:266 - ROC AUC Score: 0.9013422131147539
+2025-12-19 08:02:51.926 | INFO     | __main__:main:414 - [Client 16] Multiplier 1.0: ACC=0.8832, P=0.9829, R=0.8263, F1=0.8978, AUC=0.9013
+2025-12-19 08:02:52.948 | INFO     | __main__:main:305 - Client 16 test at epoch 2000 with threshold re: (0, 0), and threshold z: (0.5, 0)
+2025-12-19 08:02:58.252 | INFO     | __main__:main:369 - Saved non-iid-dir latent viz for client 16 -> logs/re_distributions/SupAE_mc20_epoch_2000/client_16/epoch2000_client16_tsne_non_iid.png
+2025-12-19 08:02:58.398 | INFO     | __main__:main:376 - Saved client 16 latent-dim0 histogram to logs/re_distributions/SupAE_mc20_epoch_2000/client_16/epoch2000_client16_latent_dim0_hist.png
+2025-12-19 08:02:59.516 | INFO     | agents.clients.clientSupAE:test_with_thresholds:244 - [tensor(5.1016, device='cuda:0'), tensor(6.0011, device='cuda:0'), tensor(5.9995, device='cuda:0'), tensor(0.8866, device='cuda:0'), tensor(5.0798, device='cuda:0'), tensor(0.9990, device='cuda:0'), tensor(0.3879, device='cuda:0'), tensor(0.7893, device='cuda:0'), tensor(6.0067, device='cuda:0'), tensor(5.2563, device='cuda:0'), tensor(0.6003, device='cuda:0'), tensor(0.3548, device='cuda:0'), tensor(6.0038, device='cuda:0'), tensor(0.3568, device='cuda:0'), tensor(5.9999, device='cuda:0'), tensor(0.3343, device='cuda:0'), tensor(0.8882, device='cuda:0'), tensor(5.0720, device='cuda:0'), tensor(0.4441, device='cuda:0'), tensor(0.7841, device='cuda:0')]
+2025-12-19 08:02:59.523 | INFO     | agents.clients.clientSupAE:test_with_thresholds:245 - [2, 6, 6, 1, 4, 7, 0, 0, 6, 7, 0, 0, 6, 0, 6, 0, 0, 7, 0, 0]
+2025-12-19 08:02:59.564 | DEBUG    | agents.clients.clientSupAE:test_with_thresholds:261 - Classification Report:
+              precision    recall  f1-score   support
+
+           0       1.00      0.24      0.39       938
+           1       0.70      1.00      0.82      1638
+
+    accuracy                           0.72      2576
+   macro avg       0.85      0.62      0.60      2576
+weighted avg       0.81      0.72      0.66      2576
+
+2025-12-19 08:02:59.564 | DEBUG    | agents.clients.clientSupAE:test_with_thresholds:265 - Confusion Matrix:
+[[ 226  712]
+ [   1 1637]]
+2025-12-19 08:02:59.564 | DEBUG    | agents.clients.clientSupAE:test_with_thresholds:266 - ROC AUC Score: 0.6201638328504
+2025-12-19 08:02:59.566 | INFO     | __main__:main:414 - [Client 17] Multiplier 1.0: ACC=0.7232, P=0.6969, R=0.9994, F1=0.8212, AUC=0.6202
+2025-12-19 08:03:00.589 | WARNING  | __main__:main:263 - ↩️ Falling back to epoch 530 for client 18
+2025-12-19 08:03:00.589 | INFO     | __main__:main:305 - Client 17 test at epoch 530 with threshold re: (0, 0), and threshold z: (0.5, 0)
+2025-12-19 08:03:05.754 | INFO     | __main__:main:369 - Saved non-iid-dir latent viz for client 17 -> logs/re_distributions/SupAE_mc20_epoch_530/client_17/epoch530_client17_tsne_non_iid.png
+2025-12-19 08:03:05.911 | INFO     | __main__:main:376 - Saved client 17 latent-dim0 histogram to logs/re_distributions/SupAE_mc20_epoch_530/client_17/epoch530_client17_latent_dim0_hist.png
+2025-12-19 08:03:07.047 | INFO     | agents.clients.clientSupAE:test_with_thresholds:244 - [tensor(0.0667, device='cuda:0'), tensor(5.0226, device='cuda:0'), tensor(5.9741, device='cuda:0'), tensor(0.1730, device='cuda:0'), tensor(4.4561, device='cuda:0'), tensor(0.1401, device='cuda:0'), tensor(0.0298, device='cuda:0'), tensor(0.0330, device='cuda:0'), tensor(4.5262, device='cuda:0'), tensor(0.0248, device='cuda:0'), tensor(0.0541, device='cuda:0'), tensor(0.0339, device='cuda:0'), tensor(0.0372, device='cuda:0'), tensor(4.5916, device='cuda:0'), tensor(0.3337, device='cuda:0'), tensor(5.9784, device='cuda:0'), tensor(4.2045, device='cuda:0'), tensor(4.9567, device='cuda:0'), tensor(5.9778, device='cuda:0'), tensor(0.0876, device='cuda:0')]
+2025-12-19 08:03:07.055 | INFO     | agents.clients.clientSupAE:test_with_thresholds:245 - [0, 5, 6, 4, 5, 0, 0, 0, 4, 1, 0, 0, 0, 5, 1, 6, 2, 5, 6, 0]
+2025-12-19 08:03:07.096 | DEBUG    | agents.clients.clientSupAE:test_with_thresholds:261 - Classification Report:
+              precision    recall  f1-score   support
+
+           0       0.75      0.97      0.84       913
+           1       0.98      0.82      0.89      1663
+
+    accuracy                           0.87      2576
+   macro avg       0.86      0.89      0.87      2576
+weighted avg       0.90      0.87      0.88      2576
+
+2025-12-19 08:03:07.096 | DEBUG    | agents.clients.clientSupAE:test_with_thresholds:265 - Confusion Matrix:
+[[ 883   30]
+ [ 298 1365]]
+2025-12-19 08:03:07.096 | DEBUG    | agents.clients.clientSupAE:test_with_thresholds:266 - ROC AUC Score: 0.8939735325712186
+2025-12-19 08:03:07.098 | INFO     | __main__:main:414 - [Client 18] Multiplier 1.0: ACC=0.8727, P=0.9785, R=0.8208, F1=0.8927, AUC=0.8940
+2025-12-19 08:03:08.119 | INFO     | __main__:main:305 - Client 18 test at epoch 2000 with threshold re: (0, 0), and threshold z: (0.5, 0)
+2025-12-19 08:03:13.424 | INFO     | __main__:main:369 - Saved non-iid-dir latent viz for client 18 -> logs/re_distributions/SupAE_mc20_epoch_2000/client_18/epoch2000_client18_tsne_non_iid.png
+2025-12-19 08:03:13.562 | INFO     | __main__:main:376 - Saved client 18 latent-dim0 histogram to logs/re_distributions/SupAE_mc20_epoch_2000/client_18/epoch2000_client18_latent_dim0_hist.png
+2025-12-19 08:03:14.696 | INFO     | agents.clients.clientSupAE:test_with_thresholds:244 - [tensor(5.0273, device='cuda:0'), tensor(0.0201, device='cuda:0'), tensor(7.1799, device='cuda:0'), tensor(0.0645, device='cuda:0'), tensor(7.4096, device='cuda:0'), tensor(0.1182, device='cuda:0'), tensor(0.0224, device='cuda:0'), tensor(0.0223, device='cuda:0'), tensor(0.0322, device='cuda:0'), tensor(0.0785, device='cuda:0'), tensor(0.0201, device='cuda:0'), tensor(6.0039, device='cuda:0'), tensor(0.0580, device='cuda:0'), tensor(7.8856, device='cuda:0'), tensor(7.2102, device='cuda:0'), tensor(7.4152, device='cuda:0'), tensor(6.0988, device='cuda:0'), tensor(6.0138, device='cuda:0'), tensor(5.0794, device='cuda:0'), tensor(7.1590, device='cuda:0')]
+2025-12-19 08:03:14.703 | INFO     | agents.clients.clientSupAE:test_with_thresholds:245 - [5, 0, 0, 0, 4, 0, 0, 0, 0, 0, 0, 6, 0, 4, 4, 4, 7, 6, 5, 5]
+2025-12-19 08:03:14.744 | DEBUG    | agents.clients.clientSupAE:test_with_thresholds:261 - Classification Report:
+              precision    recall  f1-score   support
+
+           0       0.84      0.95      0.89       974
+           1       0.97      0.89      0.93      1602
+
+    accuracy                           0.91      2576
+   macro avg       0.90      0.92      0.91      2576
+weighted avg       0.92      0.91      0.91      2576
+
+2025-12-19 08:03:14.744 | DEBUG    | agents.clients.clientSupAE:test_with_thresholds:265 - Confusion Matrix:
+[[ 929   45]
+ [ 182 1420]]
+2025-12-19 08:03:14.744 | DEBUG    | agents.clients.clientSupAE:test_with_thresholds:266 - ROC AUC Score: 0.9200953889773307
+2025-12-19 08:03:14.746 | INFO     | __main__:main:414 - [Client 19] Multiplier 1.0: ACC=0.9119, P=0.9693, R=0.8864, F1=0.9260, AUC=0.9201
+2025-12-19 08:03:15.777 | WARNING  | __main__:main:263 - ↩️ Falling back to epoch 1470 for client 20
+2025-12-19 08:03:15.778 | INFO     | __main__:main:305 - Client 19 test at epoch 1470 with threshold re: (0, 0), and threshold z: (0.5, 0)
+2025-12-19 08:03:20.960 | INFO     | __main__:main:369 - Saved non-iid-dir latent viz for client 19 -> logs/re_distributions/SupAE_mc20_epoch_1470/client_19/epoch1470_client19_tsne_non_iid.png
+2025-12-19 08:03:21.116 | INFO     | __main__:main:376 - Saved client 19 latent-dim0 histogram to logs/re_distributions/SupAE_mc20_epoch_1470/client_19/epoch1470_client19_latent_dim0_hist.png
+2025-12-19 08:03:22.246 | INFO     | agents.clients.clientSupAE:test_with_thresholds:244 - [tensor(5.3323, device='cuda:0'), tensor(0.1346, device='cuda:0'), tensor(5.0338, device='cuda:0'), tensor(4.9584, device='cuda:0'), tensor(4.9848, device='cuda:0'), tensor(6.0003, device='cuda:0'), tensor(6.0005, device='cuda:0'), tensor(1.4090, device='cuda:0'), tensor(6.3030, device='cuda:0'), tensor(4.9217, device='cuda:0'), tensor(0.8866, device='cuda:0'), tensor(4.9529, device='cuda:0'), tensor(4.9443, device='cuda:0'), tensor(0.0626, device='cuda:0'), tensor(4.9916, device='cuda:0'), tensor(5.2218, device='cuda:0'), tensor(4.9769, device='cuda:0'), tensor(0.0538, device='cuda:0'), tensor(0.4613, device='cuda:0'), tensor(4.9212, device='cuda:0')]
+2025-12-19 08:03:22.253 | INFO     | agents.clients.clientSupAE:test_with_thresholds:245 - [0, 0, 0, 2, 0, 6, 6, 0, 4, 5, 0, 4, 5, 0, 4, 1, 5, 0, 0, 5]
+2025-12-19 08:03:22.293 | DEBUG    | agents.clients.clientSupAE:test_with_thresholds:261 - Classification Report:
+              precision    recall  f1-score   support
+
+           0       0.91      0.74      0.81       914
+           1       0.87      0.96      0.91      1662
+
+    accuracy                           0.88      2576
+   macro avg       0.89      0.85      0.86      2576
+weighted avg       0.88      0.88      0.88      2576
+
+2025-12-19 08:03:22.294 | DEBUG    | agents.clients.clientSupAE:test_with_thresholds:265 - Confusion Matrix:
+[[ 672  242]
+ [  65 1597]]
+2025-12-19 08:03:22.294 | DEBUG    | agents.clients.clientSupAE:test_with_thresholds:266 - ROC AUC Score: 0.8480601263406247
+2025-12-19 08:03:22.296 | INFO     | __main__:main:414 - [Client 20] Multiplier 1.0: ACC=0.8808, P=0.8684, R=0.9609, F1=0.9123, AUC=0.8481
+2025-12-19 08:03:23.496 | INFO     | __main__:main:510 - Saved global latent[0] histogram to logs/re_distributions/SupAE_mc20_epoch_2000/epoch2000_latent_dim0_hist.png
+2025-12-19 08:03:23.546 | INFO     | __main__:main:529 - Saved per-attack AUC to logs/re_distributions/SupAE_mc20_epoch_2000/SupAE_per_attack_auc.json
+2025-12-19 08:03:23.546 | INFO     | __main__:main:544 - 
+====== AVERAGE AUC PER MULTIPLIER ======
+Multiplier   All Clients          
+---------------------------------------------------------------------------
+1.0          0.816226             
+
+2025-12-19 08:03:23.547 | INFO     | __main__:main:560 - 
+====== GLOBAL TEST METRICS (All Clients) ======
+ROC-AUC:   81.6226
+Precision: 86.4143
+Recall:    93.0056
+F1:        88.9035
+ACC:       89.7100
+
+2025-12-19 08:03:23.551 | INFO     | __main__:main:599 - 
+====== GLOBAL DETAILED METRICS (Seen/Unseen/Normal) ======
+Recall_seen:       98.4614
+Recall_unseen:     94.4066
+Recall_normal:     40.8315
+Precision_attack:  76.2772
+Precision_normal:  91.8724
+
+2025-12-19 08:03:23.552 | INFO     | __main__:main:625 - Saved detailed metrics CSV to logs/unseen/unsw_SupAE_epoch_2000_detailed_metrics.csv

@@ -158,7 +158,6 @@ def collect_predictions_and_labels_from_client(client):
                     dist_to_z0 = torch.norm(z - proto_z0_t, p=2, dim=1)
                     dist_to_z1 = torch.norm(z - proto_z1_t, p=2, dim=1)
                     
-                    # Predict 0 if closer to z0, else 1
                     pred = (dist_to_z1 < dist_to_z0).long().cpu().numpy()
                 else:
                     # Fallback to RE threshold if no prototypes
