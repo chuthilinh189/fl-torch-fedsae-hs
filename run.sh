@@ -77,6 +77,7 @@ nohup python evaluate.py -d unsw -m DualLossAE -tbs 128 -vbs 1 -di 196 -ep 1000 
 nohup python main.py -d unsw -m PTLAE -tbs 128 -vbs 1 -di 196 -lr 0.0001 -ep 150 -agg average -nt label_flipping -pw 0 -pr 1 -ns 0.001 -ans 1 -cs 1 -tm 1 -mc 20 -et non_iid_dir -da 1.0 > logger/unsw_log5.out 2>&1 & wait
 nohup python main.py -d unsw -m SupAE -tbs 128 -vbs 1 -di 196 -lr 0.001 -ep 2000 -agg average -nt label_flipping -pw 0 -pr 1 -ns 0.001 -ans 1 -cs 1 -tm 1 -mc 20 -et non_iid_dir -da 1.0 > logger/unsw_log6.out 2>&1 & wait
 nohup python main.py -d unsw -m SAE -tbs 128 -vbs 1 -di 196 -lr 0.0001 -ep 2000 -agg average -nt label_flipping -pw 0 -pr 1 -ns 0.001 -ans 1 -cs 1 -tm 0 -mc 0 -et non_iid_dir -da 1.0  > logger/unsw_log7.out 2>&1 &
+nohup python main.py -d unsw -m FedHome -tbs 128 -vbs 1 -di 196 -lr 0.001 -ep 20 -agg average -nt label_flipping -pw 0 -pr 1 -ns 0.001 -ans 1 -cs 1 -tm 0 -mc 20 -et non_iid_dir -da 1.0 > logger/unsw_log8.out 2>&1 &
 nohup python main.py -d unsw -m DualLossAE -tbs 128 -vbs 1 -di 196 -lr 0.0001 -ep 1000 -agg average -nt label_flipping -pw 0 -pr 1 -ns 0.001 -ans 1 -cs 1 -tm 1 -mc 20 -et non_iid_dir -da 1.0 > logger/unsw_log7.out 2>&1 &
 
 nohup python evaluate.py -d unsw -m PTLAE -tbs 128 -vbs 1 -di 196 -ep 1000 -tm 1 -mc 20 -et non_iid_dir --model_dir saved_models/PTLAE/20/average/unsw --log_csv logs/unseen/unsw_PTLAE_ > logger/unsw_PTLAE_1000.log 2>&1 & wait

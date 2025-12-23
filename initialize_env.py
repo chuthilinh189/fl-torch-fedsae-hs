@@ -5,7 +5,7 @@ import os
 import argparse
 from function.arguments import Arguments
 from function.datasets import DataReader
-from function.nets import AE, VAE, DualLossAE, SupAE
+from function.nets import AE, VAE, DualLossAE, SupAE, FedDetect
 from function.utils import (
     generate_train_loader,
     generate_val_loader,
@@ -161,5 +161,11 @@ if __name__ == "__main__":
         )
         full_save_path = os.path.join(args.default_model_folder_path, "SupAE.model")
         torch.save(SupAE(args.dimension).state_dict(), full_save_path)
+
+        args.logger.debug(
+            "Initialize the FedDetect model with the dimension of {}".format(args.dimension)
+        )
+        full_save_path = os.path.join(args.default_model_folder_path, "FedDetect.model")
+        torch.save(FedDetect(args.dimension, n_classes=getattr(args, "num_classes", 2)).state_dict(), full_save_path)
         
         args.logger.debug(f"Initialize {dataset} environment successfully.")
