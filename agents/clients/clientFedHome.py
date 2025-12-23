@@ -1,6 +1,7 @@
 import os
 import copy
 import torch
+import torch.nn as nn
 import torch.optim as optim
 import numpy as np
 from sklearn.metrics import accuracy_score, precision_score, recall_score, f1_score, roc_auc_score, classification_report, confusion_matrix
@@ -15,26 +16,23 @@ class ClientFedHome:
 
         self.best_loss = 1e9
         self.best_epoch = -1
-        self.threshold_re = (1e9, 0.0)
-        self.threshold_z = (1e9, 0.0)
         self.best_weight_model = None
 
         self.recent_re = 0.0
+        self.recent_ce = 0.0
         self.recent_latent_z = 0.0
         self.recent_train_loss = 0.0
         self.recent_val_loss = 0.0
-        self.recent_threshold_re = (1e9, 0.0)
-        self.recent_threshold_z = (1e9, 0.0)
 
         self.device = self.initialize_device()
         self.set_net(self.load_default_model())
         self.best_weight_model = copy.deepcopy(self.net.state_dict())
 
-            self.optimizer = optim.Adam(self.net.parameters(), lr=self.args.learning_rate)
-            self.ce_loss = nn.CrossEntropyLoss()
-            self.re_loss = nn.MSELoss()
-            self.lambda_ce = getattr(self.args, "lambda_ce", 1.0)
-            self.lambda_re = getattr(self.args, "lambda_re", 1.0)
+        self.optimizer = optim.Adam(self.net.parameters(), lr=self.args.learning_rate)
+        self.ce_loss = nn.CrossEntropyLoss()
+        self.re_loss = nn.MSELoss()
+        self.lambda_ce = getattr(self.args, "lambda_ce", 1.0)
+        self.lambda_re = getattr(self.args, "lambda_re", 1.0)
 
         self.train_data_loader = train_data_loader
         self.val_data_loader = val_data_loader
@@ -51,17 +49,20 @@ class ClientFedHome:
 
     def load_default_model(self):
         model_class = self.args.get_net(self.model_type)
-        n_classes = getattr(self.args, "num_classes", 2)
         default_model_path = os.path.join(self.args.default_model_folder_path, model_class.__name__ + ".model")
+        return self.load_model_from_file(model_class, default_model_path)
+
+    def load_model_from_file(self, model_class, model_file_path):
+        n_classes = getattr(self.args, "num_classes", 2)
         model = model_class(self.args.dimension, n_classes=n_classes)
-        if os.path.exists(default_model_path):
+        if os.path.exists(model_file_path):
             try:
-                model.load_state_dict(torch.load(default_model_path))
+                model.load_state_dict(torch.load(model_file_path))
             except Exception:
                 self.args.logger.warning("Couldn't load model; mapping to CPU")
-                model.load_state_dict(torch.load(default_model_path, map_location=torch.device("cpu")))
+                model.load_state_dict(torch.load(model_file_path, map_location=torch.device("cpu")))
         else:
-            self.args.logger.warning(f"Could not find model: {default_model_path}")
+            self.args.logger.warning(f"Could not find model: {model_file_path}")
         return model
 
     def get_nn_parameters(self):
@@ -70,23 +71,20 @@ class ClientFedHome:
     def update_nn_parameters(self, new_params):
         self.net.load_state_dict(copy.deepcopy(new_params), strict=True)
 
-    def set_best_ckpt(self, best_loss, best_epoch, threshold_re, threshold_z, best_weight_model):
+    def set_best_ckpt(self, best_loss, best_epoch, best_weight_model):
         self.best_loss = best_loss
         self.best_epoch = best_epoch
-        self.threshold_re = threshold_re
-        self.threshold_z = threshold_z
         self.best_weight_model = copy.deepcopy(best_weight_model)
 
     def set_training_status(self, training_status):
         self.is_training = training_status
 
-    def set_recent_metric(self, recent_re, recent_latent_z, recent_train_loss, recent_val_loss, recent_threshold_re, recent_threshold_z):
+    def set_recent_metric(self, recent_re, recent_ce, recent_latent_z, recent_train_loss, recent_val_loss):
         self.recent_re = recent_re
+        self.recent_ce = recent_ce
         self.recent_latent_z = recent_latent_z
         self.recent_train_loss = recent_train_loss
         self.recent_val_loss = recent_val_loss
-        self.recent_threshold_re = recent_threshold_re
-        self.recent_threshold_z = recent_threshold_z
 
     def calculate_loss(self, input, label_bin, logits=None, recon=None):
         if logits is None or recon is None:
@@ -95,7 +93,6 @@ class ClientFedHome:
         re = self.re_loss(recon, input)
         total = self.lambda_ce * ce + self.lambda_re * re
         return total, ce, re, recon
-        return total_loss, ce_loss, re_loss
 
     def train(self, epoch):
         self.net.train()
@@ -105,18 +102,18 @@ class ClientFedHome:
             self.optimizer.zero_grad()
             label_bin = (label != 0).long()
             logits, recon = self.net(input)
-            total_loss, _, re_loss, _ = self.calculate_loss(input, label_bin, logits, recon)
+            total_loss, ce_loss, re_loss, _ = self.calculate_loss(input, label_bin, logits, recon)
             total_loss.backward()
             self.optimizer.step()
             last_total = total_loss.detach()
             self.recent_re = float(re_loss.detach().cpu().item())
+            self.recent_ce = float(ce_loss.detach().cpu().item())
             self.recent_train_loss = float(total_loss.detach().cpu().item())
         return last_total
 
     def validate(self, epoch):
         self.net.eval()
         list_loss = []
-        benign_re = []
         with torch.no_grad():
             for input, label in self.val_data_loader:
                 input, label = input.to(self.device), label.to(self.device)
@@ -125,15 +122,8 @@ class ClientFedHome:
                 total_loss, _, _, recon = self.calculate_loss(input, label_bin, logits, recon)
                 list_loss.append(float(total_loss.item()))
 
-                mse_per_sample = torch.mean((recon - input) ** 2, dim=1)
-                benign_mask = label_bin == 0
-                if benign_mask.any():
-                    benign_re.extend(mse_per_sample[benign_mask].detach().cpu().tolist())
-
         avg_loss = float(np.mean(list_loss)) if list_loss else 0.0
-        threshold_re = ((float(np.mean(benign_re)), float(np.std(benign_re))) if benign_re else (0.0, 0.0))
-        threshold_z = (0.0, 0.0)
-        return avg_loss, threshold_re, threshold_z
+        return avg_loss
 
     def test(self, is_check=False):
         acc_list, precision_list, recall_list, f1_list, roc_list = [], [], [], [], []
@@ -155,7 +145,7 @@ class ClientFedHome:
                 input, label = input.to(self.device), label.to(self.device)
                 logits, recon = self.net(input)
                 scores = torch.softmax(logits, dim=1)
-                    prob1 = scores[:, 1] if scores.shape[1] > 1 else scores[:, 0]
+                prob1 = scores[:, 1] if scores.shape[1] > 1 else scores[:, 0]
                 pred = torch.argmax(scores, dim=1)
                 labels_bin += (label != 0).long().cpu().tolist()
                 preds_bin += pred.cpu().tolist()
@@ -179,7 +169,7 @@ class ClientFedHome:
 
         return acc, precision, recall, f1, roc
 
-    def test_by_attack_type_full(self, threshold_re_unused, threshold_z_unused, verbose=False):
+    def test_by_attack_type_full(self, verbose=False):
         self.net.eval()
         labels_raw = []
         preds = []
