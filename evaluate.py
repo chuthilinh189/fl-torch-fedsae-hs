@@ -295,17 +295,23 @@ def main():
             # set_best_ckpt với threshold mặc định (không dùng cho PTLAE)
             client.set_best_ckpt(0, fallback_epoch, (0, 0), (0, 0), None)
         else:
-            # Các phương pháp khác dùng thresholds
-            threshold_re = (
-                eval(row["threshold_re"]) if pd.notna(row.get("threshold_re")) else (0, 0)
-            )
-            threshold_z = (
-                eval(row["threshold_z"]) if pd.notna(row.get("threshold_z")) else (0, 0)
-            )
-            args.logger.info(
-                f"Client {client_idx} test at epoch {fallback_epoch} with threshold re: {threshold_re}, and threshold z: {threshold_z}"
-            )
-            # FedHome no longer uses thresholds; load weights then record best_ckpt with current params
+            if args.model_type == "FedGH":
+                # FedGH không lưu/không dùng threshold; chỉ log thông tin epoch
+                args.logger.info(
+                    f"Client {client_idx} test at epoch {fallback_epoch} (FedGH: thresholds not used)"
+                )
+            else:
+                # Các phương pháp khác dùng thresholds
+                threshold_re = (
+                    eval(row["threshold_re"]) if pd.notna(row.get("threshold_re")) else (0, 0)
+                )
+                threshold_z = (
+                    eval(row["threshold_z"]) if pd.notna(row.get("threshold_z")) else (0, 0)
+                )
+                args.logger.info(
+                    f"Client {client_idx} test at epoch {fallback_epoch} with threshold re: {threshold_re}, and threshold z: {threshold_z}"
+                )
+                # FedHome no longer uses thresholds; load weights then record best_ckpt with current params
 
         # đọc và load lại mô hình cho từng client
         model_path = os.path.join(
@@ -391,10 +397,12 @@ def main():
         # Lưu per-client data để dùng cho seen/unseen analysis
         threshold_val = 0.0
         if args.model_type == "PTLAE":
-            # PTLAE không dùng threshold_re, dùng 0 làm placeholder
+            threshold_val = 0.0
+        elif args.model_type == "FedGH":
+            # FedGH không có threshold trong log; giữ placeholder 0.0
             threshold_val = 0.0
         else:
-            threshold_re = eval(row["threshold_re"]) if pd.notna(row["threshold_re"]) else (0, 0)
+            threshold_re = eval(row["threshold_re"]) if pd.notna(row.get("threshold_re")) else (0, 0)
             threshold_val = float(threshold_re[0]) if isinstance(threshold_re, (list, tuple)) else float(threshold_re)
         
         per_client_data[client_idx] = {
