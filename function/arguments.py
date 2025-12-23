@@ -43,7 +43,7 @@ class Arguments:
         # Number of classes (including normal class 0) each client should see when using hybrid
         self.seen_per_client = config.get("seen_per_client", 5)
         # Dirichlet alpha used for splitting samples of each class across clients
-        self.dir_alpha = config.get("dir_alpha", 0.7)
+        self.dir_alpha = config.get("dir_alpha", 1.0)
         # Seed used for deterministic assignment of seen classes
         self.assign_seed = config.get("assign_seed", 0)
             # ----- ptl (Prototype-Triplet) hyperparameters -----

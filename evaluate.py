@@ -297,19 +297,23 @@ def main():
         else:
             # Các phương pháp khác dùng thresholds
             threshold_re = (
-                eval(row["threshold_re"]) if pd.notna(row["threshold_re"]) else (0, 0)
+                eval(row["threshold_re"]) if pd.notna(row.get("threshold_re")) else (0, 0)
             )
             threshold_z = (
-                eval(row["threshold_z"]) if pd.notna(row["threshold_z"]) else (0, 0)
+                eval(row["threshold_z"]) if pd.notna(row.get("threshold_z")) else (0, 0)
             )
-            args.logger.info(f"Client {client_idx} test at epoch {fallback_epoch} with threshold re: {threshold_re}, and threshold z: {threshold_z}")
-            client.set_best_ckpt(0, fallback_epoch, threshold_re, threshold_z, None)
+            args.logger.info(
+                f"Client {client_idx} test at epoch {fallback_epoch} with threshold re: {threshold_re}, and threshold z: {threshold_z}"
+            )
+            # FedHome no longer uses thresholds; load weights then record best_ckpt with current params
 
         # đọc và load lại mô hình cho từng client
         model_path = os.path.join(
             args_ns.model_dir, f"epoch_{fallback_epoch}_client_{client_idx}.pt"
         )
         client.update_nn_parameters(torch.load(model_path, map_location=client.device))
+        if args.model_type == "FedHome":
+            client.set_best_ckpt(0, fallback_epoch, client.get_nn_parameters())
 
         # ===== b) Collect Dữ Liệu Test =====
         # Collect per-sample RE and raw labels

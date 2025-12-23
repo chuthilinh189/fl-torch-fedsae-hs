@@ -133,7 +133,12 @@ def collect_predictions_and_labels_from_client(client):
             label = label.to(device)
             
             # Compute prediction based on model type
-            if model_type == "PTLAE" or model_type == "PTL":
+            if model_type == "FedHome":
+                # FedHome is classifier: use argmax over logits
+                logits, _ = client.net(input)
+                pred = torch.argmax(torch.softmax(logits, dim=1), dim=1).cpu().numpy()
+
+            elif model_type == "PTLAE" or model_type == "PTL":
                 # Use prototype decision
                 encode, decode = client.net(input)
                 

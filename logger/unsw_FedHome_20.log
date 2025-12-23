@@ -1,0 +1,105 @@
+nohup: ignoring input
+2025-12-24 00:47:36.529 | INFO     | function.utils.data_loader_util:load_data_loader_from_file:202 - Loading data loader from file: data_loaders_full_attack_type/unsw/test_data_loader.pickle
+2025-12-24 00:47:40.864 | INFO     | __main__:main:192 - Testing FedHome model at epoch #20
+2025-12-24 00:47:40.864 | INFO     | function.utils.data_loader_util:load_data_loader_from_file:202 - Loading data loader from file: data_loaders_full_attack_type/unsw/train_data_loader.pickle
+2025-12-24 00:47:40.996 | INFO     | core.data_processing:client_data_process:130 - Using hybrid partition (train stage): seen_per_client=5, dir_alpha=1.0, seed=0
+2025-12-24 00:47:41.051 | INFO     | core.data_processing:client_data_process:173 - Client 0: total_samples=11409, class_counts={0: 1422, 2: 495, 3: 95, 5: 9107, 8: 290}
+2025-12-24 00:47:41.051 | INFO     | core.data_processing:client_data_process:173 - Client 1: total_samples=6603, class_counts={0: 1586, 2: 198, 4: 4643, 7: 58, 8: 118}
+2025-12-24 00:47:41.051 | INFO     | core.data_processing:client_data_process:173 - Client 2: total_samples=14640, class_counts={0: 3669, 3: 17, 4: 998, 5: 5674, 6: 4282}
+2025-12-24 00:47:41.051 | INFO     | core.data_processing:client_data_process:173 - Client 3: total_samples=3293, class_counts={0: 977, 3: 149, 6: 1166, 7: 922, 8: 79}
+2025-12-24 00:47:41.051 | INFO     | core.data_processing:client_data_process:173 - Client 4: total_samples=18277, class_counts={0: 7201, 5: 731, 6: 10192, 7: 60, 8: 93}
+2025-12-24 00:47:41.051 | INFO     | core.data_processing:client_data_process:173 - Client 5: total_samples=7354, class_counts={0: 3467, 3: 247, 5: 3583, 8: 52, 9: 5}
+2025-12-24 00:47:41.052 | INFO     | core.data_processing:client_data_process:173 - Client 6: total_samples=5537, class_counts={0: 1110, 1: 3547, 2: 10, 6: 863, 9: 7}
+2025-12-24 00:47:41.052 | INFO     | core.data_processing:client_data_process:173 - Client 7: total_samples=5914, class_counts={0: 233, 2: 606, 3: 77, 4: 985, 7: 4013}
+2025-12-24 00:47:41.052 | INFO     | core.data_processing:client_data_process:173 - Client 8: total_samples=10403, class_counts={0: 7168, 4: 1205, 6: 1731, 8: 296, 9: 3}
+2025-12-24 00:47:41.052 | INFO     | core.data_processing:client_data_process:173 - Client 9: total_samples=10694, class_counts={0: 5055, 1: 1006, 2: 165, 5: 648, 6: 3820}
+2025-12-24 00:47:41.052 | INFO     | core.data_processing:client_data_process:173 - Client 10: total_samples=13834, class_counts={0: 1978, 1: 7629, 4: 3576, 7: 635, 9: 16}
+2025-12-24 00:47:41.052 | INFO     | core.data_processing:client_data_process:173 - Client 11: total_samples=10506, class_counts={0: 6813, 1: 931, 2: 2, 3: 417, 6: 2343}
+2025-12-24 00:47:41.052 | INFO     | core.data_processing:client_data_process:173 - Client 12: total_samples=3980, class_counts={0: 2190, 2: 106, 7: 1614, 8: 56, 9: 14}
+2025-12-24 00:47:41.052 | INFO     | core.data_processing:client_data_process:173 - Client 13: total_samples=6629, class_counts={0: 3727, 3: 167, 5: 2438, 7: 288, 9: 9}
+2025-12-24 00:47:41.052 | INFO     | core.data_processing:client_data_process:173 - Client 14: total_samples=10977, class_counts={0: 6028, 2: 75, 5: 3630, 7: 1215, 9: 29}
+2025-12-24 00:47:41.052 | INFO     | core.data_processing:client_data_process:173 - Client 15: total_samples=4973, class_counts={0: 4258, 4: 87, 5: 565, 7: 55, 8: 8}
+2025-12-24 00:47:41.053 | INFO     | core.data_processing:client_data_process:173 - Client 16: total_samples=15349, class_counts={0: 2294, 1: 3731, 5: 1918, 6: 7404, 9: 2}
+2025-12-24 00:47:41.053 | INFO     | core.data_processing:client_data_process:173 - Client 17: total_samples=3208, class_counts={0: 2021, 1: 199, 2: 153, 6: 808, 8: 27}
+2025-12-24 00:47:41.053 | INFO     | core.data_processing:client_data_process:173 - Client 18: total_samples=7662, class_counts={0: 3771, 6: 2951, 7: 893, 8: 13, 9: 34}
+2025-12-24 00:47:41.053 | INFO     | core.data_processing:client_data_process:173 - Client 19: total_samples=9128, class_counts={0: 222, 2: 15, 3: 452, 5: 2793, 6: 5646}
+2025-12-24 00:47:41.053 | INFO     | core.data_processing:client_data_process:178 - Seen classes per client: [[0, 2, 3, 5, 8], [0, 2, 4, 7, 8], [0, 3, 4, 5, 6], [0, 3, 6, 7, 8], [0, 5, 6, 7, 8], [0, 3, 5, 8, 9], [0, 1, 2, 6, 9], [0, 2, 3, 4, 7], [0, 4, 6, 8, 9], [0, 1, 2, 5, 6], [0, 1, 4, 7, 9], [0, 1, 2, 3, 6], [0, 2, 7, 8, 9], [0, 3, 5, 7, 9], [0, 2, 5, 7, 9], [0, 4, 5, 7, 8], [0, 1, 5, 6, 9], [0, 1, 2, 6, 8], [0, 6, 7, 8, 9], [0, 2, 3, 5, 6]]
+2025-12-24 00:47:41.055 | INFO     | __main__:main:219 - Loaded train partition meta: seen_sets=[[0, 2, 3, 5, 8], [0, 2, 4, 7, 8], [0, 3, 4, 5, 6], [0, 3, 6, 7, 8], [0, 5, 6, 7, 8], [0, 3, 5, 8, 9], [0, 1, 2, 6, 9], [0, 2, 3, 4, 7], [0, 4, 6, 8, 9], [0, 1, 2, 5, 6], [0, 1, 4, 7, 9], [0, 1, 2, 3, 6], [0, 2, 7, 8, 9], [0, 3, 5, 7, 9], [0, 2, 5, 7, 9], [0, 4, 5, 7, 8], [0, 1, 5, 6, 9], [0, 1, 2, 6, 8], [0, 6, 7, 8, 9], [0, 2, 3, 5, 6]]
+2025-12-24 00:47:41.057 | INFO     | __main__:main:305 - Client 0 test at epoch 20 with threshold re: (0, 0), and threshold z: (0, 0)
+2025-12-24 00:47:47.381 | INFO     | __main__:main:373 - Saved non-iid-dir latent viz for client 0 -> logs/re_distributions/FedHome_mc20_epoch_20/client_0/epoch20_client0_tsne_non_iid.png
+2025-12-24 00:47:47.524 | INFO     | __main__:main:380 - Saved client 0 latent-dim0 histogram to logs/re_distributions/FedHome_mc20_epoch_20/client_0/epoch20_client0_latent_dim0_hist.png
+2025-12-24 00:47:50.170 | INFO     | __main__:main:305 - Client 1 test at epoch 20 with threshold re: (0, 0), and threshold z: (0, 0)
+2025-12-24 00:47:56.218 | INFO     | __main__:main:373 - Saved non-iid-dir latent viz for client 1 -> logs/re_distributions/FedHome_mc20_epoch_20/client_1/epoch20_client1_tsne_non_iid.png
+2025-12-24 00:47:56.367 | INFO     | __main__:main:380 - Saved client 1 latent-dim0 histogram to logs/re_distributions/FedHome_mc20_epoch_20/client_1/epoch20_client1_latent_dim0_hist.png
+2025-12-24 00:47:58.983 | INFO     | __main__:main:305 - Client 2 test at epoch 20 with threshold re: (0, 0), and threshold z: (0, 0)
+2025-12-24 00:48:04.924 | INFO     | __main__:main:373 - Saved non-iid-dir latent viz for client 2 -> logs/re_distributions/FedHome_mc20_epoch_20/client_2/epoch20_client2_tsne_non_iid.png
+2025-12-24 00:48:05.077 | INFO     | __main__:main:380 - Saved client 2 latent-dim0 histogram to logs/re_distributions/FedHome_mc20_epoch_20/client_2/epoch20_client2_latent_dim0_hist.png
+2025-12-24 00:48:07.709 | INFO     | __main__:main:305 - Client 3 test at epoch 20 with threshold re: (0, 0), and threshold z: (0, 0)
+2025-12-24 00:48:13.659 | INFO     | __main__:main:373 - Saved non-iid-dir latent viz for client 3 -> logs/re_distributions/FedHome_mc20_epoch_20/client_3/epoch20_client3_tsne_non_iid.png
+2025-12-24 00:48:13.809 | INFO     | __main__:main:380 - Saved client 3 latent-dim0 histogram to logs/re_distributions/FedHome_mc20_epoch_20/client_3/epoch20_client3_latent_dim0_hist.png
+2025-12-24 00:48:16.536 | INFO     | __main__:main:305 - Client 4 test at epoch 20 with threshold re: (0, 0), and threshold z: (0, 0)
+2025-12-24 00:48:22.565 | INFO     | __main__:main:373 - Saved non-iid-dir latent viz for client 4 -> logs/re_distributions/FedHome_mc20_epoch_20/client_4/epoch20_client4_tsne_non_iid.png
+2025-12-24 00:48:22.703 | INFO     | __main__:main:380 - Saved client 4 latent-dim0 histogram to logs/re_distributions/FedHome_mc20_epoch_20/client_4/epoch20_client4_latent_dim0_hist.png
+2025-12-24 00:48:25.325 | INFO     | __main__:main:305 - Client 5 test at epoch 20 with threshold re: (0, 0), and threshold z: (0, 0)
+2025-12-24 00:48:31.230 | INFO     | __main__:main:373 - Saved non-iid-dir latent viz for client 5 -> logs/re_distributions/FedHome_mc20_epoch_20/client_5/epoch20_client5_tsne_non_iid.png
+2025-12-24 00:48:31.381 | INFO     | __main__:main:380 - Saved client 5 latent-dim0 histogram to logs/re_distributions/FedHome_mc20_epoch_20/client_5/epoch20_client5_latent_dim0_hist.png
+2025-12-24 00:48:34.006 | INFO     | __main__:main:305 - Client 6 test at epoch 20 with threshold re: (0, 0), and threshold z: (0, 0)
+2025-12-24 00:48:40.073 | INFO     | __main__:main:373 - Saved non-iid-dir latent viz for client 6 -> logs/re_distributions/FedHome_mc20_epoch_20/client_6/epoch20_client6_tsne_non_iid.png
+2025-12-24 00:48:40.229 | INFO     | __main__:main:380 - Saved client 6 latent-dim0 histogram to logs/re_distributions/FedHome_mc20_epoch_20/client_6/epoch20_client6_latent_dim0_hist.png
+2025-12-24 00:48:42.858 | INFO     | __main__:main:305 - Client 7 test at epoch 20 with threshold re: (0, 0), and threshold z: (0, 0)
+2025-12-24 00:48:48.774 | INFO     | __main__:main:373 - Saved non-iid-dir latent viz for client 7 -> logs/re_distributions/FedHome_mc20_epoch_20/client_7/epoch20_client7_tsne_non_iid.png
+2025-12-24 00:48:48.916 | INFO     | __main__:main:380 - Saved client 7 latent-dim0 histogram to logs/re_distributions/FedHome_mc20_epoch_20/client_7/epoch20_client7_latent_dim0_hist.png
+2025-12-24 00:48:51.508 | INFO     | __main__:main:305 - Client 8 test at epoch 20 with threshold re: (0, 0), and threshold z: (0, 0)
+2025-12-24 00:48:57.347 | INFO     | __main__:main:373 - Saved non-iid-dir latent viz for client 8 -> logs/re_distributions/FedHome_mc20_epoch_20/client_8/epoch20_client8_tsne_non_iid.png
+2025-12-24 00:48:57.491 | INFO     | __main__:main:380 - Saved client 8 latent-dim0 histogram to logs/re_distributions/FedHome_mc20_epoch_20/client_8/epoch20_client8_latent_dim0_hist.png
+2025-12-24 00:49:00.095 | INFO     | __main__:main:305 - Client 9 test at epoch 20 with threshold re: (0, 0), and threshold z: (0, 0)
+2025-12-24 00:49:05.960 | INFO     | __main__:main:373 - Saved non-iid-dir latent viz for client 9 -> logs/re_distributions/FedHome_mc20_epoch_20/client_9/epoch20_client9_tsne_non_iid.png
+2025-12-24 00:49:06.107 | INFO     | __main__:main:380 - Saved client 9 latent-dim0 histogram to logs/re_distributions/FedHome_mc20_epoch_20/client_9/epoch20_client9_latent_dim0_hist.png
+2025-12-24 00:49:08.706 | INFO     | __main__:main:305 - Client 10 test at epoch 20 with threshold re: (0, 0), and threshold z: (0, 0)
+2025-12-24 00:49:14.561 | INFO     | __main__:main:373 - Saved non-iid-dir latent viz for client 10 -> logs/re_distributions/FedHome_mc20_epoch_20/client_10/epoch20_client10_tsne_non_iid.png
+2025-12-24 00:49:14.726 | INFO     | __main__:main:380 - Saved client 10 latent-dim0 histogram to logs/re_distributions/FedHome_mc20_epoch_20/client_10/epoch20_client10_latent_dim0_hist.png
+2025-12-24 00:49:17.338 | INFO     | __main__:main:305 - Client 11 test at epoch 20 with threshold re: (0, 0), and threshold z: (0, 0)
+2025-12-24 00:49:23.248 | INFO     | __main__:main:373 - Saved non-iid-dir latent viz for client 11 -> logs/re_distributions/FedHome_mc20_epoch_20/client_11/epoch20_client11_tsne_non_iid.png
+2025-12-24 00:49:23.404 | INFO     | __main__:main:380 - Saved client 11 latent-dim0 histogram to logs/re_distributions/FedHome_mc20_epoch_20/client_11/epoch20_client11_latent_dim0_hist.png
+2025-12-24 00:49:26.009 | INFO     | __main__:main:305 - Client 12 test at epoch 20 with threshold re: (0, 0), and threshold z: (0, 0)
+2025-12-24 00:49:31.911 | INFO     | __main__:main:373 - Saved non-iid-dir latent viz for client 12 -> logs/re_distributions/FedHome_mc20_epoch_20/client_12/epoch20_client12_tsne_non_iid.png
+2025-12-24 00:49:32.051 | INFO     | __main__:main:380 - Saved client 12 latent-dim0 histogram to logs/re_distributions/FedHome_mc20_epoch_20/client_12/epoch20_client12_latent_dim0_hist.png
+2025-12-24 00:49:34.662 | INFO     | __main__:main:305 - Client 13 test at epoch 20 with threshold re: (0, 0), and threshold z: (0, 0)
+2025-12-24 00:49:40.574 | INFO     | __main__:main:373 - Saved non-iid-dir latent viz for client 13 -> logs/re_distributions/FedHome_mc20_epoch_20/client_13/epoch20_client13_tsne_non_iid.png
+2025-12-24 00:49:40.878 | INFO     | __main__:main:380 - Saved client 13 latent-dim0 histogram to logs/re_distributions/FedHome_mc20_epoch_20/client_13/epoch20_client13_latent_dim0_hist.png
+2025-12-24 00:49:43.483 | INFO     | __main__:main:305 - Client 14 test at epoch 20 with threshold re: (0, 0), and threshold z: (0, 0)
+2025-12-24 00:49:49.386 | INFO     | __main__:main:373 - Saved non-iid-dir latent viz for client 14 -> logs/re_distributions/FedHome_mc20_epoch_20/client_14/epoch20_client14_tsne_non_iid.png
+2025-12-24 00:49:49.538 | INFO     | __main__:main:380 - Saved client 14 latent-dim0 histogram to logs/re_distributions/FedHome_mc20_epoch_20/client_14/epoch20_client14_latent_dim0_hist.png
+2025-12-24 00:49:52.138 | INFO     | __main__:main:305 - Client 15 test at epoch 20 with threshold re: (0, 0), and threshold z: (0, 0)
+2025-12-24 00:49:58.204 | INFO     | __main__:main:373 - Saved non-iid-dir latent viz for client 15 -> logs/re_distributions/FedHome_mc20_epoch_20/client_15/epoch20_client15_tsne_non_iid.png
+2025-12-24 00:49:58.351 | INFO     | __main__:main:380 - Saved client 15 latent-dim0 histogram to logs/re_distributions/FedHome_mc20_epoch_20/client_15/epoch20_client15_latent_dim0_hist.png
+2025-12-24 00:50:00.987 | INFO     | __main__:main:305 - Client 16 test at epoch 20 with threshold re: (0, 0), and threshold z: (0, 0)
+2025-12-24 00:50:06.987 | INFO     | __main__:main:373 - Saved non-iid-dir latent viz for client 16 -> logs/re_distributions/FedHome_mc20_epoch_20/client_16/epoch20_client16_tsne_non_iid.png
+2025-12-24 00:50:07.139 | INFO     | __main__:main:380 - Saved client 16 latent-dim0 histogram to logs/re_distributions/FedHome_mc20_epoch_20/client_16/epoch20_client16_latent_dim0_hist.png
+2025-12-24 00:50:09.738 | INFO     | __main__:main:305 - Client 17 test at epoch 20 with threshold re: (0, 0), and threshold z: (0, 0)
+2025-12-24 00:50:15.563 | INFO     | __main__:main:373 - Saved non-iid-dir latent viz for client 17 -> logs/re_distributions/FedHome_mc20_epoch_20/client_17/epoch20_client17_tsne_non_iid.png
+2025-12-24 00:50:15.713 | INFO     | __main__:main:380 - Saved client 17 latent-dim0 histogram to logs/re_distributions/FedHome_mc20_epoch_20/client_17/epoch20_client17_latent_dim0_hist.png
+2025-12-24 00:50:18.312 | INFO     | __main__:main:305 - Client 18 test at epoch 20 with threshold re: (0, 0), and threshold z: (0, 0)
+2025-12-24 00:50:24.266 | INFO     | __main__:main:373 - Saved non-iid-dir latent viz for client 18 -> logs/re_distributions/FedHome_mc20_epoch_20/client_18/epoch20_client18_tsne_non_iid.png
+2025-12-24 00:50:24.411 | INFO     | __main__:main:380 - Saved client 18 latent-dim0 histogram to logs/re_distributions/FedHome_mc20_epoch_20/client_18/epoch20_client18_latent_dim0_hist.png
+2025-12-24 00:50:27.015 | INFO     | __main__:main:305 - Client 19 test at epoch 20 with threshold re: (0, 0), and threshold z: (0, 0)
+2025-12-24 00:50:32.894 | INFO     | __main__:main:373 - Saved non-iid-dir latent viz for client 19 -> logs/re_distributions/FedHome_mc20_epoch_20/client_19/epoch20_client19_tsne_non_iid.png
+2025-12-24 00:50:33.040 | INFO     | __main__:main:380 - Saved client 19 latent-dim0 histogram to logs/re_distributions/FedHome_mc20_epoch_20/client_19/epoch20_client19_latent_dim0_hist.png
+2025-12-24 00:50:35.774 | INFO     | __main__:main:514 - Saved global latent[0] histogram to logs/re_distributions/FedHome_mc20_epoch_20/epoch20_latent_dim0_hist.png
+2025-12-24 00:50:35.822 | INFO     | __main__:main:533 - Saved per-attack AUC to logs/re_distributions/FedHome_mc20_epoch_20/FedHome_per_attack_auc.json
+2025-12-24 00:50:35.823 | INFO     | __main__:main:548 - 
+====== AVERAGE AUC PER MULTIPLIER ======
+Multiplier   All Clients          
+---------------------------------------------------------------------------
+1.0          0.879767             
+
+2025-12-24 00:50:35.823 | WARNING  | __main__:main:589 - Không thu được thống kê nào tại multiplier yêu cầu.
+2025-12-24 00:50:35.824 | INFO     | __main__:main:603 - 
+====== GLOBAL DETAILED METRICS (Seen/Unseen/Normal) ======
+Recall_seen:       94.7677
+Recall_unseen:     91.9644
+Recall_normal:     56.8216
+Precision_attack:  81.6264
+Precision_normal:  90.2449
+
+2025-12-24 00:50:35.826 | INFO     | __main__:main:629 - Saved detailed metrics CSV to logs/unsw_FedHome_epoch_20_detailed_metrics.csv

@@ -13,7 +13,7 @@ from datetime import datetime
 import pickle
 
 
-def generate_hybrid_client_dataset(args, data_loader, num_clients, seen_per_client=5, alpha=0.7, assign_seed=0, force_seen_sets=None):#số attack mỗi client = seen_per_client - 1
+def generate_hybrid_client_dataset(args, data_loader, num_clients, seen_per_client=5, alpha=1.0, assign_seed=0, force_seen_sets=None):#số attack mỗi client = seen_per_client - 1
     """
     Hybrid partition:
       - deterministically choose seen classes per client (always include class 0)
