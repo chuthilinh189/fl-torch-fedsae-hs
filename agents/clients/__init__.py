@@ -10,7 +10,8 @@ def get_client_class(model_type):
         "SupAE": "clientSupAE",
         "DualLossAE": "clientDualLossAE",
         "PTL": "clientPTL",
-        "PTLAE": "clientPTLAE"
+        "PTLAE": "clientPTLAE",
+        "FedHome": "clientFedHome"
     }
 
     if model_type not in model_map:

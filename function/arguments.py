@@ -1,4 +1,4 @@
-from .nets import AE, VAE, DualLossAE, SupAE
+from .nets import AE, VAE, DualLossAE, SupAE, FedDetect
 import torch
 
 # Set seed cố định cho reproducibility
@@ -59,7 +59,7 @@ class Arguments:
         # default to 'proto' to use prototype-based thresholding
         self.ptl_decision_mode = config.get("ptl_decision_mode", "proto")
         # DualLossAE scaling factor for anomaly term
-        self.dual_loss_alpha = config.get("dual_loss_alpha", 0.001)
+        self.dual_loss_alpha = config.get("dual_loss_alpha", 1)
 
         # ⚙️ Các tham số nội bộ tự động gán
         self.num_workers = 20  # Tổng số client mặc định
@@ -133,8 +133,9 @@ class Arguments:
             return DualLossAE
         elif model_type == "SupAE":
             return SupAE
-        else:
-            return AE
+        elif model_type in ("FedHome", "FedGH"):
+            return FedDetect
+        return AE
 
     def set_train_log_df(self, df):
         self.train_log_df = df

@@ -61,9 +61,9 @@ class ServerPTL:
                 val_loss, threshold_re, threshold_z = client.validate(epoch)
                 client.set_recent_metric(getattr(client, 'recent_re', 0.0), None, train_loss if not hasattr(train_loss, 'item') else train_loss.item(), val_loss, threshold_re, threshold_z)
 
-                if val_loss < client.best_loss * 1.01:
+                if val_loss < client.best_loss:
                     best_weight_model = copy.deepcopy(client.get_nn_parameters())
-                    client.set_best_ckpt(val_loss, epoch, threshold_re, threshold_z, best_weight_model)
+                    client.set_best_ckpt(val_loss, epocsh, threshold_re, threshold_z, best_weight_model)
                     self.args.logger.info(
                         "Client {} gets new best val_loss at epoch #{}: {:.6f}",
                         str(client_idx), str(client.best_epoch), client.best_loss,
