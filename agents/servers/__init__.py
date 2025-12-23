@@ -11,7 +11,8 @@ def get_server_class(model_type):
         "DualLossAE": "serverDualLossAE",
         "PTL": "serverPTL",
         "PTLAE": "serverPTLAE",
-        "FedHome": "serverFedHome"
+        "FedHome": "serverFedHome",
+        "FedGH": "serverFedGH"
     }
 
     if model_type not in model_map:
