@@ -189,8 +189,20 @@ def run_exp(config):
 
     args.set_train_log_df(
         pd.DataFrame(
-            columns=["epoch", "client_id", "is_mal", "train_re", "train_latent_z", "train_loss",
-                     "threshold_re", "threshold_z", "best_val_loss", "best_epoch", "is_training"]
+            columns=[
+                "epoch",
+                "client_id",
+                "is_mal",
+                "train_re",
+                "train_re_loss",
+                "train_ptl_loss",
+                "train_loss",
+                "threshold_re",
+                "threshold_z",
+                "best_val_loss",
+                "best_epoch",
+                "is_training",
+            ]
         )
     )
     args.set_test_log_df(
