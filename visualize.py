@@ -16,7 +16,7 @@ def visualize(file_name, prefix, interval):
     # df = pd.read_csv(file_name)
 
     # # Prepare xlsx files for each loss type
-    # metrics = ['train_re', 'train_latent_z']
+    # metrics = ['train_re', 'train_ptl_loss']
     # if 'val_roc_auc' in df.columns:  # Check if 'val_roc_auc' exists
     #     metrics.append('val_roc_auc')
 
@@ -73,8 +73,13 @@ def visualize(file_name, prefix, interval):
     # Read the CSV file
     df = pd.read_csv(file_name)
 
-    # Metrics to visualize
-    metrics = ['train_re', 'train_latent_z']
+    # Metrics to visualize depend on available columns
+    if 'train_ptl_loss' in df.columns:
+        metrics = ['train_re', 'train_ptl_loss']  # PTLAE (or any model logging PTL loss)
+    elif 'train_latent_z' in df.columns:
+        metrics = ['train_re', 'train_latent_z']  # other models
+    else:
+        metrics = ['train_re']
 
     for metric in metrics:
         plt.figure(figsize=(40, 24))

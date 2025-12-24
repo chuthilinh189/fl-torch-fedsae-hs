@@ -37,6 +37,7 @@ class ServerPTL:
         # ema factor for prototype updates
         self.ema = getattr(args, "ptl_proto_ema", 0.9)
 
+
     def train_on_clients(self, epoch, clients, poisoned_workers):
         self.args.logger.info("Training {} model epoch #{}", self.args.model_type, str(epoch))
 
@@ -63,7 +64,7 @@ class ServerPTL:
 
                 if val_loss < client.best_loss:
                     best_weight_model = copy.deepcopy(client.get_nn_parameters())
-                    client.set_best_ckpt(val_loss, epocsh, threshold_re, threshold_z, best_weight_model)
+                    client.set_best_ckpt(val_loss, epoch, threshold_re, threshold_z, best_weight_model)
                     self.args.logger.info(
                         "Client {} gets new best val_loss at epoch #{}: {:.6f}",
                         str(client_idx), str(client.best_epoch), client.best_loss,
@@ -620,7 +621,8 @@ class ServerPTL:
                 "client_id": client_idx,
                 "is_mal": is_mal,
                 "train_re": getattr(client, 'recent_re', 0.0),
-                "train_latent_z": getattr(client, 'recent_latent_z', 0.0),
+                "train_re_loss": getattr(client, 'recent_re_loss', getattr(client, 'recent_re', 0.0)),
+                "train_ptl_loss": getattr(client, 'recent_ptl_loss', 0.0),
                 "train_loss": getattr(client, 'recent_train_loss', 0.0),
                 "val_loss": getattr(client, 'recent_val_loss', 0.0),
                 "threshold_re": getattr(client, 'recent_threshold_re', (0,0)),

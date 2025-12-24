@@ -35,6 +35,8 @@ class ClientPTLAE:
         self.recent_latent_z = 0.0
         self.recent_train_loss = 0.0
         self.recent_val_loss = 0.0
+        self.recent_re_loss = 0.0
+        self.recent_ptl_loss = 0.0
         self.recent_threshold_re = (1e9, 0.0)
         self.recent_threshold_z = (1e9, 0.0)
 
@@ -218,6 +220,8 @@ class ClientPTLAE:
 
         total_re = 0.0
         total_z_norm = 0.0
+        total_re_loss = 0.0
+        total_ptl_loss = 0.0
         for input, label in self.train_data_loader:
             input, label = input.to(self.device), label.to(self.device)
             # binarize labels for loss/prototype: 0 -> 0, others -> 1
@@ -236,6 +240,11 @@ class ClientPTLAE:
 
             re_val = float(re_loss.item())
             total_re += re_val
+            total_re_loss += re_val
+            try:
+                total_ptl_loss += float(ptl.item())
+            except Exception:
+                total_ptl_loss += float(ptl)
             total_loss += loss.item()
             # accumulate latent norm
             z_norms = torch.norm(encode.view(encode.size(0), -1), p=2, dim=1)
@@ -286,9 +295,13 @@ class ClientPTLAE:
         # compute and store recent per-epoch metrics used by server logging
         avg_re = total_re / it if it > 0 else 0.0
         avg_z = total_z_norm / it if it > 0 else 0.0
+        avg_re_loss = total_re_loss / it if it > 0 else 0.0
+        avg_ptl_loss = total_ptl_loss / it if it > 0 else 0.0
         self.recent_re = avg_re
         self.recent_latent_z = avg_z
         self.recent_train_loss = avg_loss
+        self.recent_re_loss = avg_re_loss
+        self.recent_ptl_loss = avg_ptl_loss
 
         return avg_loss, local_proto_stats
 
