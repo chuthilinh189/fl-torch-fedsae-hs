@@ -183,7 +183,7 @@ class ClientSupAE:
 
     def validate(self, epoch):
         self.net.eval()
-        list_re, list_loss = [], []
+        list_re, list_loss, list_z = [], [], []
         with torch.no_grad():
             for input, label in self.val_data_loader:
                 input, label = input.to(self.device), label.to(self.device)
@@ -191,10 +191,13 @@ class ClientSupAE:
                 loss = loss_re + loss_z
                 list_re.append(loss_re)
                 list_loss.append(loss.cpu().numpy().tolist())
+                list_z.append(float(loss_z.detach().cpu().item()))
 
             avg_loss = np.mean(list_loss)
             threshold_re = (0, 0)
-            threshold_z = (0.5, 0)
+            mean_z = float(np.mean(list_z)) if len(list_z) > 0 else 0.0
+            std_z = float(np.std(list_z)) if len(list_z) > 0 else 0.0
+            threshold_z = (mean_z, std_z)
 
             return avg_loss, threshold_re, threshold_z
 
@@ -211,7 +214,7 @@ class ClientSupAE:
         mean_re, std_re = self.threshold_re
         mean_z, std_z = self.threshold_z
 
-        threshold_z = 0.5
+        threshold_z = float(mean_z + std_z)
         is_verbose = not is_check
 
         acc, precision, recall, f1, roc = self.test_with_thresholds(

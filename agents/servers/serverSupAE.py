@@ -295,8 +295,8 @@ class ServerSupAE:
             )
             client_dir = os.path.join(out_dir, f"client_{client_idx}")
             os.makedirs(client_dir, exist_ok=True)
-            th_z_mean = float(client.threshold_z[0]) if isinstance(client.threshold_z, (list, tuple)) else float(client.threshold_z)
-            classif = client.test_by_attack_type_full(None, th_z_mean, verbose=False)
+            th_z = float(client.threshold_z[0] + client.threshold_z[1]) if isinstance(client.threshold_z, (list, tuple)) and len(client.threshold_z) >= 2 else float(client.threshold_z)
+            classif = client.test_by_attack_type_full(None, th_z, verbose=False)
             # collect per-client z scores and labels to compute per-attack AUCs (using z as score)
             z_scores = []
             lbls = []
@@ -417,7 +417,7 @@ class ServerSupAE:
             if global_hist_path:
                 self.args.logger.info(f"Saved global latent-dim0 histogram to {global_hist_path}")
 
-        # Global recall per attack (benign vs k) using z-threshold=0.5
+        # Global recall per attack (benign vs k) using client threshold_z = mean+std
         if len(global_labels) > 0:
             labels_arr = np.array(global_labels, dtype=int)
             recall_dict = {}
@@ -434,7 +434,11 @@ class ServerSupAE:
                         lab = int(label.item())
                         if lab in (0, atk_type):
                             y_true_bin_all.append(1 if lab == atk_type else 0)
-                            y_pred_bin_all.append(1 - int(float(z.item()) <= 0.5))
+                            if isinstance(client.threshold_z, (list, tuple)) and len(client.threshold_z) >= 2:
+                                z_thresh = float(client.threshold_z[0] + client.threshold_z[1])
+                            else:
+                                z_thresh = float(client.threshold_z)
+                            y_pred_bin_all.append(1 - int(float(z.item()) <= z_thresh))
                 recall_dict[str(int(atk_type))] = (float(recall_score(y_true_bin_all, y_pred_bin_all, zero_division=0)) if len(y_true_bin_all) > 0 else None)
             recall_path = os.path.join(out_dir, f"epoch{epoch}_recall_per_attack.json")
             with open(recall_path, 'w') as jf:

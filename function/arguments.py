@@ -50,9 +50,9 @@ class Arguments:
         # Lambda weight for prototype-triplet loss term
         self.ptl_lambda = config.get("ptl_lambda", 0.3)
         # EMA coefficient for server-side prototype updates (0..1)
-        self.ptl_proto_ema = config.get("ptl_proto_ema", 0.99)
+        self.ptl_proto_ema = config.get("ptl_proto_ema", 0.9)
         # Margin used in triplet-style loss (d_pos - d_neg + margin)
-        self.ptl_margin = config.get("ptl_margin", 5.0)
+        self.ptl_margin = config.get("ptl_margin", 2.0)
         # Distance metric for prototypes: 'euclid' or 'cosine'
         self.ptl_distance = config.get("ptl_distance", "euclid")
         # Decision mode for PTL at test time: 're' | 'proto' | 'combined'

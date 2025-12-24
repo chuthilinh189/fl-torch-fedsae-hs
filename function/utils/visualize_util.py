@@ -171,11 +171,15 @@ def collect_predictions_and_labels_from_client(client):
                     pred = (per_sample_re > threshold_re).long().cpu().numpy()
             
             elif model_type == "SupAE":
-                # SupAE uses latent z norm threshold
-                encode, decode = client.net(input)
-                z_norm = torch.norm(encode.view(encode.size(0), -1), p=2, dim=1)
-                threshold_z = client.threshold_z[0] if isinstance(client.threshold_z, (list, tuple)) else client.threshold_z
-                pred = (z_norm > threshold_z).long().cpu().numpy()
+                # SupAE decision: use latent loss z with threshold = mean+std (aligned with clientSupAE)
+                dummy_label = torch.zeros(input.size(0), dtype=torch.long, device=device)
+                _, z_val = client.calculate_loss(input, dummy_label)
+                z_tensor = z_val.view(-1) if torch.is_tensor(z_val) else torch.tensor([float(z_val)], device=device)
+                if isinstance(client.threshold_z, (list, tuple)) and len(client.threshold_z) >= 2:
+                    threshold_z = float(client.threshold_z[0] + client.threshold_z[1])
+                else:
+                    threshold_z = float(client.threshold_z)
+                pred = (z_tensor > threshold_z).long().cpu().numpy()
             
             else:
                 # Default: use RE threshold

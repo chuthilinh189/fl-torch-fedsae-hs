@@ -16,6 +16,8 @@ data_loaders_by_attack_type/
 data_loaders_full_attack_type/
 data_loaders_full_attack_type_old/
 data_loaders_full_attack_type_linh/
+data_loaders_full_attack_type_V1/
+data_loaders_full_attack_type_V2/
 default_models/
 dist/
 saved_models/
