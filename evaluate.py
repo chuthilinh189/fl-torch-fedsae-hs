@@ -222,8 +222,14 @@ def main():
         except Exception as e:
             args.logger.warning(f"Failed to load train partition meta for non_iid_dir: {e}")
 
-    multipliers = np.array([1.0])
+    # Track both the requested threshold_multiplier and the legacy 1.0 default
+    multiplier_values = sorted(set([1.0, float(getattr(args, "threshold_multiplier", 1.0))]))
+    multipliers = np.array(multiplier_values, dtype=float)
     multiplier_auc_all = {m: [] for m in multipliers}
+    metric_totals = {
+        m: {"acc": [], "precision": [], "recall": [], "f1": [], "auc": []}
+        for m in multipliers
+    }
 
     summary_rows = []
     detailed_metrics_rows = []  # For seen/unseen/normal metrics
@@ -240,7 +246,7 @@ def main():
     output_folder = os.path.join(
         "logs",
         "re_distributions",
-        f"{args.model_type}_mc{args.num_multi_class_clients}_epoch_{fallback_epoch_global}",
+        f"{args.model_type}_mc{args.num_multi_class_clients}",
     )
     os.makedirs(output_folder, exist_ok=True)
 
@@ -311,6 +317,11 @@ def main():
                 args.logger.info(
                     f"Client {client_idx} test at epoch {fallback_epoch} with threshold re: {threshold_re}, and threshold z: {threshold_z}"
                 )
+                # Propagate thresholds to client (some clients store scalar instead of tuple)
+                if hasattr(client, "threshold_re"):
+                    client.threshold_re = threshold_re
+                if hasattr(client, "threshold_z"):
+                    client.threshold_z = threshold_z
                 # FedHome no longer uses thresholds; load weights then record best_ckpt with current params
 
         # đọc và load lại mô hình cho từng client
@@ -335,7 +346,7 @@ def main():
         out_dir = os.path.join(
             "logs",
             "re_distributions",
-            f"{args.model_type}_mc{args.num_multi_class_clients}_epoch_{fallback_epoch}",
+            f"{args.model_type}_mc{args.num_multi_class_clients}",
         )
         client_out_dir = os.path.join(out_dir, f"client_{client_idx}")
         os.makedirs(client_out_dir, exist_ok=True)
@@ -413,14 +424,26 @@ def main():
 
         # ===== e) test (như hiện tại) =====
         acc_list, precision_list, recall_list, f1_list, auc_list = client.test()
+
+        # Some clients return a single metric set; map it across all multipliers safely
+        if not acc_list:
+            continue
         for i, m in enumerate(multipliers):
+            idx = min(i, len(acc_list) - 1)
             acc, precision, recall, f1, auc = (
-                acc_list[i],
-                precision_list[i],
-                recall_list[i],
-                f1_list[i],
-                auc_list[i],
+                acc_list[idx],
+                precision_list[idx],
+                recall_list[idx],
+                f1_list[idx],
+                auc_list[idx],
             )
+
+            # Accumulate for global mean stats
+            metric_totals[m]["acc"].append(acc)
+            metric_totals[m]["precision"].append(precision)
+            metric_totals[m]["recall"].append(recall)
+            metric_totals[m]["f1"].append(f1)
+            metric_totals[m]["auc"].append(auc)
 
             if abs(m - args.threshold_multiplier) < 1e-4:
                 args.logger.info(
@@ -555,6 +578,26 @@ def main():
 
     args.logger.info(header + rows)
 
+    # ===== Global mean metrics (ACC/P/R/F1/AUC) per multiplier =====
+    header_metrics = "\n====== GLOBAL METRICS (All Clients, mean) ======\n"
+    header_metrics += "{:<12} {:<10} {:<10} {:<10} {:<10} {:<10}\n".format(
+        "Multiplier", "ACC", "Precision", "Recall", "F1", "AUC"
+    )
+    header_metrics += "-" * 75 + "\n"
+    rows_metrics = ""
+    for m in sorted(metric_totals.keys()):
+        vals = metric_totals[m]
+        acc_mean = np.nanmean(vals["acc"]) if vals["acc"] else 0
+        p_mean = np.nanmean(vals["precision"]) if vals["precision"] else 0
+        r_mean = np.nanmean(vals["recall"]) if vals["recall"] else 0
+        f1_mean = np.nanmean(vals["f1"]) if vals["f1"] else 0
+        auc_mean = np.nanmean(vals["auc"]) if vals["auc"] else 0
+        rows_metrics += "{:<12.1f} {:<10.4f} {:<10.4f} {:<10.4f} {:<10.4f} {:<10.4f}\n".format(
+            m, acc_mean * 100, p_mean * 100, r_mean * 100, f1_mean * 100, auc_mean * 100
+        )
+
+    args.logger.info(header_metrics + rows_metrics)
+
     # ===== Xuất bảng thống kê tại multiplier = args.threshold_multiplier =====
     if summary_rows:
         df_summary = pd.DataFrame(
@@ -600,33 +643,85 @@ def main():
     if detailed_metrics_rows and args_ns.experiment_type == "non_iid_dir":
         df_detailed = pd.DataFrame(detailed_metrics_rows)
         
-        # Compute global averages (nanmean to ignore NaN values)
+        def safe_stat(arr, fn):
+            arr = np.asarray(arr, dtype=float)
+            if arr.size == 0 or np.all(np.isnan(arr)):
+                return np.nan
+            return fn(arr)
+
+        # Compute global statistics (mean, min, std; NaN-safe)
         global_recall_seen = np.nanmean(df_detailed["Recall_seen"].values)
+        global_recall_seen_min = safe_stat(df_detailed["Recall_seen"].values, np.nanmin)
+        global_recall_seen_std = safe_stat(df_detailed["Recall_seen"].values, np.nanstd)
+
         global_recall_unseen = np.nanmean(df_detailed["Recall_unseen"].values)
+        global_recall_unseen_min = safe_stat(df_detailed["Recall_unseen"].values, np.nanmin)
+        global_recall_unseen_std = safe_stat(df_detailed["Recall_unseen"].values, np.nanstd)
+
         global_recall_normal = np.nanmean(df_detailed["Recall_normal"].values)
+        global_recall_normal_min = safe_stat(df_detailed["Recall_normal"].values, np.nanmin)
+        global_recall_normal_std = safe_stat(df_detailed["Recall_normal"].values, np.nanstd)
+
         global_precision_attack = np.nanmean(df_detailed["Precision_attack"].values)
+        global_precision_attack_min = safe_stat(df_detailed["Precision_attack"].values, np.nanmin)
+        global_precision_attack_std = safe_stat(df_detailed["Precision_attack"].values, np.nanstd)
+
         global_precision_normal = np.nanmean(df_detailed["Precision_normal"].values)
+        global_precision_normal_min = safe_stat(df_detailed["Precision_normal"].values, np.nanmin)
+        global_precision_normal_std = safe_stat(df_detailed["Precision_normal"].values, np.nanstd)
         
         # Log global detailed metrics
         args.logger.info(
             "\n====== GLOBAL DETAILED METRICS (Seen/Unseen/Normal) ======\n"
-            f"Recall_seen:       {global_recall_seen:.4f}\n"
-            f"Recall_unseen:     {global_recall_unseen:.4f}\n"
-            f"Recall_normal:     {global_recall_normal:.4f}\n"
-            f"Precision_attack:  {global_precision_attack:.4f}\n"
-            f"Precision_normal:  {global_precision_normal:.4f}\n"
+            f"Recall_seen_mean:       {global_recall_seen:.4f}\n"
+            f"Recall_seen_min:        {global_recall_seen_min:.4f}\n"
+            f"Recall_seen_std:        {global_recall_seen_std:.4f}\n"
+            f"Recall_unseen_mean:     {global_recall_unseen:.4f}\n"
+            f"Recall_unseen_min:      {global_recall_unseen_min:.4f}\n"
+            f"Recall_unseen_std:      {global_recall_unseen_std:.4f}\n"
+            f"Recall_normal_mean:     {global_recall_normal:.4f}\n"
+            f"Recall_normal_min:      {global_recall_normal_min:.4f}\n"
+            f"Recall_normal_std:      {global_recall_normal_std:.4f}\n"
+            f"Precision_attack_mean:  {global_precision_attack:.4f}\n"
+            f"Precision_attack_min:   {global_precision_attack_min:.4f}\n"
+            f"Precision_attack_std:   {global_precision_attack_std:.4f}\n"
+            f"Precision_normal_mean:  {global_precision_normal:.4f}\n"
+            f"Precision_normal_min:   {global_precision_normal_min:.4f}\n"
+            f"Precision_normal_std:   {global_precision_normal_std:.4f}\n"
         )
         
-        # Add global row to DataFrame
-        global_row = {
-            "Client": "All",
+        # Add separate summary rows for mean/min/std (only core metrics columns)
+        global_mean_row = {
+            "Client": "Mean",
             "Recall_seen": global_recall_seen,
             "Recall_unseen": global_recall_unseen,
             "Recall_normal": global_recall_normal,
             "Precision_attack": global_precision_attack,
             "Precision_normal": global_precision_normal,
         }
-        df_detailed = pd.concat([df_detailed, pd.DataFrame([global_row])], ignore_index=True)
+
+        global_min_row = {
+            "Client": "Min",
+            "Recall_seen": global_recall_seen_min,
+            "Recall_unseen": global_recall_unseen_min,
+            "Recall_normal": global_recall_normal_min,
+            "Precision_attack": global_precision_attack_min,
+            "Precision_normal": global_precision_normal_min,
+        }
+
+        global_std_row = {
+            "Client": "Std",
+            "Recall_seen": global_recall_seen_std,
+            "Recall_unseen": global_recall_unseen_std,
+            "Recall_normal": global_recall_normal_std,
+            "Precision_attack": global_precision_attack_std,
+            "Precision_normal": global_precision_normal_std,
+        }
+
+        df_detailed = pd.concat([
+            df_detailed,
+            pd.DataFrame([global_mean_row, global_min_row, global_std_row])
+        ], ignore_index=True)
         
         # Export to CSV
         out_dir = os.path.dirname(log_csv_path)

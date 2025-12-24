@@ -133,8 +133,8 @@ def collect_predictions_and_labels_from_client(client):
             label = label.to(device)
             
             # Compute prediction based on model type
-            if model_type == "FedHome":
-                # FedHome is classifier: use argmax over logits
+            if model_type == "FedHome" or model_type == "FedGH":
+                # Classifier models: use argmax over logits (FedGH has no threshold_re)
                 logits, _ = client.net(input)
                 pred = torch.argmax(torch.softmax(logits, dim=1), dim=1).cpu().numpy()
 

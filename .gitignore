@@ -125,3 +125,4 @@ venv.bak/
 
 #logs
 /logs   
+/logger
