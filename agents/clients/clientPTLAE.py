@@ -175,11 +175,17 @@ class ClientPTLAE:
     def update_nn_parameters(self, new_params):
         self.net.load_state_dict(copy.deepcopy(new_params), strict=True)
 
-    def prototype_triplet_loss(self, z_i, y_i, z0, z1, margin=10.0, distance='euclid'):
+    def prototype_triplet_loss(self, z_i, y_i, z0, z1, margin=None, distance=None):
         """z_i: (B, dim), y_i: (B,), z0,z1: (dim,)"""
         if z0 is None or z1 is None:
             # no prototype available yet
             return torch.tensor(0.0, device=z_i.device)
+
+        # pick margin/distance from args if not provided
+        if margin is None:
+            margin = getattr(self.args, 'ptl_margin', 2.0)
+        if distance is None:
+            distance = getattr(self.args, 'ptl_distance', 'euclid')
 
         # ensure z0, z1 are torch tensors on the same device as z_i
         if not isinstance(z0, torch.Tensor):
@@ -231,7 +237,7 @@ class ClientPTLAE:
             re_loss = self.loss_function(decode, input)
 
             # prototype triplet loss
-            ptl = self.prototype_triplet_loss(encode, label_bin, self.prototype_z0, self.prototype_z1, margin=10.0, distance='euclid')
+            ptl = self.prototype_triplet_loss(encode, label_bin, self.prototype_z0, self.prototype_z1)
 
             lambda_ptl = getattr(self.args, 'ptl_lambda', 1.0)
             loss = re_loss + lambda_ptl * ptl
@@ -323,7 +329,7 @@ class ClientPTLAE:
                 # prototype triplet loss with binarized labels
                 label_bin = (label != 0).int()
                 lambda_ptl = getattr(self.args, 'ptl_lambda', 1.0)
-                ptl = self.prototype_triplet_loss(encode, label_bin, self.prototype_z0, self.prototype_z1, margin=10.0, distance='euclid')
+                ptl = self.prototype_triplet_loss(encode, label_bin, self.prototype_z0, self.prototype_z1)
                 # total validation loss
                 total_loss = re_loss_tensor + lambda_ptl * ptl
                 list_loss.append(float(total_loss.item()))
