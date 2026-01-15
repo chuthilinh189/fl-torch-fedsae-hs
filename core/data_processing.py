@@ -13,7 +13,7 @@ from datetime import datetime
 import pickle
 
 
-def generate_hybrid_client_dataset(args, data_loader, num_clients, seen_per_client=5, alpha=1.0, assign_seed=0, force_seen_sets=None):#số attack mỗi client = seen_per_client - 1
+def generate_hybrid_client_dataset(args, data_loader, num_clients, seen_per_client=5, alpha=1.0, assign_seed=0, force_seen_sets=None):
     """
     Hybrid partition:
       - deterministically choose seen classes per client (always include class 0)
@@ -95,43 +95,13 @@ def generate_hybrid_client_dataset(args, data_loader, num_clients, seen_per_clie
 
     return distributed_dataset, seen_sets
 
-def load_clients_data_noniid(
-    load_dir,
-    prefix="train",
-    num_clients=None,
-):
-    """
-    Load clients data from disk
-
-    Returns:
-      clients_data: list of (X, y)
-    """
-    clients_data = []
-
-    if num_clients is None:
-        files = sorted(
-            f for f in os.listdir(load_dir)
-            if f.startswith(prefix)
-        )
-        num_clients = len(files)
-
-    for i in range(num_clients):
-        path = os.path.join(load_dir, f"{prefix}_client_{i}.pkl")
-        with open(path, "rb") as f:
-            data = pickle.load(f)
-            clients_data.append((data["X"], data["y"]))
-
-    return clients_data
-
-
 def client_data_process(args, data_loader, poisoned_workers, mal_data_loader, batch_size, poison=True, data_stage="train"):
     # Support new hybrid partition strategy (deterministic class-assignment + Dirichlet within classes)
     if getattr(args, "partition_strategy", "original") == "hybrid" and data_stage in ("train", "val"):
         args.logger.info("Using hybrid partition ({} stage): seen_per_client={}, dir_alpha={}, seed={}",
                          data_stage, args.seen_per_client, args.dir_alpha, args.assign_seed)
 
-        """
-        distributed_dataset, seen_sets = generate_hybrid_client_dataset( #hybrid: non-iid
+        distributed_dataset, seen_sets = generate_hybrid_client_dataset(
             args,
             data_loader,
             args.num_workers,
@@ -140,46 +110,13 @@ def client_data_process(args, data_loader, poisoned_workers, mal_data_loader, ba
             assign_seed=args.assign_seed,
             force_seen_sets=None,
         )
-        """
-        # ---- resolve path ----
-        base_dir = "data_loaders_full_attack_type"
-        dataset  = getattr(args, "dataset", "unsw")
-        alpha_dir = os.path.join(
-            base_dir,
-            dataset,
-            f"alpha{args.dir_alpha}",
-            data_stage,
-        )
 
-         # ---- load client datasets from disk ----
-        distributed_dataset = load_clients_data_noniid(
-            load_dir=alpha_dir,
-            prefix=data_stage,
-            num_clients=args.num_workers,
-        )
-
-        # ---- Log per-client counts & seen classes ----
-        seen_sets = []
-
+        # Log per-client counts per class
         for i, (Xc, Yc) in enumerate(distributed_dataset):
-            if Yc.size > 0:
-                unique, counts = np.unique(Yc, return_counts=True)
-                counts_dict = {int(u): int(c) for u, c in zip(unique, counts)}
-                seen_sets.append(set(unique.tolist()))
-            else:
-                counts_dict = {}
-                seen_sets.append(set())
-
-            args.logger.info(
-                "Client {}: total_samples={}, class_counts={}",
-                i, Yc.shape[0], counts_dict
-            )
-
-        args.logger.info(
-            "Seen classes per client: {}",
-            [sorted(list(s)) for s in seen_sets]
-            )
-
+            unique, counts = np.unique(Yc, return_counts=True) if Yc.size > 0 else ([], [])
+            counts_dict = {int(u): int(c) for u, c in zip(unique, counts)}
+            args.logger.info("Client {}: total_samples={}, class_counts={}", i, Yc.shape[0], counts_dict)
+        args.logger.info("Seen classes per client: {}", [sorted(list(s)) for s in seen_sets])
 
         # persist partition metadata
         client_counts = []
@@ -187,6 +124,18 @@ def client_data_process(args, data_loader, poisoned_workers, mal_data_loader, ba
             unique, counts = np.unique(Yc, return_counts=True) if Yc.size > 0 else ([], [])
             counts_dict = {int(u): int(c) for u, c in zip(unique, counts)}
             client_counts.append(counts_dict)
+
+        # xác định thư mục đích theo format code mới
+        base_dir = "data_loaders_full_attack_type"
+        dataset = getattr(args, "dataset", "unsw")
+        alpha_dir = os.path.join(base_dir, dataset, f"alpha{args.dir_alpha}", data_stage)
+        os.makedirs(alpha_dir, exist_ok=True)
+
+        # lưu từng client: train_client_0.pkl, val_client_0.pkl, ...
+        for i, (Xc, Yc) in enumerate(distributed_dataset):
+            out_path = os.path.join(alpha_dir, f"{data_stage}_client_{i}.pkl")
+            with open(out_path, "wb") as f:
+                pickle.dump({"X": Xc, "y": Yc}, f)
 
         meta = {
             "dataset": getattr(args, "dataset", "unknown"),

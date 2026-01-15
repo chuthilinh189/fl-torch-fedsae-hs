@@ -185,7 +185,7 @@ def collect_predictions_and_labels_from_client(client):
                 # Default: use RE threshold
                 encode, decode = client.net(input)
                 per_sample_re = ((decode - input) ** 2).mean(dim=1)
-                threshold_re = client.threshold_re[0] if isinstance(client.threshold_re, (list, tuple)) else client.threshold_re
+                threshold_re = client.threshold_re[0] + 0.2*client.threshold_re[1] if isinstance(client.threshold_re, (list, tuple)) else client.threshold_re
                 pred = (per_sample_re > threshold_re).long().cpu().numpy()
             
             predictions.extend(pred.tolist())

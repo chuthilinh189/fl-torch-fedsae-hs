@@ -134,17 +134,28 @@ def convert_distributed_data_into_numpy(distributed_dataset):
     """
     converted_distributed_dataset = []
 
+    def _to_numpy(item):
+        """Safely convert tensors/arrays/scalars to numpy without assuming .numpy() exists."""
+        # Torch tensor path
+        if hasattr(item, "detach"):
+            return item.detach().cpu().numpy()
+        # Numpy array stays as is
+        if isinstance(item, np.ndarray):
+            return item
+        # Fallback for numpy scalars / python scalars / lists
+        return np.asarray(item)
+
     for worker_idx in range(len(distributed_dataset)):
         worker_data = distributed_dataset[worker_idx]
 
-        X_ = np.array(
-            [tensor.numpy()
-             for batch in worker_data for tensor in batch[0]]
-        )
-        Y_ = np.array(
-            [tensor.numpy()
-             for batch in worker_data for tensor in batch[1]]
-        )
+        X_ = np.array([
+            _to_numpy(tensor)
+            for batch in worker_data for tensor in batch[0]
+        ])
+        Y_ = np.array([
+            _to_numpy(tensor)
+            for batch in worker_data for tensor in batch[1]
+        ])
 
         converted_distributed_dataset.append((X_, Y_))
 

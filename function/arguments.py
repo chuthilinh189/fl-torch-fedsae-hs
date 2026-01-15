@@ -2,7 +2,7 @@ from .nets import AE, VAE, DualLossAE, SupAE, FedDetect
 import torch
 
 # Set seed cố định cho reproducibility
-SEED = 19
+SEED = 1
 torch.manual_seed(SEED)
 
 
@@ -59,11 +59,11 @@ class Arguments:
         # default to 'proto' to use prototype-based thresholding
         self.ptl_decision_mode = config.get("ptl_decision_mode", "proto")
         # DualLossAE scaling factor for anomaly term
-        self.dual_loss_alpha = config.get("dual_loss_alpha", 1)
+        self.dual_loss_alpha = config.get("dual_loss_alpha", 0.001)
 
         # ⚙️ Các tham số nội bộ tự động gán
         self.num_workers = 20  # Tổng số client mặc định
-        self.es_offset = 500  # Offset cho early stopping
+        self.es_offset = 1500  # Offset cho early stopping
         self.threshold_factor = 0  # Threshold scaling
         self.cuda = True  # Luôn bật GPU
         self.shuffle = False  # Không shuffle dữ liệu

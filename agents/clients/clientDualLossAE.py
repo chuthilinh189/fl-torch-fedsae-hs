@@ -213,7 +213,7 @@ class ClientDualLossAE:
 
     def test(self, is_check=False):
         """
-        Test với một giá trị threshold_multiplier cố định = 3.
+        Test với một giá trị threshold_multiplier cố định = 1.
         """
         acc_list = []
         precision_list = []
@@ -222,7 +222,7 @@ class ClientDualLossAE:
         roc_list = []
 
         mean_re, std_re = self.threshold_re
-        multiplier = 3.0
+        multiplier = 0.2
         threshold_re = mean_re + multiplier * std_re
         is_verbose = not is_check
 

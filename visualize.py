@@ -185,6 +185,41 @@ def visualize_loss_by_client(path_folder, filename_prefix="", interval=1, max_ep
 
 
 
+def plot_mse_seen_unseen(csv_path, title_prefix="DualLossAE"):
+    """
+    Plot mean MSE over epochs for normal traffic vs seen / unseen attacks.
+
+    Args:
+        csv_path (str): Path to mse_seen_unseen.csv produced during testing.
+        title_prefix (str): Prefix for saved figure name.
+    """
+    df = pd.read_csv(csv_path)
+    required_cols = {"epoch", "group", "mean_mse"}
+    if not required_cols.issubset(df.columns):
+        raise ValueError(f"CSV missing required columns: {required_cols}")
+
+    os.makedirs("visualizes", exist_ok=True)
+
+    plt.figure(figsize=(6, 4))
+    for group in ["normal", "seen", "unseen"]:
+        if group not in df["group"].unique():
+            continue
+        sub = df[df["group"] == group].sort_values("epoch")
+        plt.plot(sub["epoch"], sub["mean_mse"], marker='o', linewidth=1.5, label=group)
+
+    plt.title(f"{title_prefix}: MSE by group")
+    plt.xlabel("Epoch")
+    plt.ylabel("Mean MSE")
+    plt.grid(True)
+    plt.legend()
+    plt.tight_layout()
+
+    out_path = os.path.join("visualizes", f"{title_prefix}_mse_seen_unseen.png")
+    plt.savefig(out_path, dpi=200)
+    plt.close()
+    print(f"Saved MSE plot -> {out_path}")
+
+
 if __name__ == "__main__":
     # parser = argparse.ArgumentParser(description="Visualize Loss Data")
     # parser.add_argument("-file", type=str, required=True, help="CSV file to visualize")

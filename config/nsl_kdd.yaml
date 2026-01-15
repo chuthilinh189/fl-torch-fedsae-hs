@@ -44,6 +44,8 @@ num_multi_class_clients:
   # - 5
   # - 10
   - 20
+by_attack_type: 
+  - 0
 #AE learning_rate 0.001
 # DAE learning_rate 0.001 noise_std 0.0001
 # SAE learning_rate 0.0001 coefficient_ae 1
