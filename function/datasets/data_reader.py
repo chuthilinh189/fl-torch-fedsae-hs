@@ -28,6 +28,12 @@ class DataReader(Dataset):
                 X_train, y_train, X_val, y_val, X_test, y_test, X_mal, y_mal = cic_ids_by_attack_type()
             else:
                 X_train, y_train, X_val, y_val, X_test, y_test, X_mal, y_mal = cic_ids()
+        if self.data_name == "cic_iot":
+            print("Loading CIC IoT dataset")
+            if getattr(self.args, "full_attack_type", False):
+                X_train, y_train, X_val, y_val, X_test, y_test, X_mal, y_mal = cic_iot_full_attack_type()
+            else:
+                X_train, y_train, X_val, y_val, X_test, y_test, X_mal, y_mal = cic_iot()
         if self.data_name == "nb_iot":
             X_train, y_train, X_val, y_val, X_test, y_test, X_mal, y_mal = nb_iot()
         if self.data_name == "nsl_kdd":

@@ -163,7 +163,7 @@ nohup python evaluate_attack_type.py -d cic_ids -m DAE -tbs 128 -vbs 128 -di 80 
 nohup python evaluate_attack_type.py -d cic_ids -m SAE -tbs 128 -vbs 128 -di 80 -ep 4000 -tm 3.0 --model_dir saved_models/SAE/average/cic_ids  --log_csv logs/SAE/cic_ids_SAE_ > evaluate_results/attacktype_cic_ids_SAE_4000_3.log 2>&1 &
 nohup python evaluate_attack_type.py -d cic_ids -m DualLossAE -tbs 128 -vbs 1 -di 80 -ep 4000 -tm 0 --model_dir saved_models/DualLossAEbytype1/average/cic_ids  --log_csv logs/DualLossAEbytype1/cic_ids_DualLossAE > evaluate_results/attacktype1_cic_ids_DualLossAE_4000_0.log 2>&1 &
 
-nohup python main.py -d cic_ids -m PTLAE -tbs 128 -vbs 1 -di 80 -lr 0.001 -ep 1000 -agg average -nt label_flipping -pw 0 -pr 1 -ns 0.001 -ans 3 -cs 1 -tm 1 -mc 20 -et non_iid_dir -da 1.0 > logger/unsw_log5.out 2>&1 &
+nohup python main.py -d cic_ids -m PTLAE -tbs 128 -vbs 1 -di 80 -lr 0.001 -ep 10 -agg average -nt label_flipping -pw 0 -pr 1 -ns 0.001 -ans 3 -cs 1 -tm 1 -mc 20 -et non_iid_dir -da 1.0 > logger/unsw_log5.out 2>&1 &
 
 
 nohup python main.py -d cic_ids -m AE -tbs 128 -vbs 128 -di 80 -lr 0.001 -ep 500 -agg average -nt label_flipping -pw 0 -pr 1 -ns 0.001 -ans 3 -cs 1 -tm 0 -mc 0 > logger/cic_ids_log.out 2>&1 &
@@ -253,6 +253,12 @@ nohup python main.py -d nb_iot -m SDAE1 -tbs 128 -vbs 128 -di 115 -lr 0.001 -ep 
 
 
 # 5. CTU13_08:
+nohup python -u initialize_env.py -data ctu13_08  > logger/ctu13_08_init.out 2>&1 &
+
+
+nohup python main.py -d ctu13_08 -m PTLAE -tbs 256 -vbs 1 -di 40 -lr 0.0001 -ep 1000 -agg average -nt label_flipping -pw 0 -pr 1 -ns 0.001 -ans 3 -cs 1 -tm 0 -mc 20 -et non_iid_dir > logger/ctu13_08_log1.out 2>&1 & 
+
+
 nohup python main.py -d ctu13_08 -m AE -tbs 256 -vbs 256 -di 40 -lr 0.0001 -ep 2000 -agg average -nt label_flipping -pw 0 -pr 1 -ns 0.001 -ans 3 -cs 1 -tm 0 -mc 0 > logger/ctu13_08_log.out 2>&1 &
 nohup python main.py -d ctu13_08 -m SAE -tbs 256 -vbs 256 -di 40 -lr 0.0001 -ep 2000 -agg average -nt label_flipping -pw 0 -pr 1 -ns 0.001 -ans 3 -cs 1 -tm 0 -mc 0 > logger/ctu13_08_log.out 2>&1 &
 nohup python main.py -d ctu13_08 -m FedMSE -tbs 256 -vbs 256 -di 40 -lr 0.0001 -ep 2000 -agg FedMSE -nt label_flipping -pw 0 -pr 1 -ns 0.001 -ans 3 -cs 1 -tm 0 -mc 0 > logger/ctu13_08_log.out 2>&1 &
@@ -295,6 +301,8 @@ nohup python main.py -d ctu13_08 -m SDAE -tbs 256 -vbs 256 -di 40 -lr 0.01 -ep 7
 nohup python main.py -d ctu13_08 -m SDAE1 -tbs 256 -vbs 256 -di 40 -lr 0.01 -ep 700 -agg average -nt gaussian_noise -pw 5 -pr 0.5 -ns 0.001 -ans 3 -cs 1 -tm 0 -mc 0 > logger/ctu13_08_log.out 2>&1 &
 
 #6. NSL_KDD:
+nohup python -u initialize_env.py -data nsl_kdd  > logger/nsl_kdd_init.out 2>&1 &
+
 nohup python main.py -d nsl_kdd -m AE -tbs 32 -vbs 32 -di 122 -lr 0.0001 -ep 500 -agg average -nt label_flipping -pw 0 -pr 0.5 -ns 0.001 -ans 3 -cs 1 -tm 0 -mc 0 > logger/nsl_kdd_log.out 2>&1 &
 nohup python main.py -d nsl_kdd -m DAE -tbs 32 -vbs 32 -di 122 -lr 0.0001 -ep 500 -agg average -nt label_flipping -pw 0 -pr 0.5 -ns 0.001 -ans 3 -cs 1 -tm 0 -mc 0 > logger/nsl_kdd_log.out 2>&1 &
 nohup python main.py -d nsl_kdd -m SAE -tbs 32 -vbs 32 -di 122 -lr 0.0001 -ep 500 -agg average -nt label_flipping -pw 0 -pr 0.5 -ns 0.001 -ans 3 -cs 1 -tm 0 -mc 0 > logger/nsl_kdd_log.out 2>&1 &
@@ -315,6 +323,16 @@ nohup python main.py -d nsl_kdd -m SDAE -tbs 32 -vbs 32 -di 122 -lr 0.0001 -ep 5
 nohup python main.py -d nsl_kdd -m SDAE1 -tbs 32 -vbs 32 -di 122 -lr 0.0001 -ep 500 -agg average -nt gaussian_noise -pw 5 -pr 0.5 -ns 0.001 -ans 3 -cs 1 -tm 0 -mc 0 > logger/nsl_kdd_log.out 2>&1 &
 
 
+nohup python main.py -d nsl_kdd -m PTLAE -tbs 32 -vbs 1 -di 122 -lr 0.0001 -ep 1000 -agg average -nt label_flipping -pw 0 -pr 1 -ns 0.001 -ans 3 -cs 1 -tm 0 -mc 20 -et non_iid_dir > logger/nsl_kdd_log1.out 2>&1 & 
+nohup python evaluate.py -d nsl_kdd -m PTLAE -tbs 32 -vbs 1 -di 122 -ep 300 -tm 1 -mc 20 -et non_iid_dir --model_dir saved_models/PTLAE/20/average/nsl_kdd --log_csv logs/nsl_kdd_PTLAE_ > logger/nsl_kdd_PTLAE_300.log 2>&1 
+nohup python main.py -d nsl_kdd -m SupAE -tbs 32 -vbs 1 -di 122 -lr 0.0001 -ep 1000 -agg average -nt label_flipping -pw 0 -pr 1 -ns 0.001 -ans 1 -cs 1 -tm 1 -mc 20 -et non_iid_dir -da 1.0 > logger/nsl_kdd_log6.out 2>&1 
+nohup python evaluate.py -d nsl_kdd -m SupAE -tbs 32 -vbs 1 -di 122 -ep 1000 -tm 1 -mc 20 -et non_iid_dir --model_dir saved_models/SupAE/20/average/nsl_kdd --log_csv logs/nsl_kdd_SupAE_ > logger/nsl_kdd_SupAE_1000.log 2>&1 
+nohup python main.py -d nsl_kdd -m FedHome -tbs 32 -vbs 1 -di 122 -lr 0.0001 -ep 1000 -agg average -nt label_flipping -pw 0 -pr 1 -ns 0.001 -ans 1 -cs 1 -tm 0 -mc 20 -et non_iid_dir -da 1.0 > logger/nsl_kdd_log8.out 2>&1 
+nohup python evaluate.py -d nsl_kdd -m FedHome -tbs 32 -vbs 1 -di 122 -ep 1000 -tm 0 -mc 20 -et non_iid_dir --model_dir saved_models/FedHome/20/average/nsl_kdd --log_csv logs/nsl_kdd_FedHome_ > logger/nsl_kdd_FedHome_1000.log 2>&1 
+nohup python main.py -d nsl_kdd -m FedGH -tbs 32 -vbs 1 -di 122 -lr 0.0001 -ep 1000 -agg average -nt label_flipping -pw 0 -pr 1 -ns 0.001 -ans 1 -cs 1 -tm 0 -mc 20 -et non_iid_dir -da 1.0 > logger/nsl_kdd_log9.out 2>&1 
+nohup python evaluate.py -d nsl_kdd -m FedGH -tbs 32 -vbs 1 -di 122 -ep 1000 -tm 0 -mc 20 -et non_iid_dir --model_dir saved_models/FedGH/20/average/nsl_kdd --log_csv logs/nsl_kdd_FedGH_ > logger/nsl_kdd_FedGH_1000.log 2>&1 
+
+
 # 7. TON_IOT:
 nohup python -u initialize_env.py -data ton_iot_network  > logger/ton_iot_init.out 2>&1 &
 nohup python main.py -d ton_iot_network -m AE -tbs 128 -vbs 1 -di 40 -lr 0.001 -ep 2000 -agg average -nt label_flipping -pw 0 -pr 1 -ns 0.001 -ans 0.5 -cs 1 -tm 1 -mc 0 > logger/ton_iot_log.out 2>&1 & 
@@ -324,4 +342,12 @@ nohup python main.py -d ton_iot_network -m DAE -tbs 128 -vbs 1 -di 16 -lr 0.001 
 nohup python main.py -d ton_iot_network -m SupAE -tbs 128 -vbs 1 -di 16 -lr 0.001 -ep 2000 -agg average -nt label_flipping -pw 0 -pr 1 -ns 0.001 -ans 0.5 -cs 1 -tm 1 -mc 20 > logger/ton_iot_log.out 2>&1 & 
 nohup python main.py -d ton_iot_network -m DualLossAE -tbs 128 -vbs 1 -di 40 -lr 0.001 -ep 2000 -agg average -nt label_flipping -pw 0 -pr 1 -ns 0.001 -ans 0.5 -cs 1 -tm 1 -mc 2 > logger/ton_iot_log.out 2>&1 & 
 nohup python main.py -d ton_iot_network -m DualLossAE -tbs 128 -vbs 1 -di 40 -lr 0.001 -ep 2000 -agg average -nt label_flipping -pw 0 -pr 1 -ns 0.001 -ans 0.5 -cs 1 -tm 1 -mc 2 > logger/ton_iot_log.out 2>&1 & 
+
+
+
+# CIC IOT:
+
+nohup python -u initialize_env.py -data cic_iot  > logger/cic_iot_init.out 2>&1 &
+
+nohup python main.py -d cic_iot -m PTLAE -tbs 128 -vbs 1 -di 46 -lr 0.0001 -ep 1000 -agg average -nt label_flipping -pw 0 -pr 1 -ns 0.001 -ans 1 -cs 1 -tm 1 -mc 20 -et non_iid_dir -da 1.0 > logger/cic_iot_PTLAE_log20.out   2>&1 &
 

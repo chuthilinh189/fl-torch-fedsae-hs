@@ -2,6 +2,8 @@ from .bot_iot import bot_iot
 from .cic_ids import cic_ids
 from .cic_ids_by_attack_type import cic_ids_by_attack_type
 from .cic_ids_full_attack_type import cic_ids_full_attack_type
+from .cic_iot import cic_iot
+from .cic_iot_full_attack_type import cic_iot_full_attack_type
 from .nb_iot import nb_iot
 from .nsl_kdd import nsl_kdd
 from .nsl_kdd_one_class import nsl_kdd_one_class
@@ -12,6 +14,7 @@ from .unsw_full_attack_type import unsw_full_attack_type
 from .unsw_big import unsw_big
 from .unsw_one_class import unsw_one_class
 from .spambase import spambase
+from .ctu13_08_full_attack_type import ctu13_08_full_attack_type
 from .ctu13_08 import ctu13_08
 from .ctu13_09 import ctu13_09
 from .ctu13_10 import ctu13_10
