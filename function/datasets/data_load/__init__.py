@@ -21,6 +21,7 @@ from .ctu13_10 import ctu13_10
 from .ctu13_13 import ctu13_13
 from .internet_ad import internet_ad
 from .wsn_ds import wsn_ds
+from .wsn_ds_full_attack_type import wsn_ds_full_attack_type
 from .ton_iot_fridge import ton_iot_fridge
 from .ton_iot_weather import ton_iot_weather
 from .ton_iot_modbus import ton_iot_modbus

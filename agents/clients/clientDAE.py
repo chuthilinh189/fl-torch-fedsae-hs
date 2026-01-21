@@ -410,9 +410,14 @@ class ClientDAE:
         plt.grid()
 
         # Save to PDF
-    out_dir = os.path.join("visual", self.model_type)
-    os.makedirs(out_dir, exist_ok=True)
-    plt.savefig(os.path.join(out_dir, f"epoch_{epoch}_{self.model_type}_client{self.client_idx}_tsne.png"))
+        out_dir = os.path.join("visual", self.model_type)
+        os.makedirs(out_dir, exist_ok=True)
+        plt.savefig(
+            os.path.join(
+                out_dir,
+                f"epoch_{epoch}_{self.model_type}_client{self.client_idx}_tsne.png",
+            )
+        )
         plt.close()
 
     def visualize_validate(
