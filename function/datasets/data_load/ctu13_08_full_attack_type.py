@@ -23,6 +23,9 @@ def ctu13_08_full_attack_type():
     X = data[:, :-1]
     y = data[:, -1]
 
+    y[y == 1] = 0
+    y[y == 2] = 1
+
     # Split train/test
     X_train, X_test, y_train, y_test = train_test_split(
         X, y, test_size=test_size, random_state=random_state

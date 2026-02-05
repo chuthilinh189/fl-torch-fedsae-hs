@@ -41,6 +41,12 @@ nohup python main.py -d wsn_ds -m SAE1 -tbs 128 -vbs 128 -di 17 -lr 0.01 -ep 500
 nohup python main.py -d wsn_ds -m SDAE -tbs 128 -vbs 128 -di 17 -lr 0.01 -ep 500 -agg average -nt label_flipping -pw 5 -pr 0.5 -ns 0.001 -ans 3 -cs 1 -tm 0 -mc 0 > logger/wsn_ds_log.out 2>&1 &
 nohup python main.py -d wsn_ds -m SDAE1 -tbs 128 -vbs 128 -di 17 -lr 0.01 -ep 500 -agg average -nt label_flipping -pw 5 -pr 0.5 -ns 0.001 -ans 3 -cs 1 -tm 0 -mc 0 > logger/wsn_ds_log.out 2>&1 &
 
+# Thí nghiệm unseen attack
+nohup python main.py -d wsn_ds -m PTLAE -tbs 128 -vbs 1 -di 17 -lr 0.001 -ep 1000 -agg average -nt label_flipping -pw 0 -pr 1 -ns 0.001 -ans 1 -cs 1 -tm 1 -mc 20 -et non_iid_dir -da 1.0 > logger/unsw_log5.out 2>&1 & wait
+nohup python main.py -d wsn_ds -m SupAE -tbs 128 -vbs 1 -di 17 -lr 0.001 -ep 1000 -agg average -nt label_flipping -pw 0 -pr 1 -ns 0.001 -ans 1 -cs 1 -tm 1 -mc 20 -et non_iid_dir -da 1.0 > logger/unsw_log6.out 2>&1 & wait
+nohup python main.py -d wsn_ds -m FedHome -tbs 128 -vbs 1 -di 17 -lr 0.001 -ep 1000 -agg average -nt label_flipping -pw 0 -pr 1 -ns 0.001 -ans 1 -cs 1 -tm 0 -mc 20 -et non_iid_dir -da 1.0 > logger/unsw_log8.out 2>&1 & wait
+nohup python main.py -d wsn_ds -m FedGH -tbs 128 -vbs 1 -di 17 -lr 0.001 -ep 10 -agg average -nt label_flipping -pw 0 -pr 1 -ns 0.001 -ans 1 -cs 1 -tm 0 -mc 20 -et non_iid_dir -da 1.0 > logger/unsw_log9.out 2>&1 & 
+nohup python main.py -d wsn_ds -m DualLossAE -tbs 128 -vbs 1 -di 17 -lr 0.001 -ep 1000 -agg average -nt label_flipping -pw 0 -pr 1 -ns 0.001 -ans 1 -cs 1 -tm 1 -mc 20 -et non_iid_dir -da 1.0 > logger/unsw_log7.out 2>&1 &
 
 # 2. UNSW:
 nohup python -u initialize_env.py -data unsw  > logger/unsw_init.out 2>&1 &
@@ -259,8 +265,9 @@ nohup python -u initialize_env.py -data ctu13_08  > logger/ctu13_08_init.out 2>&
 nohup python main.py -d ctu13_08 -m PTLAE -tbs 256 -vbs 1 -di 40 -lr 0.0001 -ep 1000 -agg average -nt label_flipping -pw 0 -pr 1 -ns 0.001 -ans 3 -cs 1 -tm 0 -mc 20 -et non_iid_dir > logger/ctu13_08_log1.out 2>&1 & 
 
 
-nohup python main.py -d ctu13_08 -m AE -tbs 256 -vbs 256 -di 40 -lr 0.0001 -ep 2000 -agg average -nt label_flipping -pw 0 -pr 1 -ns 0.001 -ans 3 -cs 1 -tm 0 -mc 0 > logger/ctu13_08_log.out 2>&1 &
-nohup python main.py -d ctu13_08 -m SAE -tbs 256 -vbs 256 -di 40 -lr 0.0001 -ep 2000 -agg average -nt label_flipping -pw 0 -pr 1 -ns 0.001 -ans 3 -cs 1 -tm 0 -mc 0 > logger/ctu13_08_log.out 2>&1 &
+nohup python main.py -d ctu13_08 -m AE -tbs 256 -vbs 256 -di 40 -lr 0.0001 -ep 1000 -agg average -nt label_flipping -pw 0 -pr 1 -ns 0.001 -ans 3 -cs 1 -tm 0 -mc 0 > logger/ctu13_08_log.out 2>&1 &
+nohup python main.py -d ctu13_08 -m SAE -tbs 256 -vbs 256 -di 40 -lr 0.0001 -ep 1000 -agg average -nt label_flipping -pw 0 -pr 1 -ns 0.001 -ans 3 -cs 1 -tm 0 -mc 0 > logger/ctu13_08_log.out 2>&1 &
+nohup python main.py -d ctu13_08 -m DAE -tbs 256 -vbs 256 -di 40 -lr 0.0001 -ep 1000 -agg average -nt label_flipping -pw 0 -pr 1 -ns 0.001 -ans 3 -cs 1 -tm 0 -mc 0 > logger/ctu13_08_log.out 2>&1 &
 nohup python main.py -d ctu13_08 -m FedMSE -tbs 256 -vbs 256 -di 40 -lr 0.0001 -ep 2000 -agg FedMSE -nt label_flipping -pw 0 -pr 1 -ns 0.001 -ans 3 -cs 1 -tm 0 -mc 0 > logger/ctu13_08_log.out 2>&1 &
 nohup python main.py -d ctu13_08 -m SupAE -tbs 256 -vbs 1 -di 40 -lr 0.0001 -ep 2000 -agg average -nt label_flipping -pw 0 -pr 1 -ns 0.001 -ans 3 -cs 1 -tm 0 -mc 5 > logger/ctu13_08_log.out 2>&1 &
 nohup python main.py -d ctu13_08 -m DualLossAE -tbs 256 -vbs 1 -di 40 -lr 0.0001 -ep 2000 -agg average -nt label_flipping -pw 0 -pr 1 -ns 0.001 -ans 3 -cs 1 -tm 0 -mc 5 > logger/ctu13_08_log.out 2>&1 &

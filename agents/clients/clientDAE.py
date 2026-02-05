@@ -249,24 +249,27 @@ class ClientDAE:
 
                 labels += label.cpu().tolist()
 
-            predictions = [1 - int(r <= threshold_re) for r in zip(list_re)]
+            predictions = [1 - int(r <= threshold_re) for r in list_re]
 
-            acc = accuracy_score(labels, predictions)
-            precision = precision_score(labels, predictions)
-            recall = recall_score(labels, predictions)
-            f1 = f1_score(labels, predictions)
-            roc = roc_auc_score(labels, predictions)
+            # Convert raw labels to binary: 0 = normal, 1 = attack
+            labels_bin = [int(l != 0) for l in labels]
+
+            acc = accuracy_score(labels_bin, predictions)
+            precision = precision_score(labels_bin, predictions, zero_division=0)
+            recall = recall_score(labels_bin, predictions, zero_division=0)
+            f1 = f1_score(labels_bin, predictions, zero_division=0)
+            roc = roc_auc_score(labels_bin, predictions)
 
             # Tính confusion matrix và FPR
-            confusion_mat = confusion_matrix(labels, predictions)
+            confusion_mat = confusion_matrix(labels_bin, predictions)
             tn, fp, fn, tp = confusion_mat.ravel()
             fpr = fp / (fp + tn) if (fp + tn) > 0 else 0.0
 
             if verbose:
-                confusion_mat = confusion_matrix(labels, predictions)
+                confusion_mat = confusion_matrix(labels_bin, predictions)
                 self.args.logger.debug(
                     "Classification Report:\n"
-                    + classification_report(labels, predictions)
+                    + classification_report(labels_bin, predictions)
                 )
                 self.args.logger.debug("Confusion Matrix:\n" + str(confusion_mat))
                 self.args.logger.debug("ROC AUC Score: {}".format(roc))

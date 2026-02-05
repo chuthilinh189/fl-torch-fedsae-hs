@@ -107,12 +107,17 @@ def visualize(file_name, prefix, interval):
         plt.xlabel("Epoch")
         plt.ylabel(metric)
         plt.grid(True)
-        plt.legend(loc='upper right', fontsize='small', title="Malicious Clients")
+        handles, labels = plt.gca().get_legend_handles_labels()
+        if labels:
+            plt.legend(loc='upper right', fontsize='small', title="Malicious Clients")
         plt.tight_layout()
         
-        # Save the plot
-        output_png = os.path.join(visualize_dir, f"{prefix}_{metric}_plot.png")
-        plt.savefig(f"{prefix}_{interval}_{metric}_plot.png")
+        # Save the plot (create nested dirs if prefix contains subfolders)
+        output_png = os.path.join(visualize_dir, f"{prefix}_{interval}_{metric}_plot.png")
+        output_dir = os.path.dirname(output_png)
+        if output_dir:
+            os.makedirs(output_dir, exist_ok=True)
+        plt.savefig(output_png)
         plt.close()
 
 def visualize_loss_by_client(path_folder, filename_prefix="", interval=1, max_epoch=4000):

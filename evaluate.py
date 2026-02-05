@@ -216,7 +216,13 @@ def main():
                 data_stage="train",
             )
             if hasattr(args, 'train_partition_meta'):
-                args.logger.info(f"Loaded train partition meta: seen_sets={args.train_partition_meta.get('seen_sets', [])}")
+                # For AE/DAE/FedAE/FedDAE/FedSAE/FedMSE, force seen_sets to empty so all attacks are treated unseen
+                if getattr(args, 'model_type', '') in {"AE", "DAE", "SAE", "MSE", "FedAE", "FedDAE", "FedSAE", "FedMSE"}:
+                    seen_sets = [[] for _ in range(len(clients))]
+                    args.train_partition_meta['seen_sets'] = seen_sets
+                    args.logger.info(f"Loaded train partition meta: seen_sets forced empty for {args.model_type}")
+                else:
+                    args.logger.info(f"Loaded train partition meta: seen_sets={args.train_partition_meta.get('seen_sets', [])}")
             else:
                 args.logger.warning("non_iid_dir: train_partition_meta not available; seen/unseen viz may be incomplete")
         except Exception as e:
@@ -366,6 +372,10 @@ def main():
                 seen_for_client = []
                 if isinstance(seen_list, list) and client_idx < len(seen_list):
                     seen_for_client = list(map(int, seen_list[client_idx]))
+
+                # FedAE/FedDAE/FedSAE/FedMSE/AE/DAE: treat all attacks as unseen
+                if getattr(args, 'model_type', '') in {"AE", "DAE", "SAE", "MSE", "FedAE", "FedDAE", "FedSAE", "FedMSE"}:
+                    seen_for_client = []
                 
                 # Build attack labels
                 num_attacks = getattr(args, 'num_attack_labels', None)
@@ -474,6 +484,10 @@ def main():
             seen_for_client = set()
             if isinstance(seen_list, list) and client_idx < len(seen_list):
                 seen_for_client = set(map(int, seen_list[client_idx]))
+
+            # FedAE/FedDAE/FedSAE/FedMSE/AE/DAE: no attack_seen, everything attack is unseen
+            if getattr(args, 'model_type', '') in {"AE", "DAE", "SAE", "MSE", "FedAE", "FedDAE", "FedSAE", "FedMSE"}:
+                seen_for_client = set()
             
             # Categorize samples
             preds_arr = np.array(predictions, dtype=int)

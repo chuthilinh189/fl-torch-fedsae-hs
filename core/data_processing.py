@@ -93,7 +93,9 @@ def generate_hybrid_client_dataset(args, data_loader, num_clients, seen_per_clie
             Yc = Y_all[idxs].astype(int)
         distributed_dataset.append((Xc, Yc))
 
-    return distributed_dataset, seen_sets
+    actual_seen_sets = [[int(x) for x in np.unique(Yc)] for _, Yc in distributed_dataset]
+
+    return distributed_dataset, actual_seen_sets
 
 def client_data_process(args, data_loader, poisoned_workers, mal_data_loader, batch_size, poison=True, data_stage="train"):
     # Support new hybrid partition strategy (deterministic class-assignment + Dirichlet within classes)

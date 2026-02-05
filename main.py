@@ -24,8 +24,8 @@ if __name__ == "__main__":
     parser.add_argument("-et", "--experiment_type", type=str, default="normal",
                         choices=["normal", "by_attack_type", "non_iid_dir"],
                         help="Experiment type: normal | by_attack_type | non_iid_dir")
-    parser.add_argument("-spc", "--seen_per_client", type=int, default=5, help="Number of classes (including normal 0) each client should see in hybrid mode")
-    parser.add_argument("-da", "--dir_alpha", type=float, default=1, help="Dirichlet alpha for hybrid partitioning")
+    parser.add_argument("-spc", "--seen_per_client", type=int, default=3, help="Number of classes (including normal 0) each client should see in hybrid mode")
+    parser.add_argument("-da", "--dir_alpha", type=float, default=1.0, help="Dirichlet alpha for hybrid partitioning")
     parser.add_argument("-as", "--assign_seed", type=int, default=0, help="Seed for deterministic class assignment in hybrid partitioning")
     parser.add_argument("-fat", "--full_attack_type", action="store_true", help="Prepare/use full attack-type labels (keep distinct attack ids)")
 

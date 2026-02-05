@@ -1,3 +1,4 @@
+from http import client
 import os
 import csv
 from collections import defaultdict
@@ -181,11 +182,22 @@ def collect_predictions_and_labels_from_client(client):
                     threshold_z = float(client.threshold_z)
                 pred = (z_tensor > threshold_z).long().cpu().numpy()
             
+            elif model_type == "SAE":
+                # SAE decision: use latent shrink loss z with threshold = mean+std (aligned với clientSAE.test)
+                _, z_val = client.calculate_loss(input)
+                z_tensor = z_val.view(-1) if torch.is_tensor(z_val) else torch.tensor([float(z_val)], device=device)
+                if isinstance(client.threshold_z, (list, tuple)) and len(client.threshold_z) >= 2:
+                    # threshold_z stored as (mean, std); use mean + std
+                    threshold_z = float(client.threshold_z[0] + client.threshold_z[1])
+                else:
+                    threshold_z = float(client.threshold_z)
+                pred = (z_tensor > threshold_z).long().cpu().numpy()
+
             else:
                 # Default: use RE threshold
                 encode, decode = client.net(input)
                 per_sample_re = ((decode - input) ** 2).mean(dim=1)
-                threshold_re = client.threshold_re[0] + client.threshold_re[1] if isinstance(client.threshold_re, (list, tuple)) else client.threshold_re
+                threshold_re = client.threshold_re[0] + 1*client.threshold_re[1] if isinstance(client.threshold_re, (list, tuple)) else client.threshold_re
                 pred = (per_sample_re > threshold_re).long().cpu().numpy()
             
             predictions.extend(pred.tolist())
@@ -388,13 +400,24 @@ def plot_latent_embedding(latents, labels, out_dir, epoch, client_id=None, metho
     scaler = StandardScaler()
     latents_plot = scaler.fit_transform(latents_plot)
 
-    # Apply dimensionality reduction
-    if method == "umap" and _HAS_UMAP:
-        reducer = umap.UMAP(n_components=2, random_state=random_state)
+    # Guard against degenerate embeddings that cause divide-by-zero in PCA/TSNE
+    if latents_plot.shape[0] < 2 or np.allclose(latents_plot, latents_plot[0]) or np.allclose(
+        np.std(latents_plot, axis=0), 0
+    ):
+        emb_points = np.zeros((latents_plot.shape[0], 2), dtype=np.float32)
     else:
-        reducer = TSNE(n_components=2, init='pca', random_state=random_state)
+        # Apply dimensionality reduction
+        if method == "umap" and _HAS_UMAP:
+            reducer = umap.UMAP(n_components=2, random_state=random_state)
+        else:
+            reducer = TSNE(n_components=2, init='pca', random_state=random_state)
 
-    emb_points = reducer.fit_transform(latents_plot)
+        try:
+            emb_points = reducer.fit_transform(latents_plot)
+            if np.allclose(np.std(emb_points, axis=0), 0):
+                emb_points = np.zeros_like(emb_points)
+        except Exception:
+            emb_points = np.zeros((latents_plot.shape[0], 2), dtype=np.float32)
 
     fname_base = f"epoch{epoch}"
     if client_id is not None:
@@ -483,13 +506,24 @@ def plot_latent_embedding_non_iid_dir(latents, labels, seen_classes, attack_labe
     scaler = StandardScaler()
     latents_plot = scaler.fit_transform(latents_plot)
 
-    # Apply dimensionality reduction
-    if method == "umap" and _HAS_UMAP:
-        reducer = umap.UMAP(n_components=2, random_state=random_state)
+    # Guard against degenerate embeddings that cause divide-by-zero in PCA/TSNE
+    if latents_plot.shape[0] < 2 or np.allclose(latents_plot, latents_plot[0]) or np.allclose(
+        np.std(latents_plot, axis=0), 0
+    ):
+        emb_points = np.zeros((latents_plot.shape[0], 2), dtype=np.float32)
     else:
-        reducer = TSNE(n_components=2, init='pca', random_state=random_state)
+        # Apply dimensionality reduction
+        if method == "umap" and _HAS_UMAP:
+            reducer = umap.UMAP(n_components=2, random_state=random_state)
+        else:
+            reducer = TSNE(n_components=2, init='pca', random_state=random_state)
 
-    emb_points = reducer.fit_transform(latents_plot)
+        try:
+            emb_points = reducer.fit_transform(latents_plot)
+            if np.allclose(np.std(emb_points, axis=0), 0):
+                emb_points = np.zeros_like(emb_points)
+        except Exception:
+            emb_points = np.zeros((latents_plot.shape[0], 2), dtype=np.float32)
 
     fname_base = f"epoch{epoch}"
     if client_id is not None:
