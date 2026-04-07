@@ -144,12 +144,24 @@ class ServerFedGH:
         scaler = StandardScaler()
         combined_std = scaler.fit_transform(combined)
 
-        if method == "umap" and _HAS_UMAP:
-            reducer = umap.UMAP(n_components=2, random_state=random_state)
+        # Guard against degenerate embeddings (all points identical or zero variance) which can
+        # trigger divide-by-zero warnings in PCA/TSNE.
+        if combined_std.shape[0] < 2 or np.allclose(combined_std, combined_std[0]) or np.allclose(
+            np.std(combined_std, axis=0), 0
+        ):
+            emb_points = np.zeros((combined_std.shape[0], 2), dtype=np.float32)
         else:
-            reducer = TSNE(n_components=2, init="pca", random_state=random_state)
+            if method == "umap" and _HAS_UMAP:
+                reducer = umap.UMAP(n_components=2, random_state=random_state)
+            else:
+                reducer = TSNE(n_components=2, init="pca", random_state=random_state)
 
-        emb_points = reducer.fit_transform(combined_std)
+            try:
+                emb_points = reducer.fit_transform(combined_std)
+                if np.allclose(np.std(emb_points, axis=0), 0):
+                    emb_points = np.zeros_like(emb_points)
+            except Exception:
+                emb_points = np.zeros((combined_std.shape[0], 2), dtype=np.float32)
 
         fname_base = f"epoch{epoch}"
         if client_id is not None:

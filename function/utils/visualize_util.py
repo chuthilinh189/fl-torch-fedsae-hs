@@ -176,11 +176,11 @@ def collect_predictions_and_labels_from_client(client):
                 dummy_label = torch.zeros(input.size(0), dtype=torch.long, device=device)
                 _, z_val = client.calculate_loss(input, dummy_label)
                 z_tensor = z_val.view(-1) if torch.is_tensor(z_val) else torch.tensor([float(z_val)], device=device)
-                if isinstance(client.threshold_z, (list, tuple)) and len(client.threshold_z) >= 2:
-                    threshold_z = float(client.threshold_z[0] + client.threshold_z[1])
-                else:
-                    threshold_z = float(client.threshold_z)
-                pred = (z_tensor > threshold_z).long().cpu().numpy()
+                # if isinstance(client.threshold_z, (list, tuple)) and len(client.threshold_z) >= 2:
+                #     threshold_z = float(client.threshold_z[0] + client.threshold_z[1])
+                # else:
+                #     threshold_z = float(client.threshold_z)
+                pred = (z_tensor > 0.5).long().cpu().numpy()
             
             elif model_type == "SAE":
                 # SAE decision: use latent shrink loss z with threshold = mean+std (aligned với clientSAE.test)

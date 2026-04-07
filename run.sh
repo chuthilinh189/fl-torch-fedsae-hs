@@ -43,9 +43,13 @@ nohup python main.py -d wsn_ds -m SDAE1 -tbs 128 -vbs 128 -di 17 -lr 0.01 -ep 50
 
 # Thí nghiệm unseen attack
 nohup python main.py -d wsn_ds -m PTLAE -tbs 128 -vbs 1 -di 17 -lr 0.001 -ep 1000 -agg average -nt label_flipping -pw 0 -pr 1 -ns 0.001 -ans 1 -cs 1 -tm 1 -mc 20 -et non_iid_dir -da 1.0 > logger/unsw_log5.out 2>&1 & wait
+nohup python evaluate.py -d wsn_ds -m PTLAE -tbs 128 -vbs 1 -di 17 -ep 1000 -tm 1 -mc 20 -et non_iid_dir --model_dir saved_models/PTLAE/20/average/wsn_ds --log_csv logs/wsn_ds_PTLAE_ > logger/wsn_ds_PTLAE_1000.log 2>&1 &
 nohup python main.py -d wsn_ds -m SupAE -tbs 128 -vbs 1 -di 17 -lr 0.001 -ep 1000 -agg average -nt label_flipping -pw 0 -pr 1 -ns 0.001 -ans 1 -cs 1 -tm 1 -mc 20 -et non_iid_dir -da 1.0 > logger/unsw_log6.out 2>&1 & wait
+nohup python evaluate.py -d wsn_ds -m SupAE -tbs 128 -vbs 1 -di 17 -ep 1000 -tm 1 -mc 20 -et non_iid_dir --model_dir saved_models/SupAE/20/average/wsn_ds --log_csv logs/wsn_ds_SupAE_ > logger/wsn_ds_SupAE_1000.log 2>&1 & wait
 nohup python main.py -d wsn_ds -m FedHome -tbs 128 -vbs 1 -di 17 -lr 0.001 -ep 1000 -agg average -nt label_flipping -pw 0 -pr 1 -ns 0.001 -ans 1 -cs 1 -tm 0 -mc 20 -et non_iid_dir -da 1.0 > logger/unsw_log8.out 2>&1 & wait
-nohup python main.py -d wsn_ds -m FedGH -tbs 128 -vbs 1 -di 17 -lr 0.001 -ep 10 -agg average -nt label_flipping -pw 0 -pr 1 -ns 0.001 -ans 1 -cs 1 -tm 0 -mc 20 -et non_iid_dir -da 1.0 > logger/unsw_log9.out 2>&1 & 
+nohup python evaluate.py -d wsn_ds -m FedHome -tbs 128 -vbs 1 -di 17 -ep 1000 -tm 0 -mc 20 -et non_iid_dir --model_dir saved_models/FedHome/20/average/wsn_ds --log_csv logs/wsn_ds_FedHome_ > logger/wsn_ds_FedHome_1000.log 2>&1 & wait
+nohup python main.py -d wsn_ds -m FedGH -tbs 128 -vbs 1 -di 17 -lr 0.001 -ep 10 -agg average -nt label_flipping -pw 0 -pr 1 -ns 0.001 -ans 1 -cs 1 -tm 0 -mc 20 -et non_iid_dir -da 1.0 > logger/unsw_log9.out 2>&1 & wait
+nohup python evaluate.py -d wsn_ds -m FedGH -tbs 128 -vbs 1 -di 17 -ep 1000 -tm 0 -mc 20 -et non_iid_dir --model_dir saved_models/FedGH/20/average/wsn_ds --log_csv logs/wsn_ds_FedGH_ > logger/wsn_ds_FedGH_1000.log 2>&1 & 
 nohup python main.py -d wsn_ds -m DualLossAE -tbs 128 -vbs 1 -di 17 -lr 0.001 -ep 1000 -agg average -nt label_flipping -pw 0 -pr 1 -ns 0.001 -ans 1 -cs 1 -tm 1 -mc 20 -et non_iid_dir -da 1.0 > logger/unsw_log7.out 2>&1 &
 
 # 2. UNSW:

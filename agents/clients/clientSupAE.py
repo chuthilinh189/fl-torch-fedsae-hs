@@ -247,7 +247,7 @@ class ClientSupAE:
             self.args.logger.info(list_latent_z[:20])
             self.args.logger.info(labels[:20])
             for z in zip(list_latent_z):
-                predictions.append(1 - int(z[0].item() <= threshold_z))
+                predictions.append(1 - int(z[0].item() <= 0.5))
 
             # Binarize labels: benign=0, attack (any non-zero)=1
             labels_bin = [int(l != 0) for l in labels]
